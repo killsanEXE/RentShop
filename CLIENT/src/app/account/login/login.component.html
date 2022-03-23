@@ -1,0 +1,15 @@
+<div class="container text-center mt-4">
+    <form (submit)="login()" class="" autocomplete="off">
+        <div class="my-4 form-group">
+            <input [(ngModel)]="model.username" name="username" type="text" placeholder="Username"
+                class="form-control">
+        </div>
+        <div class="my-4 form-group">
+            <input [(ngModel)]="model.password" name="password" type="password" placeholder="Password"
+                class="form-control">
+        </div>
+        <button class="btn btn-secondary" 
+            [disabled]="model.username?.trim() === '' || model.password?.trim() === ''" 
+            type="submit">Login</button>
+    </form>
+</div>

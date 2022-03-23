@@ -1,0 +1,44 @@
+<div class="container">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Profile update</h4>
+        <button type="button" class="btn btn-danger" (click)="exit()" aria-label="Close">
+            Close
+        </button>
+    </div>
+
+    <div class="modal-body">
+        <form [formGroup]="itemForm" (ngSubmit)="createItem()">
+            <app-text-input 
+                [formControl]="itemForm.controls['name']"
+                [label]="'Name'"       
+                [type]="'text'">
+            </app-text-input>
+            <div class="form-group">
+                <textarea 
+                    class="form-control" 
+                    [class.is-invalid]="itemForm.controls['description'].touched && itemForm.controls['description'].invalid"
+                    rows="3"
+                    placeholder="Description"
+                    [formControl]="itemForm.controls['description']"
+                    ></textarea>
+                <div class="invalid-feedback" *ngIf="itemForm.controls.description.errors?.required">
+                    Please enter a description field
+                </div>
+            </div>
+
+            <app-text-input 
+                [formControl]="itemForm.controls['pricePerDay']"
+                [label]="'Price Per Day'"       
+                [type]="'number'">
+            </app-text-input>
+            <app-text-input 
+                [formControl]="itemForm.controls['ageRestriction']"
+                [label]="'Age Restriction'"       
+                [type]="'number'">
+            </app-text-input>
+
+            <button class="btn btn-primary" [disabled]="!itemForm.valid" type="submit">Next</button>
+        </form>
+    </div>
+</div>
+

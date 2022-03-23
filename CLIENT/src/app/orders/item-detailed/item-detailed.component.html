@@ -1,0 +1,27 @@
+<div style="padding: 0; padding-bottom: 3vh; margin: 0">
+    <div class="container mt-4 main-div px-5">
+        <div class="row item-header">
+            <p class="font-weight-bold text-justify text-capitalize title">{{item.name}}</p>
+            <p>{{item.description}}</p>
+        </div>
+
+        <div class="row">
+            <ngx-gallery [options]="gallaryOptions" [images]="gallaryImages" style="display: inline-block"></ngx-gallery>
+        </div>
+
+        <div class="row">
+            <h2>Price Per Day: {{item.pricePerDay}}</h2>
+            <h2>Age Restriction: {{item.ageRestriction}}</h2>
+        </div>
+
+        <div class="row">
+            <h2>Units</h2>
+            <ul>
+                <li *ngFor="let unit of item.units">
+                    <p>{{unit.description}}</p>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</div>

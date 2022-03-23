@@ -1,0 +1,16 @@
+<div class="admin-panel-main-div">
+    <mat-tab-group mat-align-tabs="center">
+        <mat-tab>
+            <ng-template mat-tab-label>Items</ng-template>
+            <app-admin-item [toastr]="toastr"></app-admin-item>
+        </mat-tab>
+        <mat-tab>
+            <ng-template mat-tab-label>Users</ng-template>
+            <app-admin-user [toastr]="toastr"></app-admin-user>
+        </mat-tab>
+        <mat-tab>
+            <ng-template mat-tab-label>Orders</ng-template>
+            <app-admin-order [toastr]="toastr"></app-admin-order>
+        </mat-tab>
+    </mat-tab-group>
+</div>

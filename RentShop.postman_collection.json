@@ -1,0 +1,639 @@
+{
+	"info": {
+		"_postman_id": "933b23ed-aceb-4612-9b76-e0b7c0e01dd0",
+		"name": "RentShop",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "ItemRequests",
+			"item": [
+				{
+					"name": "Units",
+					"item": [
+						{
+							"name": "AddUnit",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"pointId\": 1,\r\n    \"description\": \"from 60s\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:7163/api/unit/1",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "7163",
+									"path": [
+										"api",
+										"unit",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "EditUnit",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"pointId\": 2,\r\n    \"description\": \"i like it a lot\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://localhost:7163/api/unit/1-1",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "7163",
+									"path": [
+										"api",
+										"unit",
+										"1-1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeleteUnit",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://localhost:7163/api/unit/1-1",
+									"protocol": "https",
+									"host": [
+										"localhost"
+									],
+									"port": "7163",
+									"path": [
+										"api",
+										"unit",
+										"1-1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "GetPaginatedItem",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:7163/api/item?pageNumber=1&pageSize=5",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7163",
+							"path": [
+								"api",
+								"item"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateItem",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Dodge Daytona\",\r\n    \"description\": \"it's a car\",\r\n    \"pricePerDay\": 240,\r\n    \"ageRestriction\": 30\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7163/api/item/create",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7163",
+							"path": [
+								"api",
+								"item",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SetPreviewPhoto",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "https://localhost:7163/api/item/set-preview-photo/1-3",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7163",
+							"path": [
+								"api",
+								"item",
+								"set-preview-photo",
+								"1-3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddPhoto",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "File",
+									"type": "file",
+									"src": "/C:/Users/Kills/Pictures/Screenshots/Screenshot (41).png"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://localhost:7163/api/item/add-photo/1",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7163",
+							"path": [
+								"api",
+								"item",
+								"add-photo",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeletePhoto",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:7163/api/item/delete-photo/1-1",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7163",
+							"path": [
+								"api",
+								"item",
+								"delete-photo",
+								"1-1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetItem",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:7163/api/item/1",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7163",
+							"path": [
+								"api",
+								"item",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Point",
+			"item": [
+				{
+					"name": "GetPoints",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:7163/api/point",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7163",
+							"path": [
+								"api",
+								"point"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddPoint",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"country\": \"USA\",\r\n    \"city\": \"Los Angeles\",\r\n    \"address\": \"av somtih 2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7163/api/point",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7163",
+							"path": [
+								"api",
+								"point"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetPoint",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:7163/api/point/1",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7163",
+							"path": [
+								"api",
+								"point",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeletePoint",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:7163/api/point/2-1",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7163",
+							"path": [
+								"api",
+								"point",
+								"2-1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EditPoint",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"city\": \"Minsk\",\r\n    \"country\": \"Belarus\",\r\n    \"address\": \"street Maxima Bogranovicha 53\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7163/api/point/1",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7163",
+							"path": [
+								"api",
+								"point",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddPointPhoto",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "File",
+									"type": "file",
+									"src": "/C:/Users/Kills/Pictures/depositphotos_130951140-stock-photo-gps-map-screenshot.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://localhost:7163/api/point/set-photo/1",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7163",
+							"path": [
+								"api",
+								"point",
+								"set-photo",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "GetAllUsers",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:7163/api/users?pageNumber=1&pageSize=5",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7163",
+					"path": [
+						"api",
+						"users"
+					],
+					"query": [
+						{
+							"key": "pageNumber",
+							"value": "1"
+						},
+						{
+							"key": "pageSize",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "LoginAsKillsan",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const user = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Has properties\", function () {\r",
+							"    pm.expect(user).to.have.property('username');\r",
+							"    pm.expect(user).to.have.property('token');\r",
+							"});\r",
+							"\r",
+							"if (pm.test(\"Has properties\")) {\r",
+							"    pm.globals.set('token', user.token);\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"username\": \"admin\",\r\n\t\"password\": \"Perehod2020\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7163/api/account/login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7163",
+					"path": [
+						"api",
+						"account",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RegisterKillsan",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const user = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Has properties\", function () {\r",
+							"    pm.expect(user).to.have.property('username');\r",
+							"    pm.expect(user).to.have.property('token');\r",
+							"});\r",
+							"\r",
+							"if (pm.test(\"Has properties\")) {\r",
+							"    pm.globals.set('token', user.token);\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"killsan\",\r\n    \"name\": \"Kirill\",\r\n    \"email\": \"killsan.exe@gmail.com\",\r\n    \"password\": \"Perehod2020\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:7163/api/account/register",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7163",
+					"path": [
+						"api",
+						"account",
+						"register"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

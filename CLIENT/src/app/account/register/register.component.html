@@ -1,0 +1,40 @@
+<div class="container text-center mt-4">
+    <form [formGroup]="registerForm" (ngSubmit)="register()">
+
+        <app-text-input 
+            [formControl]="registerForm.controls['username']"
+            [label]="'Username'"       
+            [type]="'text'"
+        ></app-text-input>
+
+        <app-text-input 
+            [formControl]="registerForm.controls['name']"
+            [label]="'Name'"       
+            [type]="'text'"
+        ></app-text-input>
+
+        <app-date-input [formControl]="registerForm.controls['dateOfBirth']" 
+        [label]="'Date of Birth'" [maxDate]="maxDate"></app-date-input>
+
+        <app-text-input 
+            [formControl]="registerForm.controls['email']"
+            [label]="'Email'"       
+            [type]="'email'"
+            [email]="true" 
+        ></app-text-input>
+        
+        <app-text-input 
+            [formControl]="registerForm.controls['password']"
+            [label]="'Password'"       
+            [type]="'password'"
+        ></app-text-input>
+
+        <app-text-input 
+            [formControl]="registerForm.controls['confirmPassword']"
+            [label]="'Confirm password'"       
+            [type]="'password'"
+        ></app-text-input>
+
+        <button class="btn btn-secondary" [disabled]="!registerForm.valid" type="submit">Register</button>
+    </form>
+</div>

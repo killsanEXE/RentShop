@@ -1,0 +1,44 @@
+<div class="home-component">    
+    <!-- <div class="home-main-div" *ngIf="items.length > 0">
+        <div class="row p-2 home-item-row">
+            <div class="col-3 m-3" *ngFor="let item of items">
+                <div class="card" style="width: 16rem;">
+                    <img src="{{item.previewPhotoUrl}}" class="card-img-top" alt="{{item.id}}">
+                    <div class="card-body">
+                        <p class="card-title">{{item.name}}</p>
+                        <button class="btn btn-success">Order</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+    <div class="home-main-div">
+        <div class="row item-row">
+            <div class="col-4 item-col"  *ngFor="let item of items">
+                <div class="item-card">
+                    <div class="item-card-head">
+                        <img src="{{item.previewPhotoUrl ? item.previewPhotoUrl : '/assets/no-image.png'}}" alt="{{item.id}}">
+                    </div>
+                    <div class="item-card-body">
+                        <p>{{item.name}}</p>
+                        <button routerLink="/item/{{item.id}}" class="btn item-order-button">Order</button>
+                    </div>
+                </div>
+            </div>
+        </div>  
+    </div>
+
+    <div class="home-no-item-div" *ngIf="items.length <= 0">
+        <p>Nothing here</p>
+    </div>
+
+    <mat-paginator #paginator class="home-paginator"
+        (page)="pageEvent = pageChanged($event)"
+        [length]="pagination.totalItems"
+        [pageSize]="pagination.itemsPerPage"
+        [pageIndex]="pagination.currentPage-1"
+        [pageSizeOptions]="pageSizeOptions"
+        aria-label="Select page">
+    </mat-paginator>
+</div>

@@ -1,0 +1,32 @@
+.main-div{
+    width: 100% !important;
+    border: 0.5px solid rgb(189, 189, 189);
+    border-radius: 20px;
+    overflow: hidden;
+    padding: 3vh;
+}
+
+.item-header{
+    flex-direction: column;
+}
+
+.title{
+    font-size: 2rem;
+}
+
+
+
+img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+@media only screen and (min-width: 1200px){
+}
+
+@media only screen and (max-width: 1200px){
+    .item-photos{
+        flex-direction: column;
+    }
+}

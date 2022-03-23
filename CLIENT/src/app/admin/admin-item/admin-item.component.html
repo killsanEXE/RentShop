@@ -1,0 +1,69 @@
+<div class="p-3">
+
+    <div class="row d-flex admin-item-panel panel-controls justify-content-between mx-2 pb-1 mb-3">
+
+      <div class="col-8">
+        <input type="text" class="form-control" placeholder="Search">
+      </div>
+
+      <div class="col-4">
+        <button (click)="popUp()" type="button" class="btn icon-button btn-outline-primary">
+            <img class="icon-img" src="/assets/plus.png" alt="additem">
+        </button>
+        <button 
+          [disabled]="selectedItems.length <= 0" 
+          type="button" 
+          class="btn icon-button btn-outline-danger"
+          (click)="deleteItems()">
+            <img class="icon-img" src="/assets/trash.png" alt="trashItem">
+        </button>
+      </div>
+    </div>
+
+    <div class="row">
+      <table class="table" *ngIf="items.length > 0">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">
+                <input 
+                  type="checkbox" 
+                  class="item-checkbox"
+                  (change)="selectAll($event.target.checked)"
+                  #mainCheckbox
+                  >
+              </th>
+              <th scope="col">Name</th>
+              <th scope="col">Price Per Day</th>
+              <th scope="col">Manage</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of items">
+              <th scope="row">
+                <input 
+                  type="checkbox" 
+                  [checked]="selectedItems.includes(item)"
+                  class="item-checkbox" 
+                  (change)="selectItem(item, $event.target.checked, mainCheckbox)">
+              </th>
+              <td>{{item.name}}</td>
+              <td>{{item.pricePerDay}}</td>
+              <td><button class="btn btn-warning" (click)="editItem(item)">Edit</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div *ngIf="items.length <= 0">
+        <p>No items yet, click on the plus icon to add one</p>
+      </div>
+
+      <mat-paginator #paginator class="home-paginator"
+        (page)="pageEvent = pageChanged($event)"
+        [length]="pagination.totalItems"
+        [pageSize]="pagination.itemsPerPage"
+        [pageIndex]="pagination.currentPage-1"
+        [pageSizeOptions]="pageSizeOptions"
+        aria-label="Select page">
+    </mat-paginator>
+</div>

@@ -1,0 +1,14 @@
+.dropdown-item:hover{
+    cursor: pointer;
+}
+
+.dropdown-toggle, .login-btn{
+    background-color: #FFFFFF;
+}
+
+img{
+    max-height: 40px;
+    display: inline;
+    margin-right: 10px;
+    border: 0;
+}
