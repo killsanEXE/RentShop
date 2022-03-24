@@ -55,6 +55,12 @@ export class ItemService {
     }));
   }
 
+  editItem(id: number,item: any){
+    return this.http.put<Item>(this.baseUrl + `item/edit-item/${id}`, item).pipe(map((item: Item) => {
+      return item
+    }));
+  }
+
   deleteItem(item: Item){
     return this.http.delete(this.baseUrl + `item/${item.id}`);
   }

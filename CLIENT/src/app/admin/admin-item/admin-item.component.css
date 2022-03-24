@@ -21,6 +21,16 @@
     /* border-bottom: 2px solid gray; */
 }
 
+.item-checkbox{
+    transform: scale(1.3);
+}
+
 .item-checkbox:hover{
     border: 2px soild red;
+}
+
+.item-name-column{
+    overflow: hidden;
+    white-space: nowrap; 
+    text-overflow: ellipsis;
 }

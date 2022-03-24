@@ -2,7 +2,7 @@ export interface Item {
     id: number
     name: string
     description: string
-    previewPhotoUrl: string
+    previewPhoto: Photo;
     pricePerDay: number
     ageRestriction: number
     units: Unit[]
@@ -31,5 +31,4 @@ export interface Item {
   export interface Photo {
     id: number
     url: string
-    isPreview: boolean
   }

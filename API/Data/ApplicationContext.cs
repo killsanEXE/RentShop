@@ -50,6 +50,10 @@ namespace API.Data
                 .WithOne(f => f.ItemUnitPoint)
                 .IsRequired();
 
+            builder.Entity<Photo>()
+                .HasOne(f => f.Item)
+                .WithMany(f => f.Photos);
+
             builder.ApplyUtcDateTimeConverter();
         }
     }

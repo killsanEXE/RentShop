@@ -1,0 +1,30 @@
+.main-photo-column{
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.main-photo-column img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    margin-bottom: 2vh;
+}
+
+.photo-col img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    margin-bottom: 2vh;
+}
+
+.photo-col{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 10rem;
+    padding: 2vh;
+    border: 0.5px solid rgb(196, 196, 196);
+    border-radius: 10px;
+    margin: 2vh;
+}

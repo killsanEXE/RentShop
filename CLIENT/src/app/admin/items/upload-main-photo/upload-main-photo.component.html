@@ -1,0 +1,24 @@
+<div class="container">
+
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Upload preview photo</h4>
+        <button type="button" class="btn btn-secondary" (click)="modal.close()" aria-label="Close">
+            Do it Later
+        </button>
+    </div>
+
+    <div class="modal-body">
+
+        <div class="row pr-4">
+            <input type="file" ng2FileSelect [uploader]="uploader"/><br/>
+        </div>
+
+        <div class="row pt-4" *ngIf="uploader?.queue?.length">
+            <button type="button" class="btn btn-success btn-s m-2"
+                    (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length">
+                    Upload
+            </button>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,6 @@
+@media only screen and (max-width: 320px){
+    .main-app-div{
+        max-width: 100% !important;
+        padding: 0;
+    }
+}

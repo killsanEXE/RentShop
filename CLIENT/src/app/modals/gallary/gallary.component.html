@@ -1,0 +1,21 @@
+<div *ngIf="photos.length > 0">
+    <div class="gallary-main">
+        <div class="main-photo-div">
+            <div (click)="changeBackward()" class="change-img-button">
+                <button [disabled]="currentPhotoIndex === 0"><</button>
+            </div>
+            <div (swiperight)="changeBackward()" (swipeleft)="changeForward()" class="main-img-div">
+                <img class="main-img" src="{{currentPhoto.url}}" alt="{{currentPhoto.id}}">
+            </div>
+            <div (click)="changeForward()" class="change-img-button">
+                <button [disabled]="currentPhotoIndex === photos.length-1">></button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="row" style="display: flex; justify-content: center;" *ngIf="photos.length <= 0">
+        <p>This item has no photos</p>
+    </div>
+</div>

@@ -16,5 +16,6 @@ namespace API.Entities
         [InverseProperty(nameof(ItemUnitPoint.Item))]
         public ICollection<ItemUnitPoint>? Units { get; set; }
         public ICollection<Photo>? Photos { get; set; }
+        public Photo? PreviewPhoto { get; set; }
     }
 }

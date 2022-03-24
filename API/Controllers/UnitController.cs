@@ -6,6 +6,7 @@ using API.Data;
 using API.DTOs;
 using API.Entities;
 using API.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,15 +18,17 @@ namespace API.Controllers
     {
         readonly IUnitOfWork _unitOfWork;
         readonly ApplicationContext _context;
-        public UnitController(IUnitOfWork unitOfWork, ApplicationContext context)
+        readonly IMapper _mapper;
+        public UnitController(IUnitOfWork unitOfWork, ApplicationContext context, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _context = context;
+            _mapper = mapper;
         }
         
 
         [HttpPost("{itemId:int}")]
-        public async Task<ActionResult> AddUnit(int itemId, UnitDTO unitDTO)
+        public async Task<ActionResult<UnitDTO>> AddUnit(int itemId, UnitDTO unitDTO)
         {
             var item = await _context.Items
                 .Include(f => f.Units)
@@ -48,12 +51,12 @@ namespace API.Controllers
             await _context.ItemUnitPoints.AddAsync(new() { Item = item, Point = point, Unit = unit});
             // item.Units!.Add(unit);
             // point.Units!.Add(unit);
-            if(await _context.SaveChangesAsync() > 0) return Ok();
+            if(await _context.SaveChangesAsync() > 0) return Ok(_mapper.Map<UnitDTO>(unit));
             return BadRequest("Failed to add unit");
         }
 
         [HttpPut("{itemId:int}-{unitId:int}")]
-        public async Task<ActionResult> EditUnit(int itemId, int unitId, UnitDTO unitDTO)
+        public async Task<ActionResult<UnitDTO>> EditUnit(int itemId, int unitId, UnitDTO unitDTO)
         {
             var item = await _unitOfWork.ItemRepository.GetItemByIdAsync(itemId);
             if(item == null) return NotFound();
@@ -70,7 +73,7 @@ namespace API.Controllers
             else if(!unit.IsAvaliable) return BadRequest("Failed to update pick up point");
 
             unit.Description = unitDTO.Description;
-            if(await _context.SaveChangesAsync() > 0) return Ok();
+            if(await _context.SaveChangesAsync() > 0) return Ok(_mapper.Map<UnitDTO>(unit));
             return BadRequest("Failed to edit unit");
         }
 

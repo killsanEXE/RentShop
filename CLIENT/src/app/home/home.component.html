@@ -18,10 +18,10 @@
             <div class="col-4 item-col"  *ngFor="let item of items">
                 <div class="item-card">
                     <div class="item-card-head">
-                        <img src="{{item.previewPhotoUrl ? item.previewPhotoUrl : '/assets/no-image.png'}}" alt="{{item.id}}">
+                        <img src="{{item.previewPhoto ? item.previewPhoto.url : '/assets/no-image.png'}}" alt="{{item.id}}">
                     </div>
                     <div class="item-card-body">
-                        <p>{{item.name}}</p>
+                        <p class="item-card-title">{{item.name}}</p>
                         <button routerLink="/item/{{item.id}}" class="btn item-order-button">Order</button>
                     </div>
                 </div>

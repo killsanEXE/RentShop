@@ -1,0 +1,71 @@
+<div class="container mt-5">
+    <mat-tab-group mat-align-tabs="center">
+        <mat-tab>
+            <ng-template mat-tab-label>Info</ng-template>
+            <div class="container p-4">
+                <form [formGroup]="itemForm" (ngSubmit)="editItem()">
+                    <app-text-input 
+                        [formControl]="itemForm.controls['name']"
+                        [label]="'Name'"       
+                        [type]="'text'">
+                    </app-text-input>
+                    <div class="form-group">
+                        <textarea 
+                            class="form-control" 
+                            [class.is-invalid]="itemForm.controls['description'].touched && itemForm.controls['description'].invalid"
+                            rows="3"
+                            placeholder="Description"
+                            [formControl]="itemForm.controls['description']"
+                            ></textarea>
+                        <div class="invalid-feedback" *ngIf="itemForm.controls.description.errors?.required">
+                            Please enter a description field
+                        </div>
+                    </div>
+        
+                    <app-text-input 
+                        [formControl]="itemForm.controls['pricePerDay']"
+                        [label]="'Price Per Day'"       
+                        [type]="'number'">
+                    </app-text-input>
+                    <app-text-input 
+                        [formControl]="itemForm.controls['ageRestriction']"
+                        [label]="'Age Restriction'"       
+                        [type]="'number'">
+                    </app-text-input>
+        
+                    <button class="btn btn-primary" [disabled]="!itemForm.valid" type="submit">Save</button>
+                </form>
+            </div>
+        </mat-tab>
+
+        <mat-tab>
+            <ng-template mat-tab-label>Photos</ng-template>
+            <div class="container p-4" style="display: flex;">
+                <div class="col-4 main-photo-column">
+                    <div>
+                        <img *ngIf="item.previewPhoto !== null" src="{{item.previewPhoto.url}}" alt="{{item.previewPhoto.id}}">
+                        <div style="display: flex; flex-direction: column;">
+                            <button (click)="uploadMainPhoto(item)" class="btn btn-primary mb-2">Set main photo</button>
+                            <button (click)="uploadPhotos(item)" class="btn btn-secondary">Add multiple photos</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-8" style="border-left: 0.5px solid gray;">
+                    <div class="row photo-row">
+                        <div class="col-4 photo-col" *ngFor="let photo of item.photos">
+                            <img src="{{photo.url}}" alt="{{photo.id}}">
+                            <button (click)="deletePhoto(photo)" class="btn btn-danger">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </mat-tab>
+
+        <mat-tab>
+            <ng-template mat-tab-label>Units</ng-template>
+            <div class="container p-4">
+            </div>
+        </mat-tab>
+
+    </mat-tab-group>
+</div>

@@ -1,7 +1,7 @@
 <div class="container">
 
     <div class="modal-header">
-        <h4 class="modal-title" id="modal-basic-title">Profile update</h4>
+        <h4 class="modal-title" id="modal-basic-title">Add photos to item</h4>
         <button *ngIf="!uploaded" type="button" class="btn btn-secondary" (click)="modal.close()" aria-label="Close">
             Do it Later
         </button>
@@ -33,13 +33,9 @@
                 </tbody>
             </table>
             <div>
-                <button type="button" class="btn btn-success btn-s m-2"
+                <button type="button" class="btn btn-primary btn-s m-2"
                         (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length">
                         Upload
-                </button>
-                <button type="button" class="btn btn-warning btn-s m-2"
-                        (click)="uploader.cancelAll()" [disabled]="!uploader.isUploading">
-                        Cancel
                 </button>
                 <button type="button" class="btn btn-danger btn-s m-2"
                         (click)="uploader.clearQueue()" [disabled]="!uploader.queue.length">

@@ -1,6 +1,6 @@
 .main-div{
     width: 100% !important;
-    border: 0.5px solid rgb(189, 189, 189);
+    /* border: 0.5px solid rgb(189, 189, 189); */
     border-radius: 20px;
     overflow: hidden;
     padding: 3vh;
@@ -11,22 +11,36 @@
 }
 
 .title{
-    font-size: 2rem;
+    font-size: 1.5rem;
+    border-bottom: 0.5px solid rgb(189, 189, 189);
+    padding-bottom: 2vh;
 }
 
-
-
-img{
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
+.description-text{
+    border-bottom: 0.5px solid rgb(189, 189, 189);
+    padding-bottom: 2vh;
 }
 
-@media only screen and (min-width: 1200px){
+@media only screen and (min-width: 992px){
+    .galary-row{
+        max-width: 80%;
+        margin: 0 auto;
+    }
 }
 
 @media only screen and (max-width: 1200px){
     .item-photos{
         flex-direction: column;
+    }
+}
+
+
+@media only screen and (max-width: 993px){
+    .gallary-row{
+        width: 100%;
+    }
+    
+    ngx-gallery{
+        width: 100% !important;
     }
 }

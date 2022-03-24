@@ -30,12 +30,13 @@ namespace API.Data
                 // .Include(f => f.Units!)
                 // .ThenInclude(f => f.Point)
                 .Include(f => f.Photos)
+                .Include(f => f.PreviewPhoto)
                 .FirstOrDefaultAsync(f => f.Id == Id))!;
         }
 
         public async Task<ItemDTO> GetItemDTOByIdAsync(int Id)
         {
-            var item = await _context.Items.Include(f => f.Photos).SingleOrDefaultAsync(f => f.Id == Id);
+            var item = await _context.Items.Include(f => f.PreviewPhoto).Include(f => f.Photos).SingleOrDefaultAsync(f => f.Id == Id);
 
             var units = _context.Units.AsQueryable();
             units = units.OrderBy(f => f.Id);

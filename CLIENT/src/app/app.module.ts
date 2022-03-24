@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { Injectable, NgModule } from '@angular/core';
+import { BrowserModule, HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NavComponent } from './nav/nav.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgbModalModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { RegisterComponent } from './account/register/register.component';
 import { LoginComponent } from './account/login/login.component';
 import { HomeComponent } from './home/home.component';
@@ -31,12 +31,27 @@ import { AdminItemComponent } from './admin/admin-item/admin-item.component';
 import { AdminUserComponent } from './admin/admin-user/admin-user.component';
 import { AdminOrderComponent } from './admin/admin-order/admin-order.component';
 import { ModalModule } from 'ngx-bootstrap/modal';
-import { CreateItemComponent } from './admin/create-item/create-item.component';
+import { CreateItemComponent } from './admin/items/create-item/create-item.component';
 import { ConfirmDialogComponent } from './modals/confirm-dialog/confirm-dialog.component';
-import { UploadItemPhotoComponent } from './admin/upload-item-photo/upload-item-photo.component';
+import { UploadItemPhotoComponent } from './admin/items/upload-item-photo/upload-item-photo.component';
 import { ItemDetailedComponent } from './orders/item-detailed/item-detailed.component';
-import { NgxGalleryModule } from '@kolkov/ngx-gallery';
 import 'hammerjs';
+import * as Hammer from "hammerjs";
+import { HammerModule } from '@angular/platform-browser';
+import { UploadMainPhotoComponent } from './admin/items/upload-main-photo/upload-main-photo.component';
+import { GallaryComponent } from './modals/gallary/gallary.component';
+import { EditItemComponent } from './admin/items/edit-item/edit-item.component';
+import { PointComponent } from './admin/points/point/point.component';
+import { EditPointComponent } from './admin/points/edit-point/edit-point.component';
+import { AddPointComponent } from './admin/points/add-point/add-point.component';
+import { DeletePointComponent } from './admin/points/delete-point/delete-point.component';
+
+@Injectable()
+export class MyHammerConfig extends HammerGestureConfig  {
+  overrides = <any>{
+    'swipe': { direction: Hammer.DIRECTION_ALL}
+  }
+}
 
 @NgModule({
   declarations: [
@@ -58,6 +73,13 @@ import 'hammerjs';
     ConfirmDialogComponent,
     UploadItemPhotoComponent,
     ItemDetailedComponent,
+    UploadMainPhotoComponent,
+    GallaryComponent,
+    EditItemComponent,
+    PointComponent,
+    EditPointComponent,
+    AddPointComponent,
+    DeletePointComponent,
   ],
   imports: [
     BrowserModule,
@@ -78,12 +100,13 @@ import 'hammerjs';
     BsDatepickerModule.forRoot(),
     MatPaginatorModule,
     ModalModule.forRoot(),
-    NgxGalleryModule,
+    HammerModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true},
+    {provide: HAMMER_GESTURE_CONFIG, useClass: MyHammerConfig}
   ],
   bootstrap: [AppComponent]
 })

@@ -16,7 +16,8 @@ namespace API.Helpers
             CreateMap<RegisterDTO, AppUser>();
             CreateMap<AppUser, ClientDTO>();
 
-            CreateMap<Item, ItemDTO>().ForMember(f => f.PreviewPhotoUrl, opt => opt.MapFrom(s => s.Photos!.FirstOrDefault(f => f.IsPreview)!.Url));
+            // CreateMap<Item, ItemDTO>().ForMember(f => f.PreviewPhotoUrl, opt => opt.MapFrom(s => s.Photos!.FirstOrDefault(f => f.IsPreview)!.Url));
+            CreateMap<Item, ItemDTO>();
             CreateMap<ItemDTO, Item>();
 
             CreateMap<ItemUnitPoint, UnitDTO>()

@@ -11,8 +11,8 @@ import { NgxGalleryOptions, NgxGalleryImage, NgxGalleryAnimation } from '@kolkov
 export class ItemDetailedComponent implements OnInit {
 
   item: Item;
-  gallaryOptions: NgxGalleryOptions[];
-  gallaryImages: NgxGalleryImage[];
+  // gallaryOptions: NgxGalleryOptions[];
+  // gallaryImages: NgxGalleryImage[];
 
   constructor(private route: ActivatedRoute) { }
 
@@ -21,17 +21,17 @@ export class ItemDetailedComponent implements OnInit {
       this.item = data.item;
     });
 
-    this.gallaryOptions = [
-      {
-        imagePercent: 100,
-        thumbnailsColumns: 4,
-        imageAnimation: NgxGalleryAnimation.Slide,
-        preview: false
-      }
-    ]
+    // this.gallaryOptions = [
+    //   {
+    //     imagePercent: 100,
+    //     thumbnailsColumns: 4,
+    //     imageAnimation: NgxGalleryAnimation.Slide,
+    //     preview: false
+    //   }
+    // ]
 
     
-    this.gallaryImages = this.getImages();
+    // this.gallaryImages = this.getImages();
   }
 
   getImages = () => {

@@ -2,25 +2,32 @@
     <div class="container mt-4 main-div px-5">
         <div class="row item-header">
             <p class="font-weight-bold text-justify text-capitalize title">{{item.name}}</p>
-            <p>{{item.description}}</p>
+            <p class="description-text">{{item.description}}</p>
         </div>
 
-        <div class="row">
-            <ngx-gallery [options]="gallaryOptions" [images]="gallaryImages" style="display: inline-block"></ngx-gallery>
+        <div class="row galary-row">
+            <div class="galary-div">
+                <app-gallary [photos]="item.photos"></app-gallary>
+            </div>
         </div>
 
         <div class="row">
             <h2>Price Per Day: {{item.pricePerDay}}</h2>
-            <h2>Age Restriction: {{item.ageRestriction}}</h2>
         </div>
 
         <div class="row">
-            <h2>Units</h2>
-            <ul>
-                <li *ngFor="let unit of item.units">
-                    <p>{{unit.description}}</p>
-                </li>
-            </ul>
+            <div *ngIf="item.units.length > 0">
+                <h2>Units</h2>
+                <ul>
+                    <li *ngFor="let unit of item.units">
+                        <p>{{unit.description}}</p>
+                    </li>
+                </ul>
+            </div>
+
+            <div style="display: flex; justify-content: center; width: 100%;" *ngIf="item.units.length <= 0">
+                <p style="color: gray">No units are avaliable</p>
+            </div>
         </div>
 
     </div>

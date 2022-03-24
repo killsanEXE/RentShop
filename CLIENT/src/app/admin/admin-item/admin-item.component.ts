@@ -10,8 +10,9 @@ import { UserParams } from 'src/app/models/userParams';
 import { AccountService } from 'src/app/services/account.service';
 import { ConfirmService } from 'src/app/services/confirm.service';
 import { ItemService } from 'src/app/services/item.service';
-import { CreateItemComponent } from '../create-item/create-item.component';
-import { UploadItemPhotoComponent } from '../upload-item-photo/upload-item-photo.component';
+import { CreateItemComponent } from '../items/create-item/create-item.component';
+import { UploadItemPhotoComponent } from '../items/upload-item-photo/upload-item-photo.component';
+import { UploadMainPhotoComponent } from '../items/upload-main-photo/upload-main-photo.component';
 
 @Component({
   selector: 'app-admin-item',
@@ -59,9 +60,26 @@ export class AdminItemComponent implements OnInit {
         this.items.push(item);
         this.toastr.success("Item was added");  
         modalRef.close();
-        this.uploadPhotos(item);
+        this.uploadMainPhoto(item);
       });
     })    
+  }
+
+  uploadMainPhoto(item: Item){
+    const modalRef = this.modalService.open(UploadMainPhotoComponent, {
+      size: "lg",
+      backdrop: "static",
+      keyboard: false,
+    })
+    
+    modalRef.componentInstance.user = this.admin;
+    modalRef.componentInstance.item = item;
+    modalRef.componentInstance.handler.subscribe((photo: Photo) => {
+      this.items.find(f => f.id === item.id).previewPhoto = photo;
+      modalRef.close();
+    });
+
+    modalRef.result.then(() => { this.uploadPhotos(item) });
   }
 
   uploadPhotos(item: Item){
@@ -77,10 +95,6 @@ export class AdminItemComponent implements OnInit {
       this.items.find(f => f.id === item.id).photos.push(photo);
       modalRef.componentInstance.uploaded = true;
     });
-  }
-
-  editItem(item: Item){
-    console.log(item);
   }
 
   selectItem(item: Item, checked: boolean, mainCheckbox: any){

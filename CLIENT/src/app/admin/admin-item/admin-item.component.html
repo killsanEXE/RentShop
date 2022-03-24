@@ -17,6 +17,7 @@
           (click)="deleteItems()">
             <img class="icon-img" src="/assets/trash.png" alt="trashItem">
         </button>
+        <button class="btn btn-primary" routerLink="/admin/points">Pick Up Points</button>
       </div>
     </div>
 
@@ -46,9 +47,9 @@
                   class="item-checkbox" 
                   (change)="selectItem(item, $event.target.checked, mainCheckbox)">
               </th>
-              <td>{{item.name}}</td>
+              <td class="item-name-column">{{item.name}}</td>
               <td>{{item.pricePerDay}}</td>
-              <td><button class="btn btn-warning" (click)="editItem(item)">Edit</button></td>
+              <td><a routerLink="edit-item/{{item.id}}">Edit</a></td>
             </tr>
           </tbody>
         </table>

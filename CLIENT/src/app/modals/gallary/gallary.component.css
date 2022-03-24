@@ -1,0 +1,45 @@
+button{
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    background: 0;
+    border: 0;
+}
+
+.main-photo-div{
+    display: flex;
+    justify-content: center;
+}
+
+.main-img-div img{
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.change-img-button{
+    padding-right: 3vh;
+    padding-left: 2vh;
+}
+
+.change-img-button:hover{
+    cursor: pointer;
+    background-color: rgb(240, 240, 240);
+}
+
+/* @media only screen and (max-width: 992px){
+    .main-img{
+        width: 70%;
+    }
+} */
+
+@media only screen and (max-width: 515px){
+    .main-img{
+        width: 100%;
+    }
+
+    .change-img-button{
+        display: none;
+    }
+}
