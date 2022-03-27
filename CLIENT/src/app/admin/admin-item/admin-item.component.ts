@@ -112,16 +112,15 @@ export class AdminItemComponent implements OnInit {
     }
   }
 
-  deleteItems(){
-    this.confirmServcie.confirm("Are you sure", `You are about to delete ${this.selectedItems.length} item(s)`)
+  disableItems(){
+    this.confirmServcie.confirm("Are you sure", `You are about to disable ${this.selectedItems.length} item(s)`)
       .subscribe(f => {
         if(f){
           this.selectedItems.forEach(f => {
-            this.itemService.deleteItem(f).subscribe(() => {
-              this.selectedItems.splice(this.selectedItems.indexOf(f, 0), 1);
-              this.items.splice(this.items.indexOf(f, 0), 1);
-              this.loadItems(true);
-              this.toastr.success("Deleted item");
+            this.itemService.disableItem(f).subscribe((info) => {
+              this.selectedItems = [];
+              this.loadItems();
+              this.toastr.success("Disabled item");
             })
           })
         }
@@ -129,8 +128,24 @@ export class AdminItemComponent implements OnInit {
     )
   }
 
-  loadItems(refresh = false){
-    this.itemService.loadItems(this.itemService.getUserParams(), refresh).subscribe(response => {
+  enableItems(){
+    this.confirmServcie.confirm("Are you sure", `You are about to actiavte ${this.selectedItems.length} item(s)`)
+      .subscribe(f => {
+        if(f){
+          this.selectedItems.forEach(f => {
+            this.itemService.enableItem(f).subscribe(() => {
+              this.selectedItems = [];
+              this.loadItems();
+              this.toastr.success("Activated item");
+            })
+          })
+        }
+      }
+    )
+  }
+
+  loadItems(){
+    this.itemService.loadItems(this.itemService.getUserParams(), true).subscribe(response => {
       this.items = response.result;
       this.pagination = response.pagination;
     })

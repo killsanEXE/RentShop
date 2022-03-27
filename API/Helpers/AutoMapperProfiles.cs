@@ -28,6 +28,7 @@ namespace API.Helpers
 
             CreateMap<LocationDTO, Location>();
             CreateMap<LocationDTO, Point>();
+            // CreateMap<LocationDTO, Point>().ForMember(f => f.Disabled, opt => opt.MapFrom(s => false));
 
             CreateMap<Point, PointDTO>();
 

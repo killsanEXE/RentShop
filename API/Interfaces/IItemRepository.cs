@@ -10,8 +10,8 @@ namespace API.Interfaces
 {
     public interface IItemRepository
     {
-        Task<PagedList<ItemDTO>> GetItemsAsync(UserParams userParams, int userAge);
+        Task<PagedList<ItemDTO>> GetItemsAsync(UserParams userParams, int userAge, bool admin);
         Task<Item> GetItemByIdAsync(int Id);
-        Task<ItemDTO> GetItemDTOByIdAsync(int Id);
+        Task<ItemDTO> GetItemDTOByIdAsync(int Id, int age, bool admin);
     }
 }

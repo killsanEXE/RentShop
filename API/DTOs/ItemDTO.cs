@@ -16,5 +16,6 @@ namespace API.DTOs
         public PhotoDTO? PreviewPhoto { get; set; }
         public IReadOnlyList<UnitDTO>? Units { get; set; }
         public IReadOnlyList<PhotoDTO>? Photos { get; set; }
+        public bool Disabled { get; set; }
     }
 }

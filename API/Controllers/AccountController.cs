@@ -56,10 +56,7 @@ namespace API.Controllers
         public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDTO)
         {
 
-            Console.WriteLine(loginDTO.Username + "Ayyy");
-            loginDTO = TrimStrings<LoginDTO>(loginDTO);
-            Console.WriteLine(loginDTO.Username + "Ayyy");
-
+            // loginDTO = TrimStrings<LoginDTO>(loginDTO);
             AppUser? user = await _context.Users.SingleOrDefaultAsync(f => f.UserName == loginDTO.Username!.ToLower());
             if(user == null) return Unauthorized("Invalid username");
 
@@ -85,8 +82,10 @@ namespace API.Controllers
                           .Where(p => p.PropertyType == typeof (string));
             foreach (var stringProperty in stringProperties)
             {
-                string currentValue = (string) stringProperty.GetValue(obj, null)!;
-                stringProperty.SetValue(obj, currentValue.Trim(), null) ;
+                if(stringProperty.Name != "Password"){
+                    string currentValue = (string) stringProperty.GetValue(obj, null)!;
+                    stringProperty.SetValue(obj, currentValue.Trim(), null);
+                }
             }
             return obj;
         }

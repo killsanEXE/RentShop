@@ -18,6 +18,6 @@ export class ItemDetailedResolver implements Resolve<Item> {
   resolve(route: ActivatedRouteSnapshot): Observable<Item> {
 
     return this.itemServcie.getItem(parseInt(route.paramMap.get("id")));
-
+    
   }
 }

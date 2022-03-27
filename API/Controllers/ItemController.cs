@@ -36,8 +36,12 @@ namespace API.Controllers
         public async Task<ActionResult<IEnumerable<ItemDTO>>> GetItems([FromQuery] UserParams userParams)
         {
             int age = 16;
+            bool admin = false;
+            if(User.Identity!.IsAuthenticated){
+                if(User.IsInRole("Admin")) admin = true;
+            }
             if(User.Identity!.IsAuthenticated) age = _unitOfWork.UserRepository.GetUserAge(User.GetUsername());
-            var items = await _unitOfWork.ItemRepository.GetItemsAsync(userParams, age);
+            var items = await _unitOfWork.ItemRepository.GetItemsAsync(userParams, age, admin);
             Response.AddPaginationHeader(items.CurrentPage, items.PageSize, items.TotalCount, items.TotalPages);
             return Ok(items);
         }
@@ -46,7 +50,12 @@ namespace API.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<ItemDTO>> GetItem(int id)
         {
-            var item = await _unitOfWork.ItemRepository.GetItemDTOByIdAsync(id);
+            int age = 16;
+            bool admin = false;
+            if(User.Identity!.IsAuthenticated){
+                if(User.IsInRole("Admin")) admin = true;
+            }
+            var item = await _unitOfWork.ItemRepository.GetItemDTOByIdAsync(id, age, admin);
             if(item != null) return Ok(item);
             return NotFound();
         }
@@ -63,7 +72,7 @@ namespace API.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPut("edit-item/{id:int}")]
-        public async Task<ActionResult<ItemDTO>> CreateItem(int id, ItemDTO itemDTO)
+        public async Task<ActionResult<ItemDTO>> EditItem(int id, ItemDTO itemDTO)
         {
             var item = await _unitOfWork.ItemRepository.GetItemByIdAsync(id);
             if(item == null) return NotFound();
@@ -73,34 +82,56 @@ namespace API.Controllers
             item.AgeRestriction = itemDTO.AgeRestriction;        
             item.PricePerDay = itemDTO.PricePerDay;   
 
-            if(await _context.SaveChangesAsync() > 0) return Ok(_mapper.Map<ItemDTO>(item));
-            return BadRequest("Failed to add new item");
+            if(await _context.SaveChangesAsync() > 0) return Ok(await _unitOfWork.ItemRepository.GetItemDTOByIdAsync(item.Id, 1000, true));
+            return BadRequest("Failed to update item");
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpDelete("{id:int}")]
-        public async Task<ActionResult> DeleteItem(int id)
+        [HttpPut("disable/{id:int}")]
+        public async Task<ActionResult> DisableItem(int id)
         {
             var item = await _unitOfWork.ItemRepository.GetItemByIdAsync(id);
             if(item == null) return NotFound();
-            var units = await _context.Units.Where(f => f.ItemUnitPoint!.Item!.Id == item.Id).ToListAsync();
-            foreach(var photo in item.Photos!)
-            {
-                var result = await _photoService.DeletePhotoAsync(photo.PublicId!);
-                if(result.Error != null) return BadRequest(result.Error.Message);
-            }
-
-            if(item.PreviewPhoto != null){
-                var result = await _photoService.DeletePhotoAsync(item.PreviewPhoto.PublicId!);
-                if(result.Error != null) return BadRequest(result.Error.Message);
-            }
-
-            _context.Units.RemoveRange(units);
-            _context.Items.Remove(item);
-            
-            if(await _context.SaveChangesAsync() > 0) return Ok();
-            return BadRequest("Failed to delete item");
+            item.Disabled = true;
+            await _context.SaveChangesAsync();
+            return Ok();
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("enable/{id:int}")]
+        public async Task<ActionResult> EnableItem(int id)
+        {
+            var item = await _unitOfWork.ItemRepository.GetItemByIdAsync(id);
+            if(item == null) return NotFound();
+            item.Disabled = false;
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
+        // [Authorize(Roles = "Admin")]
+        // [HttpDelete("{id:int}")]
+        // public async Task<ActionResult> DeleteItem(int id)
+        // {
+        //     var item = await _unitOfWork.ItemRepository.GetItemByIdAsync(id);
+        //     if(item == null) return NotFound();
+        //     var units = await _context.Units.Where(f => f.ItemUnitPoint!.Item!.Id == item.Id).ToListAsync();
+        //     foreach(var photo in item.Photos!)
+        //     {
+        //         var result = await _photoService.DeletePhotoAsync(photo.PublicId!);
+        //         if(result.Error != null) return BadRequest(result.Error.Message);
+        //     }
+
+        //     if(item.PreviewPhoto != null){
+        //         var result = await _photoService.DeletePhotoAsync(item.PreviewPhoto.PublicId!);
+        //         if(result.Error != null) return BadRequest(result.Error.Message);
+        //     }
+
+        //     _context.Units.RemoveRange(units);
+        //     _context.Items.Remove(item);
+            
+        //     if(await _context.SaveChangesAsync() > 0) return Ok();
+        //     return BadRequest("Failed to delete item");
+        // }
 
         [Authorize(Roles = "Admin")]
         [HttpPost("add-main-photo/{itemId:int}")]

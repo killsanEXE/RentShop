@@ -28,3 +28,10 @@
     border-radius: 10px;
     margin: 2vh;
 }
+
+.unit-description{
+    overflow: hidden;
+    white-space: nowrap; 
+    text-overflow: ellipsis;
+    max-width: 20vh;
+}

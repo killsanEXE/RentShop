@@ -55,12 +55,14 @@ namespace API.Controllers
             return BadRequest("Failed to add unit");
         }
 
-        [HttpPut("{itemId:int}-{unitId:int}")]
-        public async Task<ActionResult<UnitDTO>> EditUnit(int itemId, int unitId, UnitDTO unitDTO)
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<UnitDTO>> EditUnit(int id, UnitDTO unitDTO)
         {
-            var item = await _unitOfWork.ItemRepository.GetItemByIdAsync(itemId);
-            if(item == null) return NotFound();
-            var unit = item.Units?.FirstOrDefault(f => f.Unit?.Id == unitId)?.Unit;
+            var unit = await _context.Units
+                .Include(f => f.ItemUnitPoint)
+                .ThenInclude(f => f!.Point)
+                .Where(f => f.Id == id)
+                .SingleOrDefaultAsync();
             if(unit == null) return NotFound();
 
             if(unit.IsAvaliable && unit.ItemUnitPoint!.Point!.Id != unitDTO.PointId)
@@ -77,17 +79,37 @@ namespace API.Controllers
             return BadRequest("Failed to edit unit");
         }
 
-        [HttpDelete("{itemId:int}-{unitId:int}")]
-        public async Task<ActionResult> DeleteUnit(int itemId, int unitId)
-        {
-            var item = await _unitOfWork.ItemRepository.GetItemByIdAsync(itemId);
-            var itemUnitPoint = item.Units?.FirstOrDefault(f => f.Unit?.Id == unitId);
-            var unit = itemUnitPoint?.Unit;
-            if(item == null || unit == null || itemUnitPoint == null) return NotFound();
+        // [HttpDelete("{itemId:int}-{unitId:int}")]
+        // public async Task<ActionResult> DeleteUnit(int itemId, int unitId)
+        // {
+        //     var item = await _unitOfWork.ItemRepository.GetItemByIdAsync(itemId);
+        //     var itemUnitPoint = item.Units?.FirstOrDefault(f => f.Unit?.Id == unitId);
+        //     var unit = itemUnitPoint?.Unit;
+        //     if(item == null || unit == null || itemUnitPoint == null) return NotFound();
 
-            _context.ItemUnitPoints.Remove(itemUnitPoint!);
-            if(await _context.SaveChangesAsync() > 0) return Ok();
-            return BadRequest("Failed to delete a unit");
+        //     _context.ItemUnitPoints.Remove(itemUnitPoint!);
+        //     if(await _context.SaveChangesAsync() > 0) return Ok();
+        //     return BadRequest("Failed to delete a unit");
+        // }
+
+        [HttpPut("disable/{id:int}")]
+        public async Task<ActionResult> DisableUnit(int id)
+        {
+            var unit = await _context.Units.FindAsync(id);
+            if(unit == null) return NotFound();
+            unit.Disabled = true;
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpPut("enable/{id:int}")]
+        public async Task<ActionResult> EnableUnit(int id)
+        {
+            var unit = await _context.Units.FindAsync(id);
+            if(unit == null) return NotFound();
+            unit.Disabled = false;
+            await _context.SaveChangesAsync();
+            return Ok();
         }
     }
 }

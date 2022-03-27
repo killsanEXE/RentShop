@@ -1,0 +1,33 @@
+<div class="container">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Create unit</h4>
+        <button type="button" class="btn btn-danger" (click)="exit()" aria-label="Close">
+            Close
+        </button>
+    </div>
+
+    <div class="modal-body">
+        <form [formGroup]="unitForm" (ngSubmit)="createUnit()">
+            <app-text-input 
+                [formControl]="unitForm.controls['description']"
+                [label]="'Description'"       
+                [type]="'text'">
+            </app-text-input>
+
+            <div class="form-group">
+                <label for="point-select">Select point</label>
+                <select id="point-select" class="form-select" 
+                    [formControl]="unitForm.controls['pointId']" aria-label="Default select example"
+                    (change)="setPoint()">
+                    <option *ngFor="let point of points" value="{{point.id}}">
+                        {{point.country}}, {{point.city}}, {{point.address}}
+                    </option>
+                    <option value="MANAGE_POINTS">Manage points</option>
+                </select>
+            </div>
+
+            <button class="btn btn-primary" [disabled]="!unitForm.valid" type="submit">Create</button>
+        </form>
+    </div>
+</div>
+

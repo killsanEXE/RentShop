@@ -17,5 +17,6 @@ namespace API.Entities
         public ICollection<ItemUnitPoint>? Units { get; set; }
         public ICollection<Photo>? Photos { get; set; }
         public Photo? PreviewPhoto { get; set; }
+        public bool Disabled { get; set; } = false;
     }
 }

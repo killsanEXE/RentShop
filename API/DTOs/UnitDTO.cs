@@ -16,5 +16,6 @@ namespace API.DTOs
         public DateTime? WhenWillBeAvaliable { get; set; }
         public bool IsAvaliable { get; set; }
         public PointDTO? Point { get; set; }
+        public bool Disabled { get; set; }
     }
 }

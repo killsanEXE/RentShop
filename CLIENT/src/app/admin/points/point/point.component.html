@@ -1,0 +1,33 @@
+<div class="container pt-5">
+    <div class="row">
+        <button class="btn btn-primary" (click)="addPoint()">
+            Add point
+        </button>
+    </div>
+    <div class="row pt-3">
+        <table class="table">
+            <thead class="thead-dark" *ngIf="points.length > 0">
+                <tr>
+                    <th scope="col">Country</th>
+                    <th scope="col">City</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">#</th>
+                    <th scope="col">#</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let point of points">
+                    <td scope="row">{{point.country}}</td>
+                    <td>{{point.city}}</td>
+                    <td>{{point.address}}</td>
+                    <td><button class="btn btn-warning" (click)="editPoint(point)">Edit</button></td>
+                    <td *ngIf="point.disabled"><button class="btn btn-primary" (click)="enablePoint(point)">Enable</button></td>
+                    <td *ngIf="!point.disabled"><button class="btn btn-danger" (click)="disablePoint(point)">Disable</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="row p-5" *ngIf="points.length <= 0" style="display: flex; justify-content: center;">
+        <p style="color: gray">No points yet</p>
+    </div>
+</div>

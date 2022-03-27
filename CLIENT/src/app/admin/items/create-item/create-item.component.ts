@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnInit, EventEmitter, Output, HostListener } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmService } from 'src/app/services/confirm.service';
@@ -15,6 +15,11 @@ export class CreateItemComponent implements OnInit {
   confirmServcie: ConfirmService;
   itemForm: FormGroup;
   validationErrors: string[] = [];
+  @HostListener("window:beforeunload", ["$event"]) unloadNotification($event: any){
+    if(this.itemForm.dirty){
+      $event.returnValue = true;
+    }
+  }
 
   constructor(private fb: FormBuilder, public modal: NgbActiveModal) {}
 

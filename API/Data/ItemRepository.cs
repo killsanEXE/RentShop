@@ -34,13 +34,19 @@ namespace API.Data
                 .FirstOrDefaultAsync(f => f.Id == Id))!;
         }
 
-        public async Task<ItemDTO> GetItemDTOByIdAsync(int Id)
+        public async Task<ItemDTO> GetItemDTOByIdAsync(int Id, int age, bool admin)
         {
-            var item = await _context.Items.Include(f => f.PreviewPhoto).Include(f => f.Photos).SingleOrDefaultAsync(f => f.Id == Id);
+            Item? item;
+            if(admin){
+                item = await _context.Items.Include(f => f.PreviewPhoto).Include(f => f.Photos).SingleOrDefaultAsync(f => f.Id == Id);
+            }else item = await _context.Items.Include(f => f.PreviewPhoto).Include(f => f.Photos).SingleOrDefaultAsync(f => f.Id == Id && !f.Disabled && f.AgeRestriction < age);
+            if(item == null) return null!;
 
             var units = _context.Units.AsQueryable();
             units = units.OrderBy(f => f.Id);
-            units = units.Where(f => f.ItemUnitPoint!.Item!.Id == Id);
+
+            if(admin) units = units.Where(f => f.ItemUnitPoint!.Item!.Id == Id);
+            else units = units.Where(f => f.ItemUnitPoint!.Item!.Id == Id && !f.Disabled);
 
             var QueriableUnitDTOs = units.ProjectTo<UnitDTO>(_mapper.ConfigurationProvider).AsNoTracking();
             var unitDtos = await QueriableUnitDTOs.ToListAsync();
@@ -50,10 +56,12 @@ namespace API.Data
             return itemDTO;
         }
 
-        public async Task<PagedList<ItemDTO>> GetItemsAsync(UserParams userParams, int userAge)
+        public async Task<PagedList<ItemDTO>> GetItemsAsync(UserParams userParams, int userAge, bool admin)
         {
             var query = _context.Items.AsQueryable();
-            query = query.Where(f => f.AgeRestriction <= userAge);
+            if(!admin){
+                query = query.Where(f => f.AgeRestriction <= userAge && !f.Disabled);
+            }
             return await PagedList<ItemDTO>.CreateAsync(
                 query.ProjectTo<ItemDTO>(_mapper.ConfigurationProvider).AsNoTracking(),
                 userParams.PageNumber, userParams.PageSize

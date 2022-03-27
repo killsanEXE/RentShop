@@ -45,6 +45,9 @@ import { PointComponent } from './admin/points/point/point.component';
 import { EditPointComponent } from './admin/points/edit-point/edit-point.component';
 import { AddPointComponent } from './admin/points/add-point/add-point.component';
 import { DeletePointComponent } from './admin/points/delete-point/delete-point.component';
+import { MatSelectModule } from '@angular/material/select';
+import { CreateUnitComponent } from './admin/items/create-unit/create-unit.component';
+import { EditUnitComponent } from './admin/items/edit-unit/edit-unit.component';
 
 @Injectable()
 export class MyHammerConfig extends HammerGestureConfig  {
@@ -80,6 +83,8 @@ export class MyHammerConfig extends HammerGestureConfig  {
     EditPointComponent,
     AddPointComponent,
     DeletePointComponent,
+    CreateUnitComponent,
+    EditUnitComponent,
   ],
   imports: [
     BrowserModule,
@@ -100,7 +105,8 @@ export class MyHammerConfig extends HammerGestureConfig  {
     BsDatepickerModule.forRoot(),
     MatPaginatorModule,
     ModalModule.forRoot(),
-    HammerModule
+    HammerModule,
+    MatSelectModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},

@@ -21,7 +21,8 @@
                         <img src="{{item.previewPhoto ? item.previewPhoto.url : '/assets/no-image.png'}}" alt="{{item.id}}">
                     </div>
                     <div class="item-card-body">
-                        <p class="item-card-title">{{item.name}}</p>
+                        <p *ngIf="!item.disabled" class="item-card-title">{{item.name}}</p>
+                        <p *ngIf="item.disabled" style="color: red;" class="item-card-title">{{item.name}}</p>
                         <button routerLink="/item/{{item.id}}" class="btn item-order-button">Order</button>
                     </div>
                 </div>

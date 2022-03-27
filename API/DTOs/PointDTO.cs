@@ -8,5 +8,6 @@ namespace API.DTOs
     public class PointDTO : LocationDTO
     {
         public string? PhotoUrl { get; set; }
+        public bool Disabled { get; set; }
     }
 }

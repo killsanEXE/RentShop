@@ -2,9 +2,10 @@ export interface Item {
     id: number
     name: string
     description: string
-    previewPhoto: Photo;
+    previewPhoto: Photo
     pricePerDay: number
     ageRestriction: number
+    disabled: boolean
     units: Unit[]
     photos: Photo[]
   }
@@ -15,6 +16,7 @@ export interface Item {
     description: string
     whenWillBeAvaliable: Date
     isAvaliable: boolean
+    disabled: boolean
     point: Point
   }
   
@@ -26,6 +28,7 @@ export interface Item {
     address: string
     floor: number
     apartment: any
+    disabled: boolean
   }
   
   export interface Photo {

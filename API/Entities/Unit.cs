@@ -14,5 +14,6 @@ namespace API.Entities
         public DateTime? WhenWillBeAvaliable { get; set; }
         public string? Description { get; set; }
         public ItemUnitPoint? ItemUnitPoint { get; set; }
+        public bool Disabled { get; set; }
     }
 }

@@ -4,7 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { Item } from '../models/item';
+import { Item, Unit } from '../models/item';
 import { getPaginatedResult, getPaginationHeaders } from '../models/paginationHelper';
 import { UserParams } from '../models/userParams';
 
@@ -51,17 +51,45 @@ export class ItemService {
 
   addItem(item: any){
     return this.http.post<Item>(this.baseUrl + "item/create", item).pipe(map((item: Item) => {
-      return item
+      return item;
     }));
   }
 
   editItem(id: number,item: any){
     return this.http.put<Item>(this.baseUrl + `item/edit-item/${id}`, item).pipe(map((item: Item) => {
-      return item
+      return item;
     }));
   }
 
-  deleteItem(item: Item){
-    return this.http.delete(this.baseUrl + `item/${item.id}`);
+  // deleteItem(item: Item){
+  //   return this.http.delete(this.baseUrl + `item/${item.id}`);
+  // }
+  disableItem(item: Item){
+    return this.http.put(this.baseUrl + `item/disable/${item.id}`, {});
+  }
+
+  enableItem(item: Item){
+    return this.http.put(this.baseUrl + `item/enable/${item.id}`, {});
+  }
+
+
+  createUnit(id: number, unit: any){
+    return this.http.post<Unit>(this.baseUrl + `unit/${id}`, unit).pipe(map((unit: Unit) => {
+      return unit;
+    }));
+  } 
+
+  editUnit(id: number, unit: any){
+    return this.http.put<Unit>(this.baseUrl + `unit/${id}`, unit).pipe(map((unit: Unit) => {
+      return unit;
+    }));
+  }
+
+  disableUnit(id: number){
+    return this.http.put(this.baseUrl + `unit/disable/${id}`, {});
+  }
+
+  enableUnit(id: number){
+    return this.http.put(this.baseUrl + `unit/enable/${id}`, {});
   }
 }

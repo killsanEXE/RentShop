@@ -2,21 +2,23 @@
 
     <div class="row d-flex admin-item-panel panel-controls justify-content-between mx-2 pb-1 mb-3">
 
-      <div class="col-8">
+      <div class="col-6">
         <input type="text" class="form-control" placeholder="Search">
       </div>
 
-      <div class="col-4">
+      <div class="col-6">
         <button (click)="popUp()" type="button" class="btn icon-button btn-outline-primary">
             <img class="icon-img" src="/assets/plus.png" alt="additem">
         </button>
-        <button 
+        <!-- <button 
           [disabled]="selectedItems.length <= 0" 
           type="button" 
           class="btn icon-button btn-outline-danger"
           (click)="deleteItems()">
             <img class="icon-img" src="/assets/trash.png" alt="trashItem">
-        </button>
+        </button> -->
+        <button [disabled]="selectedItems.length <= 0" class="btn" (click)="enableItems()">Enable</button>
+        <button [disabled]="selectedItems.length <= 0" class="btn" (click)="disableItems()">Disable</button>
         <button class="btn btn-primary" routerLink="/admin/points">Pick Up Points</button>
       </div>
     </div>
@@ -35,6 +37,7 @@
               </th>
               <th scope="col">Name</th>
               <th scope="col">Price Per Day</th>
+              <th scope="col">Disabled</th>
               <th scope="col">Manage</th>
             </tr>
           </thead>
@@ -47,8 +50,10 @@
                   class="item-checkbox" 
                   (change)="selectItem(item, $event.target.checked, mainCheckbox)">
               </th>
-              <td class="item-name-column">{{item.name}}</td>
+              <td *ngIf="item.disabled" class="item-name-column" style="color: red;">{{item.name}}</td>
+              <td *ngIf="!item.disabled" class="item-name-column">{{item.name}}</td>
               <td>{{item.pricePerDay}}</td>
+              <td>{{item.disabled}}</td>
               <td><a routerLink="edit-item/{{item.id}}">Edit</a></td>
             </tr>
           </tbody>

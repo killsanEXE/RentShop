@@ -1,1 +1,50 @@
-<p>edit-point works!</p>
+<div class="container">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Create Point</h4>
+        <button type="button" class="btn btn-danger" (click)="exit()" aria-label="Close">
+            Close
+        </button>
+    </div>
+
+    <div class="modal-body">
+        <form [formGroup]="pointForm" (ngSubmit)="edit()">
+            <!-- <app-text-input 
+                [formControl]="pointForm.controls['country']"
+                [label]="'Country'"       
+                [type]="'text'">
+            </app-text-input> -->
+
+            <div *ngIf="!addNewCountry" class="form-group">
+                <label for="country-select">Select country</label>
+                <select id="country-select" class="form-select" 
+                    (change)="selectCountry()" 
+                    [formControl]="pointForm.controls['country']" 
+                    aria-label="Default select example"
+                    [value]="country">
+                    <option *ngFor="let country of countries" value="{{country}}">{{country}}</option>
+                    <option value="ADD_NEW_COUNTRY">Add another country</option>
+                </select>
+            </div>
+
+            <app-text-input *ngIf="addNewCountry"
+                [label]="'Country'"       
+                [formControl]="pointForm.controls['country']"
+                [type]="'text'">
+            </app-text-input>
+
+            <app-text-input 
+                [formControl]="pointForm.controls['city']"
+                [label]="'City'"       
+                [type]="'text'">
+            </app-text-input>
+            <app-text-input 
+                [formControl]="pointForm.controls['address']"
+                [label]="'Address'"       
+                [type]="'text'">
+            </app-text-input>
+
+            <button class="btn btn-primary" [disabled]="!pointForm.valid" type="submit">Save</button>
+        </form>
+    </div>
+</div>
+

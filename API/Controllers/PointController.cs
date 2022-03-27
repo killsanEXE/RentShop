@@ -28,17 +28,20 @@ namespace API.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<ActionResult> AddPoint(LocationDTO locationDTO)
+        public async Task<ActionResult<PointDTO>> AddPoint(LocationDTO locationDTO)
         {
-            _context.Points.Add( _mapper.Map<Point>(locationDTO));
-            if(await _context.SaveChangesAsync() > 0) return Ok();
+            locationDTO = TrimStrings<LocationDTO>(locationDTO);
+            var point = _mapper.Map<Point>(locationDTO);
+            _context.Points.Add(point);
+            if(await _context.SaveChangesAsync() > 0) return Ok(_mapper.Map<PointDTO>(point));
             return BadRequest("Failed to add pick up point");
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPut("{currentPoint:int}")]
-        public async Task<ActionResult> EditPoint(int currentPoint, LocationDTO locationDTO)
+        public async Task<ActionResult<PointDTO>> EditPoint(int currentPoint, LocationDTO locationDTO)
         {
+            locationDTO = TrimStrings<LocationDTO>(locationDTO);
             var point = await _context.Points.FindAsync(currentPoint);
             if(point == null) return NotFound();
 
@@ -48,33 +51,55 @@ namespace API.Controllers
             point.Floor = locationDTO.Floor;
             point.Apartment = locationDTO.Apartment;
 
-            if(await _context.SaveChangesAsync() > 0) return Ok();
+            if(await _context.SaveChangesAsync() > 0) return Ok(_mapper.Map<PointDTO>(point));
             return BadRequest("Failed to update a pick up point");
         }
 
+        // [Authorize(Roles = "Admin")]
+        // [HttpDelete("{currentPoint:int}-{moveTo:int}")]
+        // public async Task<ActionResult> DeletePoint(int currentPoint, int moveTo)
+        // {
+        //     var point = await _context.Points.Include(f => f.Units).SingleOrDefaultAsync(f => f.Id == currentPoint);
+        //     var anotherPoint = await _context.Points.FindAsync(moveTo);
+        //     if(point == null || anotherPoint == null) return NotFound();
+
+        //     if(point.PhotoUrl != null && point.PublicPhotoId != null)
+        //     {
+        //         var result = await _photoService.DeletePhotoAsync(point.PublicPhotoId);
+        //         if(result.Error != null) return BadRequest(result.Error.Message);
+        //     }
+
+        //     foreach(var i in point.Units!)
+        //     {
+        //         i.Point = anotherPoint;
+        //     }
+
+        //     _context.Points.Remove(point);
+
+        //     if(await _context.SaveChangesAsync() > 0) return Ok();
+        //     return BadRequest("Failed to delete pick up point");
+        // }
+
         [Authorize(Roles = "Admin")]
-        [HttpDelete("{currentPoint:int}-{moveTo:int}")]
-        public async Task<ActionResult> DeletePoint(int currentPoint, int moveTo)
+        [HttpPut("disable/{id:int}")]
+        public async Task<ActionResult> DisablePoint(int id)
         {
-            var point = await _context.Points.Include(f => f.Units).SingleOrDefaultAsync(f => f.Id == currentPoint);
-            var anotherPoint = await _context.Points.FindAsync(moveTo);
-            if(point == null || anotherPoint == null) return NotFound();
+            var point = await _context.Points.FindAsync(id);
+            if(point == null) return NotFound();
+            point.Disabled = true;
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
 
-            if(point.PhotoUrl != null && point.PublicPhotoId != null)
-            {
-                var result = await _photoService.DeletePhotoAsync(point.PublicPhotoId);
-                if(result.Error != null) return BadRequest(result.Error.Message);
-            }
-
-            foreach(var i in point.Units!)
-            {
-                i.Point = anotherPoint;
-            }
-
-            _context.Points.Remove(point);
-
-            if(await _context.SaveChangesAsync() > 0) return Ok();
-            return BadRequest("Failed to delete pick up point");
+        [Authorize(Roles = "Admin")]
+        [HttpPut("enable/{id:int}")]
+        public async Task<ActionResult> EnablePoint(int id)
+        {
+            var point = await _context.Points.FindAsync(id);
+            if(point == null) return NotFound();
+            point.Disabled = false;
+            await _context.SaveChangesAsync();
+            return Ok();
         }
 
         [Authorize(Roles = "Admin")]
@@ -114,6 +139,18 @@ namespace API.Controllers
             var point = await _context.Points.FindAsync(id);
             if(point != null) return Ok(_mapper.Map<PointDTO>(point));            
             return NotFound();
+        }
+
+        T TrimStrings<T>(T obj) where T: class
+        {
+            var stringProperties = obj.GetType().GetProperties()
+                          .Where(p => p.PropertyType == typeof (string));
+            foreach (var stringProperty in stringProperties)
+            {
+                string currentValue = (string) stringProperty.GetValue(obj, null)!;
+                if(currentValue != null) stringProperty.SetValue(obj, currentValue.Trim(), null);
+            }
+            return obj;
         }
     }
 }
