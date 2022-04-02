@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Client } from '../models/client';
 import { getPaginatedResult, getPaginationHeaders } from '../models/paginationHelper';
+import { User } from '../models/user';
 import { UserParams } from '../models/userParams';
 
 @Injectable({
@@ -34,6 +35,22 @@ export class UserService {
       this.userCache.set(Object.values(userParams).join("-"), response);
       return response.result;
     }));
+  }
+
+  getDeliverymans(){
+    return this.http.get<User[]>(this.baseUrl + "deliveryman");
+  }
+
+  getJoinRequests(){
+    return this.http.get<User[]>(this.baseUrl + "deliveryman/requests");
+  }
+
+  addDeliveryman(username: string){
+    return this.http.post<User>(this.baseUrl + `deliveryman/requests/${username}`, {});
+  }
+
+  denyDeliveryman(username: string){
+    return this.http.put(this.baseUrl + `deliveryman/requests/${username}`, {});
   }
 
 }

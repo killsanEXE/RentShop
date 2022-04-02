@@ -16,9 +16,12 @@
 .item-card{
     max-width: 26rem;
     margin: 1vh;
+    color: white;
     /* box-shadow: 2px 2px rgb(0, 0, 0, 1); */
-    border: 0.5px solid rgb(190, 190, 190);
-    border-radius: 10px;
+    /* border: 0.5px solid rgb(190, 190, 190); */
+    background-color: #171c24;
+    box-shadow: 6px 6px 5px rgba(0, 0, 0, 0.8);
+    /* border-radius: 10px; */
     overflow: hidden;
 }
 
@@ -85,6 +88,7 @@
     .item-card{
         margin: 0 auto;
         width: 100%;
+        box-shadow: none;
     }
 
     .home-paginator{

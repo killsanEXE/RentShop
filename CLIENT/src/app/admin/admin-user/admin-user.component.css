@@ -1,0 +1,35 @@
+.col-header{
+    display: flex;
+    justify-content: center;
+    padding-bottom: 2vh;
+    border-bottom: 2px soild gray;
+}
+
+.deliveryman-card{
+    background-color: rgb(122, 202, 255, .1);
+    border-left: 2px solid rgb(12, 158, 255);
+    margin-bottom: 2vh;
+}
+
+.join-card{
+    background-color: rgba(211, 35, 255, 0.1);
+    border-left: 2px solid rgb(159, 10, 197);
+    margin-bottom: 2vh;
+}
+
+.control{
+    border-top: 1px solid gray;
+}
+
+.accept-button{
+    color: rgb(34, 64, 198);
+    margin-right: 1vh;
+}
+
+.deny-button{
+    color: red;
+}
+
+.accept-button:hover, .deny-button:hover{
+    transform: scale(1.1);
+}

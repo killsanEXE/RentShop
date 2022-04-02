@@ -7,6 +7,7 @@ using API.DTOs;
 using API.Entities;
 using API.Interfaces;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -57,17 +58,23 @@ namespace API.Controllers
         {
 
             // loginDTO = TrimStrings<LoginDTO>(loginDTO);
-            AppUser? user = await _context.Users.SingleOrDefaultAsync(f => f.UserName == loginDTO.Username!.ToLower());
+            AppUser? user = await _context.Users.Include(f => f.DeliveryLocations).SingleOrDefaultAsync(f => f.UserName == loginDTO.Username!.ToLower());
             if(user == null) return Unauthorized("Invalid username");
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDTO.Password, false);
             if(!result.Succeeded) return Unauthorized("Invalid password");
 
+
+            var query = user.DeliveryLocations!.AsQueryable();
+            var locations = query.ProjectTo<LocationDTO>(_mapper.ConfigurationProvider).AsNoTracking().ToList();
+
+
             return new UserDTO
             {
                 Username = user.UserName!,
                 Token = await _tokenService.CreateToken(user),
-                PhotoUrl = user.PhotoUrl
+                PhotoUrl = user.PhotoUrl,
+                Locations = locations,
             };
         }
 

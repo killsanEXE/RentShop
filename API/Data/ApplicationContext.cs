@@ -19,6 +19,7 @@ namespace API.Data
         public DbSet<Point> Points { get; set; } = null!;
         public DbSet<Unit> Units { get; set; } = null!;
         public DbSet<ItemUnitPoint> ItemUnitPoints { get; set; } = null!;
+        public DbSet<Order> Orders { get; set; } = null!;
         public ApplicationContext(DbContextOptions options) : base(options) { }
         protected override void OnModelCreating(ModelBuilder builder)
         {

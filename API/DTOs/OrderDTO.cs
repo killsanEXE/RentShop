@@ -1,17 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using API.Entities;
 
-namespace API.Entities
+namespace API.DTOs
 {
-    public class Order
+    public class OrderDTO
     {
         public int Id { get; set; }
-        public Unit? Unit { get; set; }
-        public AppUser? Client { get; set; }
-        public AppUser? DeliveryMan { get; set; }
-        public Location? DeliveryLocation { get; set; }
+        public UnitDTO? Unit { get; set; }
+        public ClientDTO? Client { get; set; }
+        public ClientDTO? DeliveryMan { get; set; }
+        public LocationDTO? DeliveryLocation { get; set; }
         public DateTime DeliveryDate { get; set; }
         public DateTime ReturnDate { get; set; }
         public bool DeliveryInProcess { get; set; } 

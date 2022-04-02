@@ -32,6 +32,26 @@ namespace API.Data
             );
         }
 
+        public async Task<PagedList<DeliverymanDTO>> GetDeliverymansAsync(UserParams userParams)
+        {
+            var users = _context.Users.Include(f => f.UserRoles!.Where(f => f.Role!.Name == "Deliveryman"))
+                .ThenInclude(f => f.Role)
+                .Where(f => f.UserRoles!.Count > 1).AsQueryable();
+
+            return await PagedList<DeliverymanDTO>.CreateAsync(
+                users.ProjectTo<DeliverymanDTO>(_mapper.ConfigurationProvider), 
+                userParams.PageNumber, 
+                userParams.PageSize
+            );
+        }
+
+        public async Task<AppUser> GetDeliverymanByUsernameAsync(string username)
+        {
+            var user = await _context.Users.Include(f => f.UserRoles!.Where(f => f.Role!.Name == "Deliveryman"))
+                .Where(f => f.UserRoles!.Count > 1 && f.UserName == username).SingleOrDefaultAsync();
+            return user ?? null!;
+        }
+
         public int GetUserAge(string username)
         {
             return _context.Users.FirstOrDefault(f => f.UserName == username)!.DateOfBirth.CalculateAge();
@@ -44,7 +64,7 @@ namespace API.Data
 
         public async Task<AppUser> GetUserByUsernameAsync(string username)
         {
-            return (await _context.Users.SingleOrDefaultAsync(f => f.UserName == username))!;
+            return (await _context.Users.Include(f => f.DeliveryLocations).SingleOrDefaultAsync(f => f.UserName == username))!;
         }
 
         public async Task<IEnumerable<AppUser>> GetUsersAsync()

@@ -21,6 +21,8 @@ namespace API.Data
 
         public IItemRepository ItemRepository => new ItemRepository(_context, _mapper);
 
+        public IOrderRepository OrderRepository => new OrderRepository(_context, _mapper);
+
         public async Task<bool> Complete()
         {
             return await _context.SaveChangesAsync() > 0;

@@ -13,7 +13,9 @@ namespace API.Entities
         public string? PublicPhotoId { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string? CreditCard { get; set; }
-        ICollection<Location>? Locations { get; set; }
+        public Location? Location { get; set; }
+        public ICollection<Location>? DeliveryLocations { get; set; }
         public ICollection<AppUserRole>? UserRoles { get; set; }
+        public bool DeliverymanRequest { get; set; }
     }
 }

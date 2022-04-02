@@ -65,14 +65,14 @@ namespace API.Controllers
                 .SingleOrDefaultAsync();
             if(unit == null) return NotFound();
 
-            if(unit.IsAvaliable && unit.ItemUnitPoint!.Point!.Id != unitDTO.PointId)
+            if(unit.IsAvailable && unit.ItemUnitPoint!.Point!.Id != unitDTO.PointId)
             {
                 var Point = _context.Points.FirstOrDefault(f => f.Id == unitDTO.PointId);
                 if(Point != null){
                     unit.ItemUnitPoint.Point = Point;
                 }
             }
-            else if(!unit.IsAvaliable) return BadRequest("Failed to update pick up point");
+            else if(!unit.IsAvailable) return BadRequest("Failed to update pick up point");
 
             unit.Description = unitDTO.Description;
             if(await _context.SaveChangesAsync() > 0) return Ok(_mapper.Map<UnitDTO>(unit));

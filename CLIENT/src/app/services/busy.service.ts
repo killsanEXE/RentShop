@@ -1,29 +1,37 @@
 import { Injectable } from '@angular/core';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BusyService {
   
-  busyRequestCount = 0;
+  public isLoading: BehaviorSubject<boolean>= new BehaviorSubject<boolean>(false);
 
-  constructor(private spinnerService: NgxSpinnerService) { }
+  constructor() { }
+
+  // busy(){
+  //   this.busyRequestCount++;
+  //   this.spinnerService.show(undefined, {
+  //     bdColor: "rgba(255,255,255,0)",
+  //     color: "#333333",
+  //   });
+  // }
+
+  // idle(){
+  //   this.busyRequestCount--;
+  //   if(this.busyRequestCount <= 0){
+  //     this.busyRequestCount = 0;
+  //     this.spinnerService.hide();
+  //   }
+  // }
 
   busy(){
-    this.busyRequestCount++;
-    this.spinnerService.show(undefined, {
-      bdColor: "rgba(255,255,255,0)",
-      color: "#333333",
-    });
+    this.isLoading.next(true);
   }
 
   idle(){
-    this.busyRequestCount--;
-    if(this.busyRequestCount <= 0){
-      this.busyRequestCount = 0;
-      this.spinnerService.hide();
-    }
+    this.isLoading.next(false);
   }
 
 }

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { take } from 'rxjs/operators';
 import { User } from '../models/user';
 import { AccountService } from '../services/account.service';
+import { BusyService } from '../services/busy.service';
 
 @Component({
   selector: 'app-nav',
@@ -13,7 +14,8 @@ export class NavComponent implements OnInit {
 
   user: User | null;
 
-  constructor(public accountService: AccountService, private router: Router) {
+  constructor(public accountService: AccountService, private router: Router, 
+    public busyService: BusyService) {
     this.accountService.currentUser$.pipe(take(1)).subscribe(user => {
       this.user = user;
     })
@@ -26,6 +28,28 @@ export class NavComponent implements OnInit {
   logout(){
     this.router.navigateByUrl("/");
     this.accountService.logout();
+  }
+
+  showNavMenu(){
+    const menuBtn = document.querySelector(".menu-icon span");
+    // const searchBtn = document.querySelector(".search-icon");
+    const cancelBtn = document.querySelector(".cancel-icon");
+    const items = document.querySelector(".nav-items");
+    items.classList.add("active");
+    menuBtn.classList.add("hide");
+    // searchBtn.classList.add("hide");
+    cancelBtn.classList.add("show");
+  }
+  
+  hideNavMenu(){
+    const menuBtn = document.querySelector(".menu-icon span");
+    // const searchBtn = document.querySelector(".search-icon");
+    const cancelBtn = document.querySelector(".cancel-icon");
+    const items = document.querySelector(".nav-items");
+    items.classList.remove("active");
+    menuBtn.classList.remove("hide");
+    // searchBtn.classList.add("hide");
+    cancelBtn.classList.remove("show");
   }
 
 }

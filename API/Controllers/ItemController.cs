@@ -39,8 +39,8 @@ namespace API.Controllers
             bool admin = false;
             if(User.Identity!.IsAuthenticated){
                 if(User.IsInRole("Admin")) admin = true;
+                age = _unitOfWork.UserRepository.GetUserAge(User.GetUsername());
             }
-            if(User.Identity!.IsAuthenticated) age = _unitOfWork.UserRepository.GetUserAge(User.GetUsername());
             var items = await _unitOfWork.ItemRepository.GetItemsAsync(userParams, age, admin);
             Response.AddPaginationHeader(items.CurrentPage, items.PageSize, items.TotalCount, items.TotalPages);
             return Ok(items);

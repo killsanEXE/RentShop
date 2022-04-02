@@ -22,7 +22,6 @@ import { HasRoleDirective } from './directives/has-role.directive';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { FileUploadModule } from 'ng2-file-upload';
 import { LoadingInterceptor } from './interceptors/loading.interceptor';
-import { NgxSpinnerModule } from 'ngx-spinner';
 import { DateInputComponent } from './_forms/date-input/date-input.component';
 import { BsDatepickerModule } from "ngx-bootstrap/datepicker";
 import {MatPaginatorModule} from '@angular/material/paginator';
@@ -48,6 +47,9 @@ import { DeletePointComponent } from './admin/points/delete-point/delete-point.c
 import { MatSelectModule } from '@angular/material/select';
 import { CreateUnitComponent } from './admin/items/create-unit/create-unit.component';
 import { EditUnitComponent } from './admin/items/edit-unit/edit-unit.component';
+import { ClientOrdersComponent } from './orders/client-orders/client-orders.component';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {MatIconModule} from '@angular/material/icon';
 
 @Injectable()
 export class MyHammerConfig extends HammerGestureConfig  {
@@ -85,6 +87,7 @@ export class MyHammerConfig extends HammerGestureConfig  {
     DeletePointComponent,
     CreateUnitComponent,
     EditUnitComponent,
+    ClientOrdersComponent,
   ],
   imports: [
     BrowserModule,
@@ -101,12 +104,13 @@ export class MyHammerConfig extends HammerGestureConfig  {
     }),
     BsDropdownModule.forRoot(),
     FileUploadModule,
-    NgxSpinnerModule,
     BsDatepickerModule.forRoot(),
     MatPaginatorModule,
     ModalModule.forRoot(),
     HammerModule,
-    MatSelectModule
+    MatSelectModule,
+    MatProgressBarModule,
+    MatIconModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},

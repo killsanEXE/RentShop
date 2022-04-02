@@ -8,6 +8,7 @@ import { PointComponent } from './admin/points/point/point.component';
 import { AdminGuard } from './guards/admin.guard';
 import { AuthGuard } from './guards/auth.guard';
 import { HomeComponent } from './home/home.component';
+import { ClientOrdersComponent } from './orders/client-orders/client-orders.component';
 import { ItemDetailedComponent } from './orders/item-detailed/item-detailed.component';
 import { ItemDetailedResolver } from './resolvers/item-detailed.resolver';
 
@@ -22,7 +23,8 @@ const routes: Routes = [
       {path: "admin", component: AdminPanelComponent, canActivate: [AdminGuard]},
       {path: "admin/edit-item/:id", component: EditItemComponent, canActivate: [AdminGuard], resolve: {item: ItemDetailedResolver}},
       {path: "admin/points", component: PointComponent, canActivate: [AdminGuard]},
-      {path: "item/:id", component: ItemDetailedComponent, resolve: {item: ItemDetailedResolver}}
+      {path: "item/:id", component: ItemDetailedComponent, resolve: {item: ItemDetailedResolver}},
+      {path: "orders", component: ClientOrdersComponent}
     ]
   },
   {path: "regandlog", component: RegAndLogComponent},

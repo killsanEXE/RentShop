@@ -34,3 +34,12 @@
     white-space: nowrap; 
     text-overflow: ellipsis;
 }
+
+.manage-point{
+    background-color: #343a40;
+    color: white;
+}
+
+.manage-point:hover{
+    color: #ff3d00;
+}

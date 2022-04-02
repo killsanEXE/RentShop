@@ -8,7 +8,8 @@
 
       <div class="col-6">
         <button (click)="popUp()" type="button" class="btn icon-button btn-outline-primary">
-            <img class="icon-img" src="/assets/plus.png" alt="additem">
+            <!-- <img class="icon-img" src="/assets/plus.png" alt="additem"> -->
+            New item
         </button>
         <!-- <button 
           [disabled]="selectedItems.length <= 0" 
@@ -19,7 +20,7 @@
         </button> -->
         <button [disabled]="selectedItems.length <= 0" class="btn" (click)="enableItems()">Enable</button>
         <button [disabled]="selectedItems.length <= 0" class="btn" (click)="disableItems()">Disable</button>
-        <button class="btn btn-primary" routerLink="/admin/points">Pick Up Points</button>
+        <button class="btn manage-point" routerLink="/admin/points">Pick Up Points</button>
       </div>
     </div>
 

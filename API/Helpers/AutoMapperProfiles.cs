@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.DTOs;
 using API.Entities;
+using API.Extensions;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,11 +24,12 @@ namespace API.Helpers
             CreateMap<ItemUnitPoint, UnitDTO>()
                 .ForMember(f => f.Description, opt => opt.MapFrom(s => s.Unit!.Description))
                 .ForMember(f => f.Point, opt => opt.MapFrom(s => s.Point))
-                .ForMember(f => f.WhenWillBeAvaliable, opt => opt.MapFrom(s => s.Unit!.WhenWillBeAvaliable))
-                .ForMember(f => f.IsAvaliable, opt => opt.MapFrom(s => s.Unit!.IsAvaliable));
+                .ForMember(f => f.WhenWillBeAvaliable, opt => opt.MapFrom(s => s.Unit!.WhenWillBeAvailable))
+                .ForMember(f => f.IsAvaliable, opt => opt.MapFrom(s => s.Unit!.IsAvailable));
 
             CreateMap<LocationDTO, Location>();
             CreateMap<LocationDTO, Point>();
+            CreateMap<Location, LocationDTO>();
             // CreateMap<LocationDTO, Point>().ForMember(f => f.Disabled, opt => opt.MapFrom(s => false));
 
             CreateMap<Point, PointDTO>();
@@ -36,6 +38,10 @@ namespace API.Helpers
 
             CreateMap<Unit, UnitDTO>()
                 .ForMember(f => f.Point, opt => opt.MapFrom(s => s.ItemUnitPoint!.Point));
+
+            CreateMap<AppUser, DeliverymanDTO>().ForMember(f => f.Age, opt => opt.MapFrom(s => s.DateOfBirth.CalculateAge()));
+            
+            CreateMap<Order, OrderDTO>();
         }
     }
 }

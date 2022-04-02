@@ -1,49 +1,44 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-5">
+<nav>
+    <div class="menu-icon">
+        <span (click)="showNavMenu()">#</span>
+    </div>
 
-    <a class="navbar-brand" routerLink="/" routerLinkActive="active">Shipping app</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-  
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <div class="logo">
+        <a (click)="hideNavMenu()" style="color: inherit; text-decoration: inherit;" routerLink="/" routerLinkActive="active">Rent shop</a>
+    </div>
 
-        <ul *ngIf="(accountService.currentUser$ | async)" class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" routerLink="/profile" routerLinkActive="active">
-                    Profile <span class="sr-only">(current)</span>
-                </a>
-            </li>
-            <li *appHasRole="'Admin'" class="nav-item">
-                <a class="nav-link" routerLink="/admin" routerLinkActive="active">
-                    Admin <span class="sr-only">(current)</span>
-                </a>
-            </li>
-        </ul>
+    <div class="nav-items" *ngIf="(accountService.currentUser$ | async)">
+        <li><a routerLink="/orders" (click)="hideNavMenu()" routerLinkActive="active">My orders</a></li>
+        <li><a routerLink="/profile" (click)="hideNavMenu()" routerLinkActive="active">Profile</a></li>
+        <li *appHasRole="'Deliveryman'"><a (click)="hideNavMenu()" routerLink="/orders" routerLinkActive="active">Deliveries</a></li>
+        <li *appHasRole="'Admin'"><a (click)="hideNavMenu()" routerLink="/admin" routerLinkActive="active">Admin</a></li>
+        <li><a style="cursor: pointer;" (click)="hideNavMenu()" (click)="logout()">Logout</a></li>
+    </div>
 
-        <!-- <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form> -->
+    <div *ngIf="(accountService.currentUser$ | async) === null || (accountService.currentUser$ | async) === undefined" 
+        class="nav-items">
+        <li><a routerLink="/regandlog" routerLinkActive="active">Login</a></li>
+    </div>
 
-
-        <div class="btn-group mr-5" *ngIf="(accountService.currentUser$ | async) as User" dropdown>
-            <img *ngIf="user.photoUrl !== null" 
-                src="{{user.photoUrl}}" alt="{{user.username}}" class="rounded-circle">
-            <img *ngIf="user.photoUrl === null" 
-                src="/assets/user.png" alt="{{user.username}}" class="rounded-circle">
-            <button id="button-animated" dropdownToggle type="button" class="btn dropdown-toggle"
-                    aria-controls="dropdown-animated">
-                Hello, {{user?.username}} <span class="caret"></span>
-            </button>
-            <ul id="dropdown-animated" *dropdownMenu class="dropdown-menu"
-                role="menu" aria-labelledby="button-animated">
-                <li role="menuitem"><a class="dropdown-item" href="#">Edit Profile</a></li>
-                <li role="menuitem"><a class="dropdown-item" (click)="logout()">Logout</a></li>
-            </ul>
-        </div>
-
-        <div class="btn-group" *ngIf="(accountService.currentUser$ | async) === null || (accountService.currentUser$ | async) === undefined" >
-            <a routerLink="/regandlog"><button class="btn login-btn">Login</button></a>
-        </div>
+    <div class="cancel-icon">
+        <span (click)="hideNavMenu()"><mat-icon>#</mat-icon></span>
     </div>
 </nav>
+
+
+<div class="prevent-everything" *ngIf="busyService.isLoading | async">
+    <div class="loading-container">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+</div>
+
+    <!-- <div class="search-icon">
+       <span class="fas fa-search"></span>
+    </div>
+    <div class="cancel-icon">
+       <span class="fas fa-times"></span>
+    </div>
+    <form action="#">
+       <input type="search" class="search-data" placeholder="Search" required>
+       <button type="submit" class="fas fa-search"></button>
+    </form> -->

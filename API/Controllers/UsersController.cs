@@ -1,10 +1,14 @@
+using API.Data;
 using API.DTOs;
+using API.Entities;
 using API.Extensions;
 using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
@@ -46,6 +50,45 @@ namespace API.Controllers
             user.PublicPhotoId = result.PublicId;
             if(await _unitOfWork.Complete()) return Content(user.PhotoUrl);
             return BadRequest("Error while adding a photo");
+        }
+
+        [HttpPost("locations")]
+        public async Task<ActionResult<LocationDTO>> AddLocation(LocationDTO locationDTO)
+        {
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
+            var deliveryLocation = _mapper.Map<Location>(locationDTO);
+            user.DeliveryLocations!.Add(deliveryLocation);
+            if(await _unitOfWork.Complete()) return _mapper.Map<LocationDTO>(deliveryLocation);
+            return BadRequest("Failed to add point"); 
+        }
+
+        [HttpPut("locations/{locationId:int}")]
+        public async Task<ActionResult<LocationDTO>> EditLocation(int locationId, LocationDTO locationDTO)
+        {
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
+            var location = user.DeliveryLocations!.SingleOrDefault(f => f.Id == locationId);
+            if(user == null || location == null) return NotFound();
+
+            location.Address = locationDTO.Address;
+            location.Country = locationDTO.Country;
+            location.City = locationDTO.City;
+            location.Floor = locationDTO.Floor;
+            location.Apartment = locationDTO.Apartment;
+
+            if(await _unitOfWork.Complete()) return Ok(_mapper.Map<LocationDTO>(location));
+            return BadRequest("Failed to update location");
+        }
+
+        [HttpDelete("locations/{locationId:int}")]
+        public async Task<ActionResult> DeleteLocation(int locationId)
+        {
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
+            var location = user.DeliveryLocations!.SingleOrDefault(f => f.Id == locationId);
+            if(user == null || location == null) return NotFound();
+
+            user.DeliveryLocations!.Remove(location);
+            if(await _unitOfWork.Complete()) return Ok();
+            return BadRequest("Failed to delete location");
         }
     }
 }

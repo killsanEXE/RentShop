@@ -1,0 +1,10 @@
+.form-select{
+    padding: 1vh;
+    margin-left: 1vh;
+    border: 0.5px solid gray;
+    border-radius: 5px;
+}
+
+.form-select:focus{
+    outline: none;
+}
