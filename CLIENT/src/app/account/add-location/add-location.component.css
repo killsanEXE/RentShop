@@ -1,0 +1,27 @@
+/* .form-select{
+    padding: 1vh;
+    margin-left: 1vh;
+    border: 0.5px solid gray;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.form-select:focus{
+    outline: none;
+} */
+
+/* .cdk-global-overlay-wrapper, .cdk-overlay-container {
+    z-index: 99999 !important;
+} */
+
+.select-form{
+    width: 100%;
+}
+
+/* .modal-header{
+    background-color: #171c24;
+}
+
+.modal-body{
+    background-color: #171c24;
+} */

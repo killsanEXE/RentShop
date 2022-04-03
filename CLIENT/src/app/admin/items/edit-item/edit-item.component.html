@@ -10,16 +10,22 @@
                         [type]="'text'">
                     </app-text-input>
                     <div class="form-group">
-                        <textarea 
-                            class="form-control" 
-                            [class.is-invalid]="itemForm.controls['description'].touched && itemForm.controls['description'].invalid"
+                        <!-- <textarea 
+                            matInput
                             rows="3"
                             placeholder="Description"
                             [formControl]="itemForm.controls['description']"
                             ></textarea>
                         <div class="invalid-feedback" *ngIf="itemForm.controls.description.errors?.required">
                             Please enter a description field
-                        </div>
+                        </div> -->
+                        <mat-form-field class="full-width" appearance="fill">
+                            <mat-label>Description</mat-label>
+                            <textarea matInput [formControl]="itemForm.controls['description']" rows="3"></textarea>
+                            <mat-error *ngIf="itemForm.controls.description.errors?.required">
+                                Description is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
                     </div>
         
                     <app-text-input 

@@ -43,7 +43,7 @@ namespace API.Controllers
                 if(deletionResult.Error != null) return BadRequest(deletionResult.Error.Message);
             }
 
-            var result = await _photoService.AddPhotoAsync(file);
+            var result = await _photoService.AddUserPhotoAsync(file);
             if(result.Error != null) return BadRequest(result.Error.Message);
 
             user.PhotoUrl = result.SecureUri.AbsoluteUri;

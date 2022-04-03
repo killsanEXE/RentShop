@@ -26,7 +26,7 @@ export class RegisterComponent implements OnInit {
     this.registerForm = this.fb.group({
       username: ["", Validators.required],
       name: ["", Validators.required],
-      dateOfBirth: ["", [Validators.required, this.checkAge()]],
+      dateOfBirth: ["", [Validators.required]],
       email: ["", Validators.required],
       password: ["", [Validators.required, Validators.minLength(6), Validators.maxLength(16)]],
       confirmPassword: ["", [Validators.required, this.matchValues()]],
@@ -39,13 +39,6 @@ export class RegisterComponent implements OnInit {
   matchValues(): ValidatorFn{
     return (control: AbstractControl) => {
       return control?.value === this.registerForm?.controls?.password?.value ? null : { isMatching: true }
-    }
-  }
-
-  checkAge(): ValidatorFn{
-    return (control: AbstractControl) => {
-      if(control.dirty) return new Date().getFullYear() - control?.value.getFullYear() >= 130 ? {veryOld: true} : null;  
-      return null;
     }
   }
 

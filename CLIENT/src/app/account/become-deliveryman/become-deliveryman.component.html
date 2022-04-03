@@ -1,0 +1,25 @@
+<div class="container">
+    <div>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Send join deliveryman request</h4>
+            <button type="button" class="btn btn-danger" (click)="exit()" aria-label="Close">
+                Close
+            </button>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="requestForm" (ngSubmit)="send()" autocomplete="off">
+
+            <div class="form-group">
+                <mat-form-field appearance="fill" class="select-form" style="width: 100%;">
+                    <mat-label>Select country</mat-label>
+                    <mat-select [formControl]="requestForm.controls['country']">
+                        <mat-option *ngFor="let country of countries" value="{{country}}">{{country}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <button class="btn btn-primary" [disabled]="!requestForm.valid" type="submit">Send</button>
+        </form>
+    </div>
+</div>

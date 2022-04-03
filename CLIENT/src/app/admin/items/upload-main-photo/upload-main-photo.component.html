@@ -12,13 +12,5 @@
         <div class="row pr-4">
             <input type="file" ng2FileSelect [uploader]="uploader"/><br/>
         </div>
-
-        <div class="row pt-4" *ngIf="uploader?.queue?.length">
-            <button type="button" class="btn btn-success btn-s m-2"
-                    (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length">
-                    Upload
-            </button>
-        </div>
-
     </div>
 </div>

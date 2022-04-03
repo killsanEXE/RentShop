@@ -1,19 +1,26 @@
-<div class="form-group">
-    <input 
-        [class.is-invalid]="ngControl.touched && ngControl.invalid"
-        class="form-control" 
-        [formControl]="ngControl.control"
-        placeholder={{label}}
-        [email]="email"
-        [type]="type">
-    <div class="invalid-feedback" *ngIf="ngControl.control?.errors?.required">Please enter a {{label}}</div>
-    <div class="invalid-feedback" *ngIf="ngControl.control?.errors?.minlength">
-        {{label}} must be at least {{ngControl.control.errors.minlength["requiredLength"]}}
-    </div>
-    <div class="invalid-feedback" *ngIf="ngControl.control?.errors?.maxlength">
-        {{label}} must be at most {{ngControl.control.errors.maxlength["requiredLength"]}}
-    </div>
-    <div class="invalid-feedback" *ngIf="ngControl.control?.errors?.isMatching">
+<mat-form-field class="full-width" appearance="fill">
+    <mat-label>{{label}}</mat-label>
+
+    <input type="{{type}}" matInput [formControl]="ngControl.control">
+
+    <mat-error *ngIf="ngControl.control.hasError('email') && !ngControl.control.hasError('required')">
+        Please enter a valid email address
+    </mat-error>
+
+    <mat-error *ngIf="ngControl.control.hasError('required')">
+        {{label}} is <strong>required</strong>
+    </mat-error>
+
+    <mat-error *ngIf="ngControl.control?.errors?.isMatching">
         Passwords do not match
-    </div>
-</div>
+    </mat-error>
+
+    <mat-error *ngIf="ngControl.control?.errors?.minlength">
+        {{label}} must be at least {{ngControl.control.errors.minlength["requiredLength"]}}
+    </mat-error>
+
+    <mat-error *ngIf="ngControl.control?.errors?.maxlength">
+        {{label}} must be at most {{ngControl.control.errors.maxlength["requiredLength"]}}
+    </mat-error>
+
+</mat-form-field>

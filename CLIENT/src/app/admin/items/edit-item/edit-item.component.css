@@ -35,3 +35,7 @@
     text-overflow: ellipsis;
     max-width: 20vh;
 }
+
+.full-width{
+    width: 100%;
+}

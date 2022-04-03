@@ -77,8 +77,8 @@ namespace API.Controllers
             return Ok();
         }
 
-        [HttpPost("join/{country}")]
-        public async Task<ActionResult<DeliverymanDTO>> CreateBecomeDeliverymanRequest(string country)
+        [HttpPost("join")]
+        public async Task<ActionResult<UserDTO>> CreateBecomeDeliverymanRequest(JoinDeliverymanDTO dto)
         {
             if(User.IsInRole("Deliveryman")) return BadRequest("You are already a deliveryman");
             var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
@@ -88,10 +88,10 @@ namespace API.Controllers
             user.DeliverymanRequest = true;
             user.Location = new() 
             {
-                Country = country
+                Country = dto.Country
             };
             
-            if(await _context.SaveChangesAsync() > 0) return Ok(_mapper.Map<DeliverymanDTO>(user));
+            if(await _context.SaveChangesAsync() > 0) return Ok(new UserDTO { DeliverymanRequest = true });
             return BadRequest("Failed to send request");
         }
     }

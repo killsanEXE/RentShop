@@ -39,3 +39,7 @@ label:focus,
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
+
+.cdk-global-overlay-wrapper, .cdk-overlay-container {
+    z-index: 3000 !important;
+}

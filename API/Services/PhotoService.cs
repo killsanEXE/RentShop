@@ -41,6 +41,24 @@ namespace API.Services
             return uploadResults;
         }
 
+        public async Task<ImageUploadResult> AddUserPhotoAsync(IFormFile file)
+        {
+            var uploadResults = new ImageUploadResult();
+            if(file.Length > 0)
+            {
+                using(var stream = file.OpenReadStream())
+                {
+                    var uploadParams = new ImageUploadParams
+                    {
+                        File = new FileDescription(file.FileName, stream),
+                        Transformation = new Transformation().Background("black").Width(500).Height(500).Crop("pad")
+                    };
+                    uploadResults = await _cloudinary.UploadAsync(uploadParams);
+                }
+            }
+            return uploadResults;
+        }
+
         public async Task<ImageUploadResult> AddPhotoAsync(IFormFile file)
         {
             var uploadResults = new ImageUploadResult();

@@ -1,0 +1,140 @@
+.profile-main-div{
+    display: flex;
+    padding-top: 5vh;
+}
+
+.photo-main-div{
+    width: 40%;
+    background-color: #171c24;
+    padding: 3vh;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+}
+
+.photo-main-div img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.user-photo-div{
+    margin-bottom: 2vh;
+    display: flex;
+    justify-content: center;
+}
+
+.photo-input{
+    padding: 0;    
+}
+
+.locations-main-div{
+    background-color: #171c24;
+    width: 60%;
+    margin-left: 4vh;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    color: white;
+}
+
+.add-location-btn, .become-deliveryman-btn{
+    background-color: #343a40;
+    color: white;
+}
+
+.add-location-btn:hover{
+    color: #ff3d00;
+}
+
+.become-deliveryman-btn:hover{
+    color: gold;
+}
+
+.location-row{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    padding-left: 5vh;
+    padding-right: 5vh;
+    padding-top: 1vh;
+    padding-bottom: 1vh;
+    background-color: #212529;
+}
+
+.location-address{
+    overflow: hidden;
+    white-space: nowrap; 
+    text-overflow: ellipsis;
+    width: 50%;
+}
+
+.locations-div-header{
+    display: flex;
+    justify-content: space-between;
+    padding-left: 3vh;
+    padding-right: 3vh;
+}
+
+@media only screen and (max-width: 993px){
+    .profile-main-div{
+        flex-direction: column;
+        justify-content: center;
+        padding-bottom: 2vh;
+    }
+
+    .photo-main-div, .locations-main-div{
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border-radius: 0;
+    }
+
+    .photo-main-div{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-bottom: 3vh !important;
+        border-top-right-radius: 20px;
+        border-top-left-radius: 20px;
+    }
+
+    .photo-main-div img{
+        max-width: 50%;
+        margin: 0 auto;
+    }
+
+    .locations-main-div{
+        border-bottom-right-radius: 20px;
+        border-bottom-left-radius: 20px;
+    }
+    
+    .user-photo-div{
+        padding-top: 2vh;
+    }
+}
+
+@media only screen and (max-width: 375px){
+    .locations-div-header{
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .add-location-btn, .become-deliveryman-btn{
+        margin-top: 1vh;
+    }
+}
+
+@media only screen and (max-width: 322px){
+    .profile-main-div{
+        padding-bottom: 0;
+    }
+
+    .photo-main-div, .locations-main-div{
+        border-radius: 0;
+    }
+    .location-address{
+        overflow: hidden;
+        white-space: nowrap; 
+        text-overflow: ellipsis;
+        width: 30%;
+    }
+}

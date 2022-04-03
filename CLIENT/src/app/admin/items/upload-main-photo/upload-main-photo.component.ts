@@ -41,10 +41,8 @@ export class UploadMainPhotoComponent implements OnInit {
         this.uploader.removeFromQueue(this.uploader.queue[0]);
       }
       file.withCredentials = false;
-    }
-
-    this.uploader.onBeforeUploadItem = () => {
       this.busyService.busy();
+      this.uploader.uploadAll();
     }
 
     this.uploader.onSuccessItem = (item, response, status, headers) => {

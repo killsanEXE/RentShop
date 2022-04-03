@@ -10,6 +10,7 @@ namespace API.Interfaces
     {
         Task<ImageUploadResult> AddPhotoAsync(IFormFile file);
         Task<ImageUploadResult> AddMainPhotoAsync(IFormFile file);
+        Task<ImageUploadResult> AddUserPhotoAsync(IFormFile file);
         Task<DeletionResult> DeletePhotoAsync(string publicId);
     }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { User } from '../models/user';
+import { User, UserLocation } from '../models/user';
 import { environment } from 'src/environments/environment';
 import { Observable, ReplaySubject } from 'rxjs';
 import { map } from "rxjs/operators";
@@ -48,6 +48,28 @@ export class AccountService {
 
   getDecodedToken(token: string){
     return JSON.parse(atob(token.split(".")[1]));
+  }
+
+  addLocation(location: any){
+    return this.http.post<UserLocation>(this.baseUrl + "users/locations", location).pipe(map((location: UserLocation) => {
+      return location;
+    }));;
+  }
+
+  editLocation(id: number, location: any){
+    return this.http.put<UserLocation>(this.baseUrl + `users/locations/${id}`, location).pipe(map((location: UserLocation) => {
+      return location;
+    }));
+  }
+
+  deleteLocation(id: number){
+    return this.http.delete(this.baseUrl + `users/locations/${id}`);
+  }
+
+  becomeDeliveryman(joinRequest: any){
+    return this.http.post<User>(this.baseUrl + "deliveryman/join", joinRequest).pipe(map((user) => {
+      return user;
+    }));
   }
 
 }

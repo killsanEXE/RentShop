@@ -23,7 +23,7 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { FileUploadModule } from 'ng2-file-upload';
 import { LoadingInterceptor } from './interceptors/loading.interceptor';
 import { DateInputComponent } from './_forms/date-input/date-input.component';
-import { BsDatepickerModule } from "ngx-bootstrap/datepicker";
+// import { BsDatepickerModule } from "ngx-bootstrap/datepicker";
 import {MatPaginatorModule} from '@angular/material/paginator';
 import { AdminPanelComponent } from './admin/admin-panel/admin-panel.component';
 import { AdminItemComponent } from './admin/admin-item/admin-item.component';
@@ -50,6 +50,13 @@ import { EditUnitComponent } from './admin/items/edit-unit/edit-unit.component';
 import { ClientOrdersComponent } from './orders/client-orders/client-orders.component';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatIconModule} from '@angular/material/icon';
+import { AddLocationComponent } from './account/add-location/add-location.component';
+import { EditLocationComponent } from './account/edit-location/edit-location.component';
+import {MatInputModule} from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { BecomeDeliverymanComponent } from './account/become-deliveryman/become-deliveryman.component';
 
 @Injectable()
 export class MyHammerConfig extends HammerGestureConfig  {
@@ -88,6 +95,9 @@ export class MyHammerConfig extends HammerGestureConfig  {
     CreateUnitComponent,
     EditUnitComponent,
     ClientOrdersComponent,
+    AddLocationComponent,
+    EditLocationComponent,
+    BecomeDeliverymanComponent,
   ],
   imports: [
     BrowserModule,
@@ -104,13 +114,17 @@ export class MyHammerConfig extends HammerGestureConfig  {
     }),
     BsDropdownModule.forRoot(),
     FileUploadModule,
-    BsDatepickerModule.forRoot(),
+    // BsDatepickerModule.forRoot(),
     MatPaginatorModule,
     ModalModule.forRoot(),
     HammerModule,
     MatSelectModule,
     MatProgressBarModule,
-    MatIconModule
+    MatIconModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},

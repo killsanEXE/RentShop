@@ -1,4 +1,4 @@
-<div class="form-group">
+<!-- <div class="form-group">
     <input
         type="text"
         [class.is-invalid]="ngControl.touched && ngControl.invalid"
@@ -14,4 +14,14 @@
     <div class="invalid-feedback" *ngIf="ngControl.control.errors?.veryOld">
         U r 2 damn old to be on this site
     </div>
-</div>
+</div> -->
+
+<mat-form-field style="width: 100%;" appearance="fill">
+    <mat-label>{{label}}</mat-label>
+    <input [min]="minDate" [max]="maxDate" matInput [formControl]="ngControl.control" [matDatepicker]="picker">
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker touchUi #picker></mat-datepicker>
+    <mat-error *ngIf="ngControl.control.hasError('required')">
+        {{label}} is <strong>required</strong>
+    </mat-error>
+</mat-form-field>

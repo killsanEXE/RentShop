@@ -583,6 +583,34 @@
 										}
 									},
 									"response": []
+								},
+								{
+									"name": "DenyDeliveryman",
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{token}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "https://localhost:7163/api/deliveryman/requests/lisa",
+											"protocol": "https",
+											"host": [
+												"localhost"
+											],
+											"port": "7163",
+											"path": [
+												"api",
+												"deliveryman",
+												"requests",
+												"lisa"
+											]
+										}
+									},
+									"response": []
 								}
 							]
 						},
@@ -597,8 +625,17 @@
 										"type": "text"
 									}
 								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"country\": \"Belarus\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
 								"url": {
-									"raw": "https://localhost:7163/api/deliveryman/join/USA",
+									"raw": "https://localhost:7163/api/deliveryman/join",
 									"protocol": "https",
 									"host": [
 										"localhost"
@@ -607,8 +644,7 @@
 									"path": [
 										"api",
 										"deliveryman",
-										"join",
-										"USA"
+										"join"
 									]
 								}
 							},
@@ -931,7 +967,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"username\": \"eliot\",\r\n\t\"password\": \"Perehod2020\"\r\n}",
+							"raw": "{\r\n\t\"username\": \"leon\",\r\n\t\"password\": \"Perehod2020\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

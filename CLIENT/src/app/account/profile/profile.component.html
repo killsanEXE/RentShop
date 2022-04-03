@@ -1,20 +1,32 @@
-<div>
-    <div>
-        <div>
+<div class="profile-main-div">
+    <div class="photo-main-div">
 
-            
-            <div class="row pr-4">
-                <input type="file" ng2FileSelect [uploader]="uploader"/><br/>
+        <div class="user-photo-div">
+            <img src="{{user.photoUrl === null ? '/assets/user.png' : user.photoUrl}}" alt="{{user.username}}">
+        </div>
+        <div class="change-photo-div">
+            <div>
+                <input class="photo-input" type="file" ng2FileSelect [uploader]="uploader"/><br/>
             </div>
-    
-            <div class="row pt-4" *ngIf="uploader?.queue?.length">
-                <button type="button" class="btn btn-success btn-s m-2"
-                        (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length">
-                        Upload
-                </button>
-            </div>
-    
         </div>
     </div>
-    <div></div>
+    <div class="locations-main-div">
+        <div class="locations-div-header py-2">
+            <button class="btn add-location-btn" (click)="addLocation()">Add Location</button>
+            <button *ngIf="!user.deliverymanRequest" class="btn become-deliveryman-btn" (click)="becomeDeliveryman()">Join deliverymans</button>
+            <!-- <p *ngIf="user.deliverymanRequest">Admin will check your request</p> -->
+        </div>
+        <div *ngIf="user.locations.length > 0" class="location-div-boddy">
+            <div class="location-row" *ngFor="let location of user.locations">
+                <p class="location-address">{{location.address}}</p>
+                <p><a (click)="editLocation(location)" style="text-decoration: none; color: blue; cursor: pointer;">Edit</a></p>
+                <p><a (click)="deleteLocation(location)" style="text-decoration: none; color: red; cursor: pointer;">Delete</a></p>
+            </div>
+        </div>
+        <div *ngIf="user.locations.length <= 0" class="location-div-boddy">
+            <div style="display: flex; justify-content: center;">
+                <p>No locations yet</p>
+            </div>
+        </div>
+    </div>
 </div>

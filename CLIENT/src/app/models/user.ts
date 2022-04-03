@@ -4,11 +4,12 @@ export interface User {
     roles: string[]
     photoUrl: string
     age: number
-    location: Location
-    locations: Location[];
+    deliverymanRequest: boolean
+    location: UserLocation
+    locations: UserLocation[];
 }
 
-export interface Location {
+export interface UserLocation {
     id: number
     country: string
     city: string

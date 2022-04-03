@@ -46,6 +46,10 @@
     color: white;
 }
 
+.item-order-button:hover{
+    color: #ff3d00;
+}
+
 .item-card-body{
     display: flex;
     flex-direction: column;

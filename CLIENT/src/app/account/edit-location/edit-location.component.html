@@ -1,0 +1,47 @@
+<div class="container">
+    <div>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Edit location</h4>
+            <button type="button" class="btn btn-danger" (click)="exit()" aria-label="Close">
+                Close
+            </button>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="locationForm" (ngSubmit)="editLocation()" autocomplete="off">
+
+
+            <div class="form-group">
+                <mat-form-field appearance="fill" class="select-form">
+                    <mat-label>Select country</mat-label>
+                    <mat-select [formControl]="locationForm.controls['country']">
+                        <mat-option *ngFor="let country of countries" value="{{country}}">{{country}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <app-text-input 
+                [formControl]="locationForm.controls['city']"
+                [label]="'City'"       
+                [type]="'text'">
+            </app-text-input>
+            <app-text-input 
+                [formControl]="locationForm.controls['address']"
+                [label]="'Address'"       
+                [type]="'text'">
+            </app-text-input>
+            <app-text-input 
+                [formControl]="locationForm.controls['floor']"
+                [label]="'Floor'"       
+                [type]="'number'">
+            </app-text-input>
+            <app-text-input 
+                [formControl]="locationForm.controls['apartment']"
+                [label]="'Apartment'"       
+                [type]="'text'">
+            </app-text-input>
+
+            <button class="btn btn-primary" [disabled]="!locationForm.valid" type="submit">Save</button>
+        </form>
+    </div>
+</div>
