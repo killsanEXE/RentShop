@@ -37,7 +37,8 @@ namespace API.Controllers
         {
             int age = 16;
             bool admin = false;
-            if(User.Identity!.IsAuthenticated){
+            if(User.Identity!.IsAuthenticated)
+            {
                 if(User.IsInRole("Admin")) admin = true;
                 age = _unitOfWork.UserRepository.GetUserAge(User.GetUsername());
             }
@@ -54,6 +55,7 @@ namespace API.Controllers
             bool admin = false;
             if(User.Identity!.IsAuthenticated){
                 if(User.IsInRole("Admin")) admin = true;
+                age = _unitOfWork.UserRepository.GetUserAge(User.GetUsername());
             }
             var item = await _unitOfWork.ItemRepository.GetItemDTOByIdAsync(id, age, admin);
             if(item != null) return Ok(item);

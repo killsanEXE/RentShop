@@ -1,3 +1,8 @@
+.row{
+    background-color: #171c24;
+    color: white;
+}
+
 .main-div{
     width: 100% !important;
     /* border: 0.5px solid rgb(189, 189, 189); */
@@ -19,6 +24,10 @@
 .description-text{
     border-bottom: 0.5px solid rgb(189, 189, 189);
     padding-bottom: 2vh;
+}
+
+.gallary-row{
+    background-color: white !important;
 }
 
 @media only screen and (min-width: 992px){

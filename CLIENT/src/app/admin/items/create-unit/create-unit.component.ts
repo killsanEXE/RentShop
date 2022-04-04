@@ -15,7 +15,7 @@ export class CreateUnitComponent implements OnInit {
 
   @Output() handler: EventEmitter<any> = new EventEmitter();
   confirmServcie: ConfirmService;
-  points: Point[] = [];
+  points: Point[];
   unitForm: FormGroup;
   validationErrors: string[] = [];
   selectedPoint: string;
@@ -26,12 +26,11 @@ export class CreateUnitComponent implements OnInit {
     }
   }
 
-  constructor(private fb: FormBuilder, public modal: NgbActiveModal, private pointServcie: PointService,
+  constructor(private fb: FormBuilder, public modal: NgbActiveModal,
     private router: Router) {}
 
   ngOnInit(): void {
     this.initializeForm();
-    this.pointServcie.loadPoints().subscribe(points => this.points = points); 
   }
 
   initializeForm(){

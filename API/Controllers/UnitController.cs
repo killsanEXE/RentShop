@@ -61,10 +61,9 @@ namespace API.Controllers
             var unit = await _context.Units
                 .Include(f => f.ItemUnitPoint)
                 .ThenInclude(f => f!.Point)
-                .Where(f => f.Id == id)
-                .SingleOrDefaultAsync();
-            if(unit == null) return NotFound();
+                .SingleOrDefaultAsync(f => f.Id == id);
 
+            if(unit == null) return NotFound();
             if(unit.IsAvailable && unit.ItemUnitPoint!.Point!.Id != unitDTO.PointId)
             {
                 var Point = _context.Points.FirstOrDefault(f => f.Id == unitDTO.PointId);

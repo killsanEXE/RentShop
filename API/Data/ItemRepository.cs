@@ -38,15 +38,23 @@ namespace API.Data
         {
             Item? item;
             if(admin){
-                item = await _context.Items.Include(f => f.PreviewPhoto).Include(f => f.Photos).SingleOrDefaultAsync(f => f.Id == Id);
-            }else item = await _context.Items.Include(f => f.PreviewPhoto).Include(f => f.Photos).SingleOrDefaultAsync(f => f.Id == Id && !f.Disabled && f.AgeRestriction < age);
+                item = await _context.Items
+                    .Include(f => f.PreviewPhoto)
+                    .Include(f => f.Photos)
+                    .SingleOrDefaultAsync(f => f.Id == Id);
+            }
+            else
+            {
+                item = await _context.Items
+                    .Include(f => f.PreviewPhoto)
+                    .Include(f => f.Photos)
+                    .SingleOrDefaultAsync(f => f.Id == Id && !f.Disabled && f.AgeRestriction <= age);
+            } 
+
             if(item == null) return null!;
 
             var units = _context.Units.AsQueryable();
-            units = units.OrderBy(f => f.Id);
-
-            if(admin) units = units.Where(f => f.ItemUnitPoint!.Item!.Id == Id);
-            else units = units.Where(f => f.ItemUnitPoint!.Item!.Id == Id && !f.Disabled);
+            units = units.OrderBy(f => f.Id).Where(f => f.ItemUnitPoint!.Item!.Id == Id);
 
             var QueriableUnitDTOs = units.ProjectTo<UnitDTO>(_mapper.ConfigurationProvider).AsNoTracking();
             var unitDtos = await QueriableUnitDTOs.ToListAsync();

@@ -37,6 +37,7 @@
                   >
               </th>
               <th scope="col">Name</th>
+              <th scope="col">Units</th>
               <th scope="col">Price Per Day</th>
               <th scope="col">Disabled</th>
               <th scope="col">Manage</th>
@@ -53,7 +54,8 @@
               </th>
               <td *ngIf="item.disabled" class="item-name-column" style="color: red;">{{item.name}}</td>
               <td *ngIf="!item.disabled" class="item-name-column">{{item.name}}</td>
-              <td>{{item.pricePerDay}}</td>
+              <td>{{item.units.length}}</td>
+              <td style="color: green">{{item.pricePerDay}}</td>
               <td>{{item.disabled}}</td>
               <td><a routerLink="edit-item/{{item.id}}">Edit</a></td>
             </tr>

@@ -5,11 +5,12 @@ import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { take } from 'rxjs/operators';
-import { Item, Photo, Unit } from 'src/app/models/item';
+import { Item, Photo, Point, Unit } from 'src/app/models/item';
 import { User } from 'src/app/models/user';
 import { AccountService } from 'src/app/services/account.service';
 import { ConfirmService } from 'src/app/services/confirm.service';
 import { ItemService } from 'src/app/services/item.service';
+import { PointService } from 'src/app/services/point.service';
 import { environment } from 'src/environments/environment';
 import { CreateUnitComponent } from '../create-unit/create-unit.component';
 import { EditUnitComponent } from '../edit-unit/edit-unit.component';
@@ -28,6 +29,7 @@ export class EditItemComponent implements OnInit {
   item: Item;
   admin: User; 
   baseUrl = environment.apiUrl;
+  points: Point[] = [];
   
   @HostListener("window:beforeunload", ["$event"]) unloadNotification($event: any){
     if(this.itemForm.dirty){
@@ -37,7 +39,8 @@ export class EditItemComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private itemServcie: ItemService,
     private toastr: ToastrService, private modalService: NgbModal, private accountService: AccountService,
-    private http: HttpClient) {
+    private http: HttpClient, private pointServcie: PointService) {
+      this.pointServcie.loadPoints().subscribe(points => this.points = points); 
       this.accountService.currentUser$.pipe(take(1)).subscribe(user => this.admin = user);
     }
 
@@ -118,6 +121,7 @@ export class EditItemComponent implements OnInit {
       keyboard: false,
     })
     
+    modalRef.componentInstance.points = this.points;
     modalRef.componentInstance.handler.subscribe((unit) => {
       this.itemServcie.createUnit(this.item.id, unit).subscribe((createdUnit: Unit) => {
         this.item.units.push(createdUnit);
@@ -134,6 +138,7 @@ export class EditItemComponent implements OnInit {
       keyboard: false,
     })
 
+    modalRef.componentInstance.points = this.points;
     modalRef.componentInstance.unit = unit;
     modalRef.componentInstance.pointId = unit.point.id;
     modalRef.componentInstance.handler.subscribe((editedUnit) => {

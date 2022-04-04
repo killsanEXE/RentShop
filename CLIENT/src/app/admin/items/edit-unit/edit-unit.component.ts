@@ -15,7 +15,7 @@ export class EditUnitComponent implements OnInit {
 
   @Output() handler: EventEmitter<any> = new EventEmitter();
   confirmServcie: ConfirmService;
-  points: Point[] = [];
+  points: Point[]
   unit: Unit;
   pointId: number;
   unitForm: FormGroup;
@@ -28,18 +28,18 @@ export class EditUnitComponent implements OnInit {
     }
   }
 
-  constructor(private fb: FormBuilder, public modal: NgbActiveModal, private pointServcie: PointService,
+  constructor(private fb: FormBuilder, public modal: NgbActiveModal,
     private router: Router) {}
 
   ngOnInit(): void {
     this.initializeForm();
-    this.pointServcie.loadPoints().subscribe(points => this.points = points); 
+    console.log(this.unit);
   }
 
   initializeForm(){
     this.unitForm = this.fb.group({
-      description: [this.unit.description, Validators.required],
       pointId: [this.pointId, Validators.required],
+      description: [this.unit.description, Validators.required],
     });
   }
 
