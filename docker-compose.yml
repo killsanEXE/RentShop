@@ -1,0 +1,51 @@
+version: '3.7'
+
+services:
+  db-rentshop:
+    container_name: db-rentshop
+    image: postgres
+    restart: unless-stopped
+    env_file:
+      - db.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-volume:/var/lib/postgresql/data/
+
+  api:
+    build:
+      context: ./API
+      dockerfile: Dockerfile
+    ports:
+      - 7163:8800
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:8800
+    depends_on:
+      - db-rentshop      
+
+  client:
+    build:
+      context: ./CLIENT
+      dockerfile: Dockerfile
+    depends_on:
+      - api
+    ports:
+      - '8080:80'
+    restart: on-failure
+      
+  pgadmin:
+    image: dpage/pgadmin4:4.19
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: admin
+    volumes:
+      - pgadmin-volume:/var/lib/pgadmin
+    ports:
+      - 3004:80
+    logging:
+      driver: none
+
+volumes:
+  db-volume:
+  pgadmin-volume:

@@ -10,8 +10,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
 
 // builder.Services.AddControllers()
@@ -20,22 +22,28 @@ var builder = WebApplication.CreateBuilder(args);
 //     });
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-// builder.Services.AddSwaggerGen();
 
-builder.Services.AddCors(options => {
-    options.AddPolicy(name: "_myAllowSpecificOrigins", builder => {
-        builder
-        .AllowAnyHeader()
-        .WithOrigins("http://localhost:4200")
-        .AllowAnyMethod()
-        .AllowCredentials();
+if (env == "Docker") {
+    builder.Services.AddCors(x => x.AddPolicy("Any", builder => { builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); }));
+    builder.Services.AddSwaggerGen(c =>
+    {
+        c.SwaggerDoc("v1", new OpenApiInfo { Title = "RentShop.Api", Version = "v1" });
     });
-});
+} else {
+    builder.Services.AddCors(options => {
+        options.AddPolicy(name: "_myAllowSpecificOrigins", builder => {
+            builder
+            .AllowAnyHeader()
+            .WithOrigins("http://localhost:4200")
+            .AllowAnyMethod()
+            .AllowCredentials();
+        });
+    });
+}
 
-builder.Services.AddDbContext<ApplicationContext>(options => {
-    var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+builder.Services.AddDbContext<ApplicationContext>(options => {    
     string connStr;
-    if (env == "Development")
+    if (env == "Development" || env == "Docker")
     {
         connStr = builder.Configuration.GetConnectionString("Default Connection");
     }
@@ -105,31 +113,32 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 using(var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
     try{
         var context = services.GetRequiredService<ApplicationContext>();
         var userManager = services.GetRequiredService<UserManager<AppUser>>();
         var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
         await context.Database.MigrateAsync();
-    await Seed.SeedUsers(userManager, roleManager);
+        await Seed.SeedUsers(userManager, roleManager);
+        logger.LogError($"{env}-------------------------------finish seed");
     }
     catch(Exception ex)
     {
-        var logger = services.GetRequiredService<ILogger<Program>>();
+        
         logger.LogError(ex, "An error occured during migration");
     }
 }
 
-app.UseCors("_myAllowSpecificOrigins");
-
-
 app.UseMiddleware<ExceptionMiddleware>();
-// if (app.Environment.IsDevelopment())
-// {
-//     app.UseSwagger();
-//     app.UseSwaggerUI();
-// }
-
-app.UseHttpsRedirection();
+if (env == "Docker")
+{
+    app.UseCors("Any");
+    app.UseSwagger();
+    app.UseSwaggerUI();
+} else {
+    app.UseCors("_myAllowSpecificOrigins");
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthentication();
 app.UseAuthorization();
