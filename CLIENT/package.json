@@ -23,6 +23,7 @@
     "@angular/router": "~13.3.0",
     "@googlemaps/js-api-loader": "^1.13.9",
     "@kolkov/ngx-gallery": "^2.0.1",
+    "@microsoft/signalr": "^6.0.3",
     "@ng-bootstrap/ng-bootstrap": "^10.0.0",
     "bootstrap": "^4.5.3",
     "font-awesome": "^4.7.0",

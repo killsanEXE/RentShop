@@ -51,7 +51,7 @@ namespace API.Services
                     var uploadParams = new ImageUploadParams
                     {
                         File = new FileDescription(file.FileName, stream),
-                        Transformation = new Transformation().Background("black").Width(500).Height(500).Crop("pad")
+                        Transformation = new Transformation().Background("white").Width(500).Height(500).Crop("pad")
                     };
                     uploadResults = await _cloudinary.UploadAsync(uploadParams);
                 }

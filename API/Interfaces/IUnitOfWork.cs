@@ -10,6 +10,7 @@ namespace API.Interfaces
         IUserRepository UserRepository { get; }
         IItemRepository ItemRepository { get; }
         IOrderRepository OrderRepository { get; }
+        IMessageRepository MessageRepository { get; }
         Task<bool> Complete();
         bool HasChanges();
     }

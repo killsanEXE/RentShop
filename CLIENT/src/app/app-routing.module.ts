@@ -5,8 +5,10 @@ import { RegAndLogComponent } from './account/reg-and-log/reg-and-log.component'
 import { AdminPanelComponent } from './admin/admin-panel/admin-panel.component';
 import { EditItemComponent } from './admin/items/edit-item/edit-item.component';
 import { PointComponent } from './admin/points/point/point.component';
+import { DeliverymanMainComponent } from './deliveryman/deliveryman-main/deliveryman-main.component';
 import { AdminGuard } from './guards/admin.guard';
 import { AuthGuard } from './guards/auth.guard';
+import { DeliverymanGuard } from './guards/deliveryman.guard';
 import { HomeComponent } from './home/home.component';
 import { ClientOrdersComponent } from './orders/client-orders/client-orders.component';
 import { ItemDetailedComponent } from './orders/item-detailed/item-detailed.component';
@@ -24,7 +26,8 @@ const routes: Routes = [
       {path: "admin/edit-item/:id", component: EditItemComponent, canActivate: [AdminGuard], resolve: {item: ItemDetailedResolver}},
       {path: "admin/points", component: PointComponent, canActivate: [AdminGuard]},
       {path: "item/:id", component: ItemDetailedComponent, resolve: {item: ItemDetailedResolver}},
-      {path: "orders", component: ClientOrdersComponent}
+      {path: "orders", component: ClientOrdersComponent},
+      {path: "deliveries", component: DeliverymanMainComponent, canActivate: [DeliverymanGuard]}
     ]
   },
   {path: "regandlog", component: RegAndLogComponent},

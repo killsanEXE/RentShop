@@ -1,0 +1,210 @@
+<div class="order-card" 
+[ngClass]="[
+    (user.roles.includes('Deliveryman') && order.deliveryInProcess && !order.deliveryCompleted) ? 'in-progress' : '',
+    (user.roles.includes('Deliveryman') && order.deliveryInProcess && order.deliveryCompleted) ? '' : '',
+    (user.roles.includes('Deliveryman') && !order.deliveryInProcess && order.deliveryMan !== null && order.deliveryMan.username === user.username) ? 'start-delivery' : '',
+
+    (!user.roles.includes('Deliveryman') && user.roles.includes('Client') && order.deliveryCompleted && !order.clientGotDelivery) ? 'in-progress' : '',
+    ]"
+    *ngIf="!order.cancelled && !order.unitReturned">
+    <!-- *ngIf="!order.deliveryCompleted || !order.clientGotDelivery || !order.cancelled" -->
+    
+    <div class="order-info">
+        <div class="basic-info">
+            <p>{{order.unit.description}}</p>
+        </div>
+
+        <div class="pt-3">
+            <div class="location-info" *ngIf="user.roles.includes('Deliveryman') && !order.clientGotDelivery">
+                <div class="deliver-from">
+                    <p>Deliver from</p>
+                    <p>City: {{order.unit.point.city}}, </p>
+                    <p>Address: {{order.unit.point.address}}</p>
+                </div>
+                <div class="deliver-to">
+                    <p>To</p>
+                    <p>City: {{order.deliveryLocation.city}}, </p>
+                    <p>Address: {{order.deliveryLocation.address}}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="pt-3" *ngIf="user.roles.includes('Client') && !user.roles.includes('Deliveryman') && !order.inUsage">
+            <div>
+                <div class="location-info"  *ngIf="order.deliveryLocation !== null">
+                    <div class="deliver-from">
+                        <p>This order will be delivered from</p>
+                        <p>City: {{order.unit.point.city}}, </p>
+                        <p>Address: {{order.unit.point.address}}</p>
+                    </div>
+                    <div class="deliver-to">
+                        <p>To</p>
+                        <p>City: {{order.deliveryLocation.city}}, </p>
+                        <p>Address: {{order.deliveryLocation.address}}</p>
+                    </div>     
+                </div>
+                <div class="location-info"  *ngIf="order.deliveryLocation === null">
+                    <div class="deliver-from">
+                        <p>You will have to pick this unit up from:</p>
+                        <p>City: {{order.unit.point.city}}, </p>
+                        <p>Address: {{order.unit.point.address}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="date-info pt-3" *ngIf="user.roles.includes('Deliveryman') && !order.clientGotDelivery">
+            <p>Deliver until: {{order.deliveryDate | date: "dd MMMM YYYY"}}</p>
+        </div>
+
+        <div *ngIf="!order.clientGotDelivery">
+            <div class="date-info pt-3" *ngIf="user.roles.includes('Client') && !user.roles.includes('Deliveryman') && order.deliveryLocation !== null">
+                <p>Delivery date: {{order.deliveryDate | date: "dd MMMM YYYY"}}</p>
+                <p style="color: red" *ngIf="order.deliveryInProcess && !order.deliveryCompleted">Delivery in process</p>
+                <p style="color: red" *ngIf="order.deliveryCompleted && !order.clientGotDelivery">Deliveryman delivered unit to you, confirm delivery</p>
+            </div>
+            <div class="date-info pt-3" *ngIf="user.roles.includes('Client') && !user.roles.includes('Deliveryman') && order.deliveryLocation === null">
+                <p>You can pick this unit up at: {{order.deliveryDate | date: "dd MMMM YYYY"}}</p>
+            </div>
+        </div>
+
+        <div *ngIf="order.inUsage && order.client.username === user.username">
+            <p>Return date: {{order.returnDate | date: "dd MMMM YYYY"}}</p>
+        </div>
+    </div>
+
+
+    <div *ngIf="user.roles.includes('Deliveryman')">
+        <div *ngIf="order.deliveryMan?.username === null">
+            <button (click)="acceptOrder()" class="btn">Accept</button>
+        </div>
+        <div *ngIf="order.deliveryMan?.username !== null && order.deliveryMan.username === user.username">
+            <div class="deliveryman-taken-order-controls controls">
+                <button class="btn" [disabled]="order.clientGotDelivery" *ngIf="order.deliveryMan.username === user.username && !order.deliveryCompleted" (click)="message(order.client)">Message client</button>
+                <button class="btn" (click)="startDelivery()" *ngIf="!order.deliveryInProcess">Start delivery</button>
+                <button class="btn" (click)="finishDelivery()" *ngIf="order.deliveryInProcess && !order.deliveryCompleted">Finish delivery</button>
+            </div>
+        </div>
+        <div *ngIf="order.deliveryCompleted && order.clientGotDelivery && order.deliveryMan.username" style="display: flex; justify-content: center;" calss="pt-3">
+            <!-- <p>Delivery was completed</p> -->
+            <p class="client-confirm-p" *ngIf="order.deliveryCompleted && !order.clientGotDelivery">Waiting for client to confirm delivery</p>
+        </div>  
+    </div>
+
+
+
+
+    <div class="client-control-selfpick" style="display: flex; justify-content: space-between;" *ngIf="user.roles.includes('Client') && !user.roles.includes('Deliveryman') && !order.clientGotDelivery">
+        <div class="client-order-controls controls full-width">
+            <button *ngIf="order.deliveryMan === null" class="btn" (click)="selfpickOrder()">Pick it up myself</button>
+            <button *ngIf="!order.deliveryCompleted" class="btn" [disabled]="order.deliveryInProcess" (click)="cancelOrder()">Cancel order</button>
+            <button class="btn" (click)="receivedOrder()" *ngIf="order.deliveryCompleted && !order.clientGotDelivery">Received order</button>
+
+            <button class="btn" *ngIf="order.clientGotDelivery">How i will return unit</button>
+            <button 
+                *ngIf="order.deliveryMan !== null && order.deliveryMan.username !== user.username" 
+                (click)="message(order.deliveryMan)" 
+                class="btn" [disabled]="order.clientGotDelivery">Message deliveryman</button>
+            <p *ngIf="order.deliveryMan === null">Searching for deliveryman...</p>
+        </div>
+
+        <div class="client-selfpick-order-controls controls full-width" *ngIf="order.deliveryMan !== null && order.deliveryMan.username === user.username">
+            <button class="btn" (click)="receivedOrder()">Received order</button>
+            <!-- <button class="btn" *ngIf="order.clientGotDelivery">How i will return unit</button> -->
+        </div>
+    </div>
+
+    
+
+
+
+    <div class="return-container-controls pt-1" *ngIf="order.inUsage && order.returnFromLocation === null && order.returnPoint === null && order.client.username === user.username">
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>How you will return it</mat-label>
+            <mat-select [[(value)]]="selectedReturnWay">
+                <mat-option value="Returnbymyself" (click)="selectSelfReturn()">By myself</mat-option>
+                <mat-option value="Returnviadeliveryman" (click)="selectDeliveryReturn()">Via deliveryman</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width" *ngIf="showLocationsReturn">
+            <mat-label>Select the location, where unit will be at return date</mat-label>
+            <mat-select [formControl]="returnForm.controls['returnFromLocation']">
+                <mat-option *ngFor="let location of user.locations" value="{{location.id}}">{{location.city}}, {{location.address}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width" *ngIf="showPointsToReturn">
+            <mat-label>Select point to which you will return your unit</mat-label>
+            <mat-select [formControl]="returnForm.controls['returnPoint']">
+                <mat-option  *ngFor="let point of points" value="{{point.id}}">{{point.city}}, {{point.address}}</mat-option>
+            </mat-select>
+        </mat-form-field>  
+
+        <button class="btn" (click)="save()" *ngIf="returnForm.valid && (showPointsToReturn || showLocationsReturn)">
+            Save
+        </button>
+    </div>
+
+    <div *ngIf="(!user.roles.includes('Deliveryman') && user.roles.includes('Client')) && (order.returnDeliveryman !== null || order.returnFromLocation !== null || order.returnPoint !== null) && order.inUsage">
+        <div *ngIf="order.returnDeliveryman !== null && order.returnDeliveryman.username === user.username">
+            <div>
+                <p>Get this unit to {{order.returnPoint.address}} at delivery date</p>
+                <strong>Confirm id: {{order.id}}</strong>
+            </div>
+        </div>
+        <div *ngIf="order.returnFromLocation !== null">
+            <div *ngIf="order.returnDeliveryman === null">
+                Waiting for deliveryman to accept the returning of your order
+            </div>
+            <div *ngIf="order.returnDeliveryman !== null">
+                <div>
+                    <p>Get this item to {{order.returnFromLocation.address}} for deliveryman to get it</p>
+                </div>
+                <button class="btn" (click)="message(order.returnDeliveryman)">Message deliveryman</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="pt-3" *ngIf="user.roles.includes('Deliveryman') && order.clientGotDelivery && order.returnFromLocation !== null">
+        <div class="location-info">
+            <div class="deliver-from">
+                <p>Deliver from</p>
+                <p>City: {{order.returnFromLocation.city}}, </p>
+                <p>Address: {{order.returnFromLocation.address}}</p>
+            </div>
+            <div class="deliver-to" *ngIf="order.returnPoint === null">
+                <p>To</p>
+                <p>One of pickup points in {{this.order.unit.point.country}}</p>
+            </div>
+            <div class="deliver-to" *ngIf="order.returnPoint !== null">
+                <p>To</p>
+                <p>City: {{order.returnPoint.city}}</p>
+                <p>Address: {{order.returnPoint.address}}</p>
+            </div>
+        </div>
+        <div class="pt-3">
+            <p>Delivery date: {{order.returnDate | date: "dd MMMM YYYY"}}</p>
+        </div>
+        <div *ngIf="order.returnDeliveryman === null">
+            <button (click)="acceptOrder()" class="btn">Accept</button>
+        </div>
+        <div class="pt-3" *ngIf="(order.returnDeliveryman !== null && order.returnDeliveryman.username === user.username) && order.returnPoint === null">
+            <mat-form-field appearance="fill" class="full-width" *ngIf="order.returnPoint === null">
+                <mat-label>Select point to which you will return your unit</mat-label>
+                <mat-select [formControl]="returnForm.controls['returnPoint']">
+                    <mat-option  *ngFor="let point of points" value="{{point.id}}">{{point.city}}, {{point.address}}</mat-option>
+                </mat-select>
+            </mat-form-field>  
+            <button class="btn" (click)="save()" *ngIf="returnForm.valid && showPointsToReturn && order.returnPoint === null">
+                Save
+            </button>
+        </div>
+        <strong *ngIf="order.returnPoint !== null" class="pt-3">Confirm id: {{order.id}}</strong>
+    </div>
+
+</div>
+
+<div class="py-3" style="display: flex; justify-content: center;" *ngIf="orderFromPage && order.cancelled && order.client.username === user.username && user.roles.includes('Client')">
+    <p>Order was cancelled</p>
+</div>

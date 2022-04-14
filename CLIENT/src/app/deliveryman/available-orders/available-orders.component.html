@@ -1,0 +1,10 @@
+<div>
+    <div *ngFor="let order of orders">
+        <app-order [order]="order" [user]="user"></app-order>
+    </div>
+
+    <div *ngIf="orders.length <= 0" style="display: flex; justify-content: center;" class="pt-5">
+        <p>No available orders in your country</p>
+    </div>
+
+</div>

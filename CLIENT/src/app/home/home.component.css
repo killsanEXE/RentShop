@@ -1,5 +1,8 @@
 .home-component{
     width: 100% !important;
+    /* padding-left: 2vh; */
+    /* padding-right: 3vh; */
+    padding-bottom: 2vh;
 }
 
 .home-paginator{
@@ -16,13 +19,15 @@
 .item-card{
     max-width: 26rem;
     margin: 1vh;
-    color: white;
+    /* color: white; */
     /* box-shadow: 2px 2px rgb(0, 0, 0, 1); */
     /* border: 0.5px solid rgb(190, 190, 190); */
-    background-color: #171c24;
+    /* background-color: #171c24; */
+    background-color: #f5f5f5;
     box-shadow: 6px 6px 5px rgba(0, 0, 0, 0.8);
     /* border-radius: 10px; */
     overflow: hidden;
+    border-bottom: 2px solid gray;
 }
 
 .item-card-title{
@@ -92,7 +97,12 @@
     .item-card{
         margin: 0 auto;
         width: 100%;
-        box-shadow: none;
+        box-shadow: 0px 6px 5px rgba(0, 0, 0, 0.8);
+        border: 0;
+    }
+
+    .item-card-body{
+        border: 0;
     }
 
     .home-paginator{
@@ -104,5 +114,9 @@
 @media only screen and (max-width: 330px){
     .item-card{
         max-width: 95%;
+    }
+
+    .home-component{
+        padding: 0;
     }
 }

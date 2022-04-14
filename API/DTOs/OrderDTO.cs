@@ -17,5 +17,10 @@ namespace API.DTOs
         public bool DeliveryCompleted { get; set; }
         public bool ClientGotDelivery { get; set; }
         public bool InUsage { get; set; }
+
+        public ClientDTO? ReturnDeliveryman { get; set; }
+        public bool UnitReturned { get; set; }
+        public Location? ReturnFromLocation { get; set; }
+        public PointDTO? ReturnPoint { get; set; }
     }
 }

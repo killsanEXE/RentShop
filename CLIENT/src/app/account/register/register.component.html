@@ -1,5 +1,5 @@
 <div class="container text-center mt-4">
-    <form [formGroup]="registerForm" (ngSubmit)="register()">
+    <form [formGroup]="registerForm" (ngSubmit)="register()" autocomplete="off">
 
         <app-text-input 
             [formControl]="registerForm.controls['username']"

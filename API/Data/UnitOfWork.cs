@@ -22,6 +22,7 @@ namespace API.Data
         public IItemRepository ItemRepository => new ItemRepository(_context, _mapper);
 
         public IOrderRepository OrderRepository => new OrderRepository(_context, _mapper);
+        public IMessageRepository MessageRepository => new MessageRepository(_context, _mapper);
 
         public async Task<bool> Complete()
         {

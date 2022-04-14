@@ -58,12 +58,19 @@ namespace API.Controllers
         [HttpPut("{id:int}")]
         public async Task<ActionResult<UnitDTO>> EditUnit(int id, UnitDTO unitDTO)
         {
+
             var unit = await _context.Units
                 .Include(f => f.ItemUnitPoint)
                 .ThenInclude(f => f!.Point)
                 .SingleOrDefaultAsync(f => f.Id == id);
-
             if(unit == null) return NotFound();
+
+            for(int i = 0; i <=100; i++)
+            {
+                System.Console.WriteLine(unit.Id);
+                System.Console.WriteLine(unit.Description);
+            }
+            
             if(unit.IsAvailable && unit.ItemUnitPoint!.Point!.Id != unitDTO.PointId)
             {
                 var Point = _context.Points.FirstOrDefault(f => f.Id == unitDTO.PointId);

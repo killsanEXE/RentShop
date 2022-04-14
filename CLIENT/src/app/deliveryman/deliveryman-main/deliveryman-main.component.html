@@ -1,0 +1,21 @@
+<div class="py-3">
+
+    <div>
+        <mat-form-field>
+            <mat-label>Enter order id</mat-label>
+            <input matInput type="text" name="orderId" [(ngModel)]="orderId">
+        </mat-form-field>
+        <button class="btn" (click)="confirmReturn()" [disabled]="orderId.trim() === ''">Confirm</button>
+    </div>
+
+    <mat-tab-group mat-align-tabs="center">
+        <mat-tab>
+            <ng-template mat-tab-label>Available orders</ng-template>
+            <app-available-orders [user]="user" [orders]="availableOrders"></app-available-orders>
+        </mat-tab>
+        <mat-tab>
+            <ng-template mat-tab-label>Accepted orders</ng-template>
+            <app-take-orders [user]="user" [orders]="takenOrders"></app-take-orders>
+        </mat-tab>
+    </mat-tab-group>
+</div>

@@ -1,1 +1,9 @@
-<p>client-orders works!</p>
+<div>
+    <div *ngFor="let order of orders">
+        <app-order [order]="order" [user]="user"></app-order>
+    </div>
+
+    <div *ngIf="filteredOrders.length <= 0" style="display: flex; justify-content: center;" class="pt-5">
+        <p>You did not order anything yet</p>
+    </div>
+</div>

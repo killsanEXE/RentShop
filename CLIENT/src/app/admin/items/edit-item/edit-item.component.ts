@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { take } from 'rxjs/operators';
@@ -24,7 +24,6 @@ import { UploadMainPhotoComponent } from '../upload-main-photo/upload-main-photo
 })
 export class EditItemComponent implements OnInit {
 
-  confirmServcie: ConfirmService;
   itemForm: FormGroup;
   item: Item;
   admin: User; 
@@ -39,7 +38,7 @@ export class EditItemComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private itemServcie: ItemService,
     private toastr: ToastrService, private modalService: NgbModal, private accountService: AccountService,
-    private http: HttpClient, private pointServcie: PointService) {
+    private http: HttpClient, private pointServcie: PointService, private confirmServcie: ConfirmService) {
       this.pointServcie.loadPoints().subscribe(points => this.points = points); 
       this.accountService.currentUser$.pipe(take(1)).subscribe(user => this.admin = user);
     }
@@ -122,6 +121,7 @@ export class EditItemComponent implements OnInit {
     })
     
     modalRef.componentInstance.points = this.points;
+    modalRef.componentInstance.confirmServcie = this.confirmServcie;
     modalRef.componentInstance.handler.subscribe((unit) => {
       this.itemServcie.createUnit(this.item.id, unit).subscribe((createdUnit: Unit) => {
         this.item.units.push(createdUnit);
@@ -139,10 +139,11 @@ export class EditItemComponent implements OnInit {
     })
 
     modalRef.componentInstance.points = this.points;
+    modalRef.componentInstance.confirmServcie = this.confirmServcie;
     modalRef.componentInstance.unit = unit;
     modalRef.componentInstance.pointId = unit.point.id;
     modalRef.componentInstance.handler.subscribe((editedUnit) => {
-      this.itemServcie.editUnit(this.item.id, editedUnit).subscribe((responseUnit: Unit) => {
+      this.itemServcie.editUnit(unit.id, editedUnit).subscribe((responseUnit: Unit) => {
         this.item.units.splice(this.item.units.indexOf(unit, 0), 1);
         this.item.units.push(responseUnit);
         this.toastr.success("Saved unit");

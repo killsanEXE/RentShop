@@ -156,6 +156,55 @@ namespace API.Data.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
+            modelBuilder.Entity("API.Entities.Chat", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("UnreadMessages")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Chats");
+                });
+
+            modelBuilder.Entity("API.Entities.Connection", b =>
+                {
+                    b.Property<string>("ConnectionId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("GroupName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Username")
+                        .HasColumnType("text");
+
+                    b.HasKey("ConnectionId");
+
+                    b.HasIndex("GroupName");
+
+                    b.ToTable("Connections");
+                });
+
+            modelBuilder.Entity("API.Entities.Group", b =>
+                {
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Name");
+
+                    b.ToTable("Groups");
+                });
+
             modelBuilder.Entity("API.Entities.Item", b =>
                 {
                     b.Property<int>("Id")
@@ -257,6 +306,44 @@ namespace API.Data.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("Location");
                 });
 
+            modelBuilder.Entity("API.Entities.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("DateRead")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("MessageSend")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("RecipientId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("RecipientUsername")
+                        .HasColumnType("text");
+
+                    b.Property<int>("SenderId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SenderUsername")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipientId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages");
+                });
+
             modelBuilder.Entity("API.Entities.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -295,8 +382,20 @@ namespace API.Data.Migrations
                     b.Property<DateTime>("ReturnDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int?>("ReturnDeliverymanId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ReturnFromLocationId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ReturnPointId")
+                        .HasColumnType("integer");
+
                     b.Property<int?>("UnitId")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("UnitReturned")
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
@@ -305,6 +404,12 @@ namespace API.Data.Migrations
                     b.HasIndex("DeliveryLocationId");
 
                     b.HasIndex("DeliveryManId");
+
+                    b.HasIndex("ReturnDeliverymanId");
+
+                    b.HasIndex("ReturnFromLocationId");
+
+                    b.HasIndex("ReturnPointId");
 
                     b.HasIndex("UnitId");
 
@@ -494,6 +599,22 @@ namespace API.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("API.Entities.Chat", b =>
+                {
+                    b.HasOne("API.Entities.AppUser", "User")
+                        .WithMany("Chats")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("API.Entities.Connection", b =>
+                {
+                    b.HasOne("API.Entities.Group", null)
+                        .WithMany("Connections")
+                        .HasForeignKey("GroupName");
+                });
+
             modelBuilder.Entity("API.Entities.Item", b =>
                 {
                     b.HasOne("API.Entities.Photo", "PreviewPhoto")
@@ -537,6 +658,25 @@ namespace API.Data.Migrations
                         .HasForeignKey("AppUserId");
                 });
 
+            modelBuilder.Entity("API.Entities.Message", b =>
+                {
+                    b.HasOne("API.Entities.AppUser", "Recipient")
+                        .WithMany()
+                        .HasForeignKey("RecipientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API.Entities.AppUser", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Recipient");
+
+                    b.Navigation("Sender");
+                });
+
             modelBuilder.Entity("API.Entities.Order", b =>
                 {
                     b.HasOne("API.Entities.AppUser", "Client")
@@ -551,6 +691,18 @@ namespace API.Data.Migrations
                         .WithMany()
                         .HasForeignKey("DeliveryManId");
 
+                    b.HasOne("API.Entities.AppUser", "ReturnDeliveryman")
+                        .WithMany()
+                        .HasForeignKey("ReturnDeliverymanId");
+
+                    b.HasOne("API.Entities.Location", "ReturnFromLocation")
+                        .WithMany()
+                        .HasForeignKey("ReturnFromLocationId");
+
+                    b.HasOne("API.Entities.Point", "ReturnPoint")
+                        .WithMany()
+                        .HasForeignKey("ReturnPointId");
+
                     b.HasOne("API.Entities.Unit", "Unit")
                         .WithMany()
                         .HasForeignKey("UnitId");
@@ -560,6 +712,12 @@ namespace API.Data.Migrations
                     b.Navigation("DeliveryLocation");
 
                     b.Navigation("DeliveryMan");
+
+                    b.Navigation("ReturnDeliveryman");
+
+                    b.Navigation("ReturnFromLocation");
+
+                    b.Navigation("ReturnPoint");
 
                     b.Navigation("Unit");
                 });
@@ -616,9 +774,16 @@ namespace API.Data.Migrations
 
             modelBuilder.Entity("API.Entities.AppUser", b =>
                 {
+                    b.Navigation("Chats");
+
                     b.Navigation("DeliveryLocations");
 
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("API.Entities.Group", b =>
+                {
+                    b.Navigation("Connections");
                 });
 
             modelBuilder.Entity("API.Entities.Item", b =>

@@ -27,8 +27,8 @@ export class AddLocationComponent implements OnInit {
       country: [this.country, [Validators.required]],
       city: ["", [Validators.required]],
       address: ["", [Validators.required]],
-      floor: [""],
-      apartment: [""],
+      floor: [null],
+      apartment: [null],
     });
   }
 
@@ -37,6 +37,8 @@ export class AddLocationComponent implements OnInit {
   }
 
   addLocation(){
+    let floor = this.locationForm.controls["floor"];
+    if(floor.value === null || floor.value === undefined || floor.value === "") floor.setValue(0);
     this.handler.emit(this.locationForm.value);
   }
 

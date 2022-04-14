@@ -33,7 +33,6 @@ export class EditUnitComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
-    console.log(this.unit);
   }
 
   initializeForm(){

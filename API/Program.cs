@@ -6,6 +6,7 @@ using API.Helpers;
 using API.Interfaces;
 using API.Middleware;
 using API.Services;
+using API.SignalR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -26,7 +27,7 @@ builder.Services.AddCors(options => {
     options.AddPolicy(name: "_myAllowSpecificOrigins", builder => {
         builder
         .AllowAnyHeader()
-        .WithOrigins("http://localhost:4200")
+        .WithOrigins("https://localhost:4200")
         .AllowAnyMethod()
         .AllowCredentials();
     });
@@ -97,6 +98,8 @@ builder.Services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<PresenceTracker>();
 
 var app = builder.Build();
 
@@ -135,5 +138,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<MessageHub>("hubs/message");
+app.MapHub<PresenceHub>("hubs/presence");
+
 
 app.Run();

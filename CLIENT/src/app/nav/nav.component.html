@@ -10,7 +10,7 @@
     <div class="nav-items" *ngIf="(accountService.currentUser$ | async)">
         <li><a routerLink="/orders" (click)="hideNavMenu()" routerLinkActive="active">My orders</a></li>
         <li><a routerLink="/profile" (click)="hideNavMenu()" routerLinkActive="active">Profile</a></li>
-        <li *appHasRole="'Deliveryman'"><a (click)="hideNavMenu()" routerLink="/orders" routerLinkActive="active">Deliveries</a></li>
+        <li *appHasRole="'Deliveryman'"><a (click)="hideNavMenu()" routerLink="/deliveries" routerLinkActive="active">Deliveries</a></li>
         <li *appHasRole="'Admin'"><a (click)="hideNavMenu()" routerLink="/admin" routerLinkActive="active">Admin</a></li>
         <li><a style="cursor: pointer;" (click)="hideNavMenu()" (click)="logout()">Logout</a></li>
     </div>

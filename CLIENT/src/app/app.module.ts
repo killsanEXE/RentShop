@@ -57,6 +57,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { BecomeDeliverymanComponent } from './account/become-deliveryman/become-deliveryman.component';
+import { OrderComponent } from './orders/order/order.component';
+import { DeliverymanMainComponent } from './deliveryman/deliveryman-main/deliveryman-main.component';
+import { AvailableOrdersComponent } from './deliveryman/available-orders/available-orders.component';
+import { TakeOrdersComponent } from './deliveryman/take-orders/take-orders.component';
+import { MessageComponent } from './message/message.component';
 
 @Injectable()
 export class MyHammerConfig extends HammerGestureConfig  {
@@ -98,6 +103,11 @@ export class MyHammerConfig extends HammerGestureConfig  {
     AddLocationComponent,
     EditLocationComponent,
     BecomeDeliverymanComponent,
+    OrderComponent,
+    DeliverymanMainComponent,
+    AvailableOrdersComponent,
+    TakeOrdersComponent,
+    MessageComponent,
   ],
   imports: [
     BrowserModule,
@@ -124,7 +134,7 @@ export class MyHammerConfig extends HammerGestureConfig  {
     MatInputModule,
     MatFormFieldModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},

@@ -80,6 +80,7 @@ export class ItemService {
   } 
 
   editUnit(id: number, unit: any){
+    console.log(unit);
     return this.http.put<Unit>(this.baseUrl + `unit/${id}`, unit).pipe(map((unit: Unit) => {
       return unit;
     }));

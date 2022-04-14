@@ -27,7 +27,7 @@ namespace API.Helpers
                 .ForMember(f => f.Point, opt => opt.MapFrom(s => s.Point))
                 .ForMember(f => f.WhenWillBeAvaliable, opt => opt.MapFrom(s => s.Unit!.WhenWillBeAvailable))
                 .ForMember(f => f.Disabled, opt => opt.MapFrom(s => s.Unit!.Disabled))
-                .ForMember(f => f.IsAvaliable, opt => opt.MapFrom(s => s.Unit!.IsAvailable));
+                .ForMember(f => f.IsAvailable, opt => opt.MapFrom(s => s.Unit!.IsAvailable));
 
             CreateMap<LocationDTO, Location>();
             CreateMap<LocationDTO, Point>();
@@ -44,6 +44,9 @@ namespace API.Helpers
             CreateMap<AppUser, DeliverymanDTO>().ForMember(f => f.Age, opt => opt.MapFrom(s => s.DateOfBirth.CalculateAge()));
             
             CreateMap<Order, OrderDTO>();
+
+            CreateMap<Message, MessageDTO>();
+            CreateMap<MessageDTO, Message>();
         }
     }
 }

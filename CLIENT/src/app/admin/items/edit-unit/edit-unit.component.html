@@ -7,7 +7,7 @@
     </div>
 
     <div class="modal-body">
-        <form [formGroup]="unitForm" (ngSubmit)="editUnit()">
+        <form [formGroup]="unitForm" (ngSubmit)="editUnit()" autocomplete="off">
             <app-text-input 
                 [formControl]="unitForm.controls['description']"
                 [label]="'Description'"       

@@ -56,7 +56,14 @@ namespace API.Controllers
         public async Task<ActionResult<LocationDTO>> AddLocation(LocationDTO locationDTO)
         {
             var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
-            var deliveryLocation = _mapper.Map<Location>(locationDTO);
+            Location deliveryLocation = new()
+            {
+                Country = locationDTO.Country,
+                City = locationDTO.City,
+                Address = locationDTO.Address,
+                Floor = locationDTO.Floor
+            };
+            if(locationDTO.Apartment != null) deliveryLocation.Apartment = locationDTO.Apartment;
             user.DeliveryLocations!.Add(deliveryLocation);
             if(await _unitOfWork.Complete()) return _mapper.Map<LocationDTO>(deliveryLocation);
             return BadRequest("Failed to add point"); 

@@ -1,0 +1,42 @@
+<div class="container py-2">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Message {{otehrUserusername}}</h4>
+        <button type="button" class="btn btn-danger" (click)="exit()" aria-label="Close">
+            Close
+        </button>
+    </div>
+ 
+    <div #scrollMe
+        [scrollTop]="scrollMe.scrollHeight" 
+        class="modal-body">
+        <div *ngFor="let message of (messageService.messageThread$ | async); let lastcall = last">
+            <div [ngClass]="message.senderUsername === user.username ? 'my-message' : 'users-message'" class="message-main">
+                <div class="avatar-div">
+                    <img src="{{
+                        message.senderPhotoUrl === null ?  '/assets/user.png' : message.senderPhotoUrl
+                    }}" class="rounded-circle" alt="{{message.id}}">
+                </div>
+                <div class="content-div">
+                    <p>{{message.content}}</p>
+                </div>
+            </div>
+            <span *ngIf="lastcall">{{scrollToBottom()}}</span>
+        </div>
+    </div>
+
+    <div *ngIf="(messageService.messageThread$ | async).length <= 0">
+        You don't have any messages yet, say HELLO THERE
+    </div>
+
+    <form (ngSubmit)="sendMessage()" class="full-width send-message-form" autocomplete="off">
+        <div class="message-input">
+            <input class="full-width" name="message" [(ngModel)]="message" type="text">
+        </div>
+        <div class="message-button">
+            <button type="submit" [disabled]="message === '' || message === null" class="btn send-button">
+                Send
+            </button>
+        </div>
+    </form>
+</div>
+

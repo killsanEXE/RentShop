@@ -1,34 +1,103 @@
 <div style="padding: 0; padding-bottom: 3vh; margin: 0">
-    <div class="container mt-4 main-div px-5">
+    <div class="container mt-4 main-div">
         <div class="row item-header">
-            <p class="font-weight-bold text-justify text-capitalize title">{{item.name}}</p>
+            <p class="font-weight-bold text-justify text-capitalize title pb-2">{{item.name}}</p>
             <p class="description-text">{{item.description}}</p>
         </div>
 
-        <div class="row galary-row">
+        <!-- <div class="row item-description">
+            <p class="description-text">{{item.description}}</p>
+        </div> -->
+
+        <div class="row galary-row mt-2">
             <div class="galary-div">
                 <app-gallary [photos]="item.photos"></app-gallary>
             </div>
         </div>
 
-        <div class="row">
-            <h2>Price Per Day: {{item.pricePerDay}}$</h2>
+        <div class="row price-per-day">
+            <p>Price Per Day: <a>{{item.pricePerDay}}$</a></p>
         </div>
 
-        <div class="row">
-            <div *ngIf="item.units.length > 0">
-                <h2>Units</h2>
-                <ul>
-                    <li *ngFor="let unit of item.units">
-                        <p *ngIf="unit.disabled" style="color: red;">{{unit.description}}</p>
-                        <p *ngIf="!unit.disabled">{{unit.description}}</p>
-                    </li>
-                </ul>
+        <div *ngIf="createdOrder === null || createdOrder === undefined" class="row order-row px-4">
+            <div *ngIf="!ordering">
+                <button [disabled]="allUnits.length <= 0" (click)="ordering = !ordering" class="btn order-button">Order</button>
+            </div>
+            <div *ngIf="ordering" style="width: 100%;">
+                <mat-form-field appearance="fill" class="select-form">
+                    <mat-label>How you will get it</mat-label>
+                    <mat-select [(value)]="selectedDeliveryWay">
+                        <mat-option value="'Seflpick'" (click)="selectSelfick()">Selfpick</mat-option>
+                        <mat-option value="'Delivery'" (click)="selectDelivery()">Delivery</mat-option>
+                    </mat-select>
+                </mat-form-field>
             </div>
 
-            <div style="display: flex; justify-content: center; width: 100%;" *ngIf="item.units.length <= 0">
-                <p style="color: gray">No units are avaliable</p>
+            <div *ngIf="delivery" class="delivery">
+                <mat-form-field appearance="fill" class="select-form" style="width: 100%;">
+                    <mat-label>Select delivery location</mat-label>
+                    <mat-select [formControl]="orderForm.controls['deliveryLocation']">
+                        <mat-option *ngFor="let location of user.locations" (click)="selectedLocation()" value="{{location.id}}">{{location.address}}</mat-option>
+                        <mat-option style="color: blue" (click)="router.navigateByUrl('/profile')">New</mat-option>
+                    </mat-select>
+                </mat-form-field>
             </div>
+
+            <div *ngIf="selectingUnit" class="selecting-unit">
+                <div style="display: flex; justify-content: center;" *ngIf="unitsToSelect.length > 0">
+                    <p>Select the unit:</p>
+                </div>
+                <div *ngFor="let unit of unitsToSelect">
+                    <div class="unit-card" *ngIf="!unit.disabled && unit.isAvailable">
+                        <div class="unit-description">
+                            <p>{{unit.description}}</p>
+                        </div>
+                        <div class="unit-location">
+                            <p>Location: {{unit.point.country}}, {{unit.point.city}}, {{unit.point.address}}</p>
+                            <button class="btn select-unit-button" (click)="selectUnit(unit)" [disabled]="unit.disabled || !unit.isAvailable">Select</button>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="unitsToSelect.length <= 0">
+                    <p>No units are available in this country</p>
+                </div>
+            </div>
+
+            <div *ngIf="selectedUnit !== null && selectedUnit !== undefined" class="unit-point">
+                <div style="display: flex; justify-content: center;">
+                    <p>A unit, that you will get:</p>
+                </div>
+                <div class="unit-card">
+                    <div class="unit-description">
+                        <p>{{selectedUnit.description}}</p>
+                    </div>
+                    <div class="unit-location">
+                        <p>Location {{selectedUnit.point.country}}, {{selectedUnit.point.city}}, {{selectedUnit.point.address}}</p>
+                        <button class="btn select-unit-button" (click)="selectAnotherUnit()">Select another</button>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="timespanSelect" class="date-select">
+                <mat-form-field appearance="fill" class="select-date-main-form">
+                    <mat-label>Enter a date range</mat-label>
+                    <mat-date-range-input [min]="minDate" [formGroup]="orderForm" [rangePicker]="picker">
+                        <input matStartDate (dateChange)="selectDate('delivery', $event)" formControlName="deliveryDate" placeholder="Get item date">
+                        <input matEndDate (dateChange)="selectDate('return', $event)" formControlName="returnDate" placeholder="Return date">
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-date-range-picker touchUi #picker></mat-date-range-picker>
+                </mat-form-field>
+            </div>
+
+            <div *ngIf="orderForm.valid" class="confirm-order">
+                <button [disabled]="!orderForm.valid" class="btn order-button" (click)="confirmOrder()">Order</button>
+            </div>
+        </div>
+
+        <div *ngIf="createdOrder !== null && createdOrder !== undefined">
+            <p style="margin: 0 auto;" class="py-2">Your order: </p>
+            <app-order [orderFromPage]="true" [user]="user" [order]="createdOrder"></app-order>
         </div>
 
     </div>

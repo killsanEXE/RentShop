@@ -15,7 +15,7 @@ export interface Item {
     pointId: number
     description: string
     whenWillBeAvaliable: Date
-    isAvaliable: boolean
+    isAvailable: boolean
     disabled: boolean
     point: Point
   }

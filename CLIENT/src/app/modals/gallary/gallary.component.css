@@ -4,7 +4,6 @@ button{
     height: 100%;
     background: 0;
     border: 0;
-    color: white;
 }
 
 .main-photo-div{
@@ -22,11 +21,13 @@ button{
 .change-img-button{
     padding-right: 3vh;
     padding-left: 2vh;
+    background-color: white !important;
+    color: black;
 }
 
 .change-img-button:hover{
     cursor: pointer;
-    background-color: rgb(240, 240, 240);
+    /* background-color: rgb(240, 240, 240); */
     color: black !important;
 }
 
