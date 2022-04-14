@@ -1,0 +1,11 @@
+.git
+.gitignore
+.vscode/
+.secure/
+*.docx
+**/*.docx
+*.zip
+**/*.zip
+/bin/*
+/obj/*
+appsettings.Development.json

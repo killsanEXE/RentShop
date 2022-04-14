@@ -66,6 +66,17 @@
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
+            },
+            "docker": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.docker.ts"
+                }
+              ],
+              "outputHashing": "all"
             }
           },
           "defaultConfiguration": "production"
@@ -82,6 +93,9 @@
               "browserTarget": "CLIENT:build:production"
             },
             "development": {
+              "browserTarget": "CLIENT:build:development"
+            },
+            "docker": {
               "browserTarget": "CLIENT:build:development"
             }
           },
