@@ -4,7 +4,7 @@
     (user.roles.includes('Deliveryman') && order.deliveryInProcess && order.deliveryCompleted) ? '' : '',
     (user.roles.includes('Deliveryman') && !order.deliveryInProcess && order.deliveryMan !== null && order.deliveryMan.username === user.username) ? 'start-delivery' : '',
 
-    (!user.roles.includes('Deliveryman') && user.roles.includes('Client') && order.deliveryCompleted && !order.clientGotDelivery) ? 'in-progress' : '',
+    (!user.roles.includes('Deliveryman') && order.deliveryCompleted && !order.clientGotDelivery) ? 'in-progress' : '',
     ]"
     *ngIf="!order.cancelled && !order.unitReturned">
     <!-- *ngIf="!order.deliveryCompleted || !order.clientGotDelivery || !order.cancelled" -->
@@ -15,7 +15,7 @@
         </div>
 
         <div class="pt-3">
-            <div class="location-info" *ngIf="user.roles.includes('Deliveryman') && !order.clientGotDelivery">
+            <div class="location-info" *ngIf="user.roles.includes('Deliveryman') && order.client.username !== user.username && !order.clientGotDelivery">
                 <div class="deliver-from">
                     <p>Deliver from</p>
                     <p>City: {{order.unit.point.city}}, </p>
@@ -29,7 +29,7 @@
             </div>
         </div>
 
-        <div class="pt-3" *ngIf="user.roles.includes('Client') && !user.roles.includes('Deliveryman') && !order.inUsage">
+        <div class="pt-3" *ngIf="(!user.roles.includes('Deliveryman') || order.client.username === user.username) && !order.inUsage">
             <div>
                 <div class="location-info"  *ngIf="order.deliveryLocation !== null">
                     <div class="deliver-from">
@@ -58,12 +58,12 @@
         </div>
 
         <div *ngIf="!order.clientGotDelivery">
-            <div class="date-info pt-3" *ngIf="user.roles.includes('Client') && !user.roles.includes('Deliveryman') && order.deliveryLocation !== null">
+            <div class="date-info pt-3" *ngIf="!user.roles.includes('Deliveryman') && order.deliveryLocation !== null">
                 <p>Delivery date: {{order.deliveryDate | date: "dd MMMM YYYY"}}</p>
                 <p style="color: red" *ngIf="order.deliveryInProcess && !order.deliveryCompleted">Delivery in process</p>
                 <p style="color: red" *ngIf="order.deliveryCompleted && !order.clientGotDelivery">Deliveryman delivered unit to you, confirm delivery</p>
             </div>
-            <div class="date-info pt-3" *ngIf="user.roles.includes('Client') && !user.roles.includes('Deliveryman') && order.deliveryLocation === null">
+            <div class="date-info pt-3" *ngIf="!user.roles.includes('Deliveryman') && order.deliveryLocation === null">
                 <p>You can pick this unit up at: {{order.deliveryDate | date: "dd MMMM YYYY"}}</p>
             </div>
         </div>
@@ -74,7 +74,7 @@
     </div>
 
 
-    <div *ngIf="user.roles.includes('Deliveryman')">
+    <div *ngIf="user.roles.includes('Deliveryman') && order.client.username !== user.username">
         <div *ngIf="order.deliveryMan?.username === null">
             <button (click)="acceptOrder()" class="btn">Accept</button>
         </div>
@@ -94,7 +94,7 @@
 
 
 
-    <div class="client-control-selfpick" style="display: flex; justify-content: space-between;" *ngIf="user.roles.includes('Client') && !user.roles.includes('Deliveryman') && !order.clientGotDelivery">
+    <div class="client-control-selfpick" style="display: flex; justify-content: space-between;" *ngIf="!user.roles.includes('Deliveryman') && !order.clientGotDelivery">
         <div class="client-order-controls controls full-width">
             <button *ngIf="order.deliveryMan === null" class="btn" (click)="selfpickOrder()">Pick it up myself</button>
             <button *ngIf="!order.deliveryCompleted" class="btn" [disabled]="order.deliveryInProcess" (click)="cancelOrder()">Cancel order</button>
@@ -123,7 +123,8 @@
             <mat-label>How you will return it</mat-label>
             <mat-select [[(value)]]="selectedReturnWay">
                 <mat-option value="Returnbymyself" (click)="selectSelfReturn()">By myself</mat-option>
-                <mat-option value="Returnviadeliveryman" (click)="selectDeliveryReturn()">Via deliveryman</mat-option>
+                <mat-option *ngIf="!user.roles.includes('Deliveryman')" value="Returnviadeliveryman" (click)="selectDeliveryReturn()">Via deliveryman</mat-option>
+                <mat-option *ngIf="user.roles.includes('Deliveryman')" disabled value="Returnviadeliveryman" (click)="selectDeliveryReturn()">Via deliveryman</mat-option>
             </mat-select>
         </mat-form-field>
 
@@ -146,7 +147,7 @@
         </button>
     </div>
 
-    <div *ngIf="(!user.roles.includes('Deliveryman') && user.roles.includes('Client')) && (order.returnDeliveryman !== null || order.returnFromLocation !== null || order.returnPoint !== null) && order.inUsage">
+    <div *ngIf="(!user.roles.includes('Deliveryman')) && (order.returnDeliveryman !== null || order.returnFromLocation !== null || order.returnPoint !== null) && order.inUsage">
         <div *ngIf="order.returnDeliveryman !== null && order.returnDeliveryman.username === user.username">
             <div>
                 <p>Get this unit to {{order.returnPoint.address}} at delivery date</p>
@@ -205,6 +206,6 @@
 
 </div>
 
-<div class="py-3" style="display: flex; justify-content: center;" *ngIf="orderFromPage && order.cancelled && order.client.username === user.username && user.roles.includes('Client')">
+<div class="py-3" style="display: flex; justify-content: center;" *ngIf="orderFromPage && order.cancelled && order.client.username === user.username">
     <p>Order was cancelled</p>
 </div>

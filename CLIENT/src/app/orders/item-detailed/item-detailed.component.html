@@ -28,7 +28,8 @@
                     <mat-label>How you will get it</mat-label>
                     <mat-select [(value)]="selectedDeliveryWay">
                         <mat-option value="'Seflpick'" (click)="selectSelfick()">Selfpick</mat-option>
-                        <mat-option value="'Delivery'" (click)="selectDelivery()">Delivery</mat-option>
+                        <mat-option *ngIf="user.roles.includes('Client') && !user.roles.includes('Deliveryman')" value="'Delivery'" (click)="selectDelivery()">Delivery</mat-option>
+                        <mat-option *ngIf="user.roles.includes('Deliveryman')" disabled value="'Delivery'" (click)="selectDelivery()">Delivery</mat-option>
                     </mat-select>
                 </mat-form-field>
             </div>

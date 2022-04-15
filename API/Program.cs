@@ -24,28 +24,21 @@ var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-<<<<<<< HEAD
-builder.Services.AddCors(options => {
-    options.AddPolicy(name: "_myAllowSpecificOrigins", builder => {
-        builder
-        .AllowAnyHeader()
-        .WithOrigins("https://localhost:4200")
-        .AllowAnyMethod()
-        .AllowCredentials();
-=======
-if (env == "Docker") {
+if (env == "Docker") 
+{
     builder.Services.AddCors(x => x.AddPolicy("Any", builder => { builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); }));
     builder.Services.AddSwaggerGen(c =>
     {
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "RentShop.Api", Version = "v1" });
->>>>>>> 9e0290001d61a3c00d2e70407f04f8b621357f8a
     });
-} else {
+} 
+else 
+{
     builder.Services.AddCors(options => {
         options.AddPolicy(name: "_myAllowSpecificOrigins", builder => {
             builder
             .AllowAnyHeader()
-            .WithOrigins("http://localhost:4200")
+            .WithOrigins("https://localhost:4200")
             .AllowAnyMethod()
             .AllowCredentials();
         });
