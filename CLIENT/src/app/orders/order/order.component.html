@@ -93,8 +93,13 @@
 
 
 
+    <div class="pb-3" *ngIf="!order.deliveryCompleted && order.client.username === user.username">
+        <strong>Confirm receive id: {{order.id}}</strong>
+    </div>
 
-    <div class="client-control-selfpick" style="display: flex; justify-content: space-between;" *ngIf="!user.roles.includes('Deliveryman') && !order.clientGotDelivery">
+
+
+    <div class="client-control-selfpick" *ngIf="!user.roles.includes('Deliveryman') && !order.clientGotDelivery">
         <div class="client-order-controls controls full-width">
             <button *ngIf="order.deliveryMan === null" class="btn" (click)="selfpickOrder()">Pick it up myself</button>
             <button *ngIf="!order.deliveryCompleted" class="btn" [disabled]="order.deliveryInProcess" (click)="cancelOrder()">Cancel order</button>
@@ -109,12 +114,10 @@
         </div>
 
         <div class="client-selfpick-order-controls controls full-width" *ngIf="order.deliveryMan !== null && order.deliveryMan.username === user.username">
-            <button class="btn" (click)="receivedOrder()">Received order</button>
+            <button class="btn" [disabled]="!order.deliveryCompleted" (click)="receivedOrder()">Received order</button>
             <!-- <button class="btn" *ngIf="order.clientGotDelivery">How i will return unit</button> -->
         </div>
     </div>
-
-    
 
 
 

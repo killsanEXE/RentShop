@@ -1,0 +1,19 @@
+<div class="container">
+    <div>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Confirm the receive of unit</h4>
+            <button type="button" class="btn btn-danger" (click)="modal.close()" aria-label="Close">
+                Close
+            </button>
+        </div>
+    </div>
+    <div class="modal-body">
+        <div>
+            <mat-form-field>
+                <mat-label>Enter order id</mat-label>
+                <input matInput type="text" name="orderId" [(ngModel)]="orderId">
+            </mat-form-field>
+            <button class="btn" (click)="confirm()" [disabled]="orderId.trim() === ''">Confirm</button>
+        </div>
+    </div>
+</div>

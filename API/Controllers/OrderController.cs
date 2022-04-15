@@ -335,5 +335,22 @@ namespace API.Controllers
             if(await _context.SaveChangesAsync() > 0) return Ok(await query.ProjectTo<OrderDTO>(_mapper.ConfigurationProvider).AsNoTracking().FirstOrDefaultAsync());
             return BadRequest("Failed to confirm return");
         }
+
+        [Authorize(Roles = "Deliveryman")]
+        [HttpPut("confirm-receive/{orderId:int}")]
+        public async Task<ActionResult<OrderDTO>> ConfirmReceive(int orderId)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(f => f.UserName == User.GetUsername());
+            var query = _context.Orders.Include(f => f.DeliveryMan).Where(f => f.Id == orderId).AsQueryable();
+            var order = await query.SingleOrDefaultAsync();
+            if(order == null || user == null) return NotFound();
+
+            if(order.ClientGotDelivery || order.UnitReturned || order.Cancelled || order.DeliveryMan == null || order.DeliveryCompleted) return BadRequest("You cannot confirm the receive of this order");
+
+            order.DeliveryCompleted = true;
+
+            if(await _context.SaveChangesAsync() > 0) return Ok(await query.ProjectTo<OrderDTO>(_mapper.ConfigurationProvider).AsNoTracking().FirstOrDefaultAsync());
+            return BadRequest("Failed to confirm return");
+        }
     }
 }

@@ -62,6 +62,8 @@ import { DeliverymanMainComponent } from './deliveryman/deliveryman-main/deliver
 import { AvailableOrdersComponent } from './deliveryman/available-orders/available-orders.component';
 import { TakeOrdersComponent } from './deliveryman/take-orders/take-orders.component';
 import { MessageComponent } from './message/message.component';
+import { ReceiveOrderConfirmComponent } from './orders/receive-order-confirm/receive-order-confirm.component';
+import { ReturnOrderConfirmComponent } from './orders/return-order-confirm/return-order-confirm.component';
 
 @Injectable()
 export class MyHammerConfig extends HammerGestureConfig  {
@@ -108,6 +110,8 @@ export class MyHammerConfig extends HammerGestureConfig  {
     AvailableOrdersComponent,
     TakeOrdersComponent,
     MessageComponent,
+    ReceiveOrderConfirmComponent,
+    ReturnOrderConfirmComponent,
   ],
   imports: [
     BrowserModule,

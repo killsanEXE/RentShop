@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { take } from 'rxjs/operators';
 import { Order } from 'src/app/models/order';
 import { User } from 'src/app/models/user';
+import { ReceiveOrderConfirmComponent } from 'src/app/orders/receive-order-confirm/receive-order-confirm.component';
+import { ReturnOrderConfirmComponent } from 'src/app/orders/return-order-confirm/return-order-confirm.component';
 import { AccountService } from 'src/app/services/account.service';
 import { OrderService } from 'src/app/services/order.service';
 
@@ -18,7 +21,8 @@ export class DeliverymanMainComponent implements OnInit {
   user: User;
   orderId: string = "";
 
-  constructor(private orderService: OrderService, private accountServcie: AccountService, private toastr: ToastrService) {
+  constructor(private orderService: OrderService, private accountServcie: AccountService, 
+    private toastr: ToastrService, private modalService: NgbModal) {
     this.accountServcie.currentUser$.pipe(take(1)).subscribe(user => this.user = user);
   }
   ngOnInit(): void {
@@ -27,13 +31,21 @@ export class DeliverymanMainComponent implements OnInit {
   }
 
   confirmReturn(){
-    this.orderService.confirmReturn(this.orderId.trim()).subscribe(order => {
-      if(order.unitReturned && order.unit.isAvailable){
-        this.toastr.success("Order was confirmed");
-      }else{
-        this.toastr.error("Some error i guess idk?");
-      }
+    const modalRef = this.modalService.open(ReturnOrderConfirmComponent, {
+      size: "lg",
     })
+
+    modalRef.componentInstance.toastr = this.toastr;
+    modalRef.componentInstance.orderService = this.orderService;
+  }
+
+  confirmReceive(){
+    const modalRef = this.modalService.open(ReceiveOrderConfirmComponent, {
+      size: "lg",
+    })
+
+    modalRef.componentInstance.orderService = this.orderService;
+    modalRef.componentInstance.toastr = this.toastr;
   }
 
 }

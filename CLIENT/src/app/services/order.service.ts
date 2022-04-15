@@ -90,4 +90,10 @@ export class OrderService {
     }));
   }
 
+  confirmReceive(id: string){
+    return this.http.put<Order>(this.baseUrl + `order/confirm-receive/${id}`, {}).pipe(map((order: Order) => {
+      return order;
+    }));
+  }
+
 }
