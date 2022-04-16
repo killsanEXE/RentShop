@@ -115,7 +115,8 @@ namespace API.Controllers
             if(unit == null || client == null || !unit.IsAvailable || unit.Disabled) return NotFound();
 
             AppUser? deliveryman = null;
-            var deliveryLocation = client?.DeliveryLocations!.FirstOrDefault();
+
+            var deliveryLocation = client!.DeliveryLocations!.FirstOrDefault();
             if(deliveryLocation == null && dto.DeliveryLocation == null)
             {
                 deliveryman = client;
@@ -231,6 +232,7 @@ namespace API.Controllers
 
             if(!order.DeliveryCompleted && order.DeliveryMan.UserName != user.UserName) return BadRequest("Deliveryman did not confirm delivery");
 
+            if(User.IsInRole("Deliveryman")) order.ReturnDeliveryman = user;
             order.ClientGotDelivery = true;
             order.InUsage = true;
 
@@ -287,13 +289,17 @@ namespace API.Controllers
         public async Task<ActionResult<OrderDTO>> ReturnOrder(ReturnUnitDTO dto)
         {
             var user = await _context.Users.Include(f => f.DeliveryLocations).SingleOrDefaultAsync(f => f.UserName == User.GetUsername());
-            var query = _context.Orders.Where(f => f.Id == dto.Id && f.InUsage).AsQueryable();
+            var query = _context.Orders.Include(f => f.Client).Include(f => f.ReturnDeliveryman).Where(f => f.Id == dto.Id && f.InUsage).AsQueryable();
             var order = await query.SingleOrDefaultAsync();
             if(order == null || user == null) return NotFound();
 
             if(User.IsInRole("Deliveryman"))
             {
                 if(order.ReturnPoint != null || dto.ReturnPoint == null) return BadRequest("You crazy man, what are you doing?");
+                // if(order.ReturnDeliveryman == null)
+                // {
+                //     if(order.Client!.UserName == user.UserName) order.ReturnDeliveryman = user;
+                // }
                 order.ReturnPoint = await _context.Points.SingleOrDefaultAsync(f => f.Id == Convert.ToInt32(dto.ReturnPoint));
             }
             else
@@ -341,12 +347,18 @@ namespace API.Controllers
         public async Task<ActionResult<OrderDTO>> ConfirmReceive(int orderId)
         {
             var user = await _context.Users.SingleOrDefaultAsync(f => f.UserName == User.GetUsername());
-            var query = _context.Orders.Include(f => f.DeliveryMan).Where(f => f.Id == orderId).AsQueryable();
+            var query = _context.Orders.Include(f => f.DeliveryMan).Include(f => f.Client).Where(f => f.Id == orderId).AsQueryable();
             var order = await query.SingleOrDefaultAsync();
             if(order == null || user == null) return NotFound();
 
-            if(order.ClientGotDelivery || order.UnitReturned || order.Cancelled || order.DeliveryMan == null || order.DeliveryCompleted) return BadRequest("You cannot confirm the receive of this order");
+            if(order.ClientGotDelivery 
+            || order.UnitReturned 
+            || order.Cancelled 
+            || order.DeliveryMan == null 
+            || order.DeliveryCompleted 
+            || order.DeliveryMan.UserName != order.Client!.UserName) return BadRequest("You cannot confirm the receive of this order");
 
+            // if(order.Client!.UserName == user.UserName) order.ReturnDeliveryman = user;
             order.DeliveryCompleted = true;
 
             if(await _context.SaveChangesAsync() > 0) return Ok(await query.ProjectTo<OrderDTO>(_mapper.ConfigurationProvider).AsNoTracking().FirstOrDefaultAsync());

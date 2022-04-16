@@ -21,6 +21,7 @@ export class OrderComponent implements OnInit {
   @Input() orderFromPage: boolean = false;
 
   selectedReturnWay: string;
+  showReturnOptions = true;
   showPointsToReturn = false;
   showLocationsReturn = false;
   selectedReturnPoint: Point;
@@ -40,6 +41,7 @@ export class OrderComponent implements OnInit {
       if(this.points.length <= 0){ this.pointService.loadPoints().subscribe(points => {
         this.points = points.filter(f => f.country === this.order.unit.point.country);
       })}
+      this.showReturnOptions = false;
       this.selectSelfReturn();
     }
 
