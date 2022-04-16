@@ -21,7 +21,7 @@
 
         <div *ngIf="createdOrder === null || createdOrder === undefined" class="row order-row px-4">
             <div *ngIf="!ordering">
-                <button [disabled]="allUnits.length <= 0" (click)="ordering = !ordering" class="btn order-button">Order</button>
+                <button [disabled]="allUnits.length <= 0 || user.roles.includes('Admin')" (click)="ordering = !ordering" class="btn order-button">Order</button>
             </div>
             <div *ngIf="ordering" style="width: 100%;">
                 <mat-form-field appearance="fill" class="select-form">

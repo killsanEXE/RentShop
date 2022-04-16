@@ -104,6 +104,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<OrderDTO>> CreateOrder(CreateOrderDTO dto)
         {
+            if(User.IsInRole("Admin")) return BadRequest("Create another account to order something");
             var unit = await _context.Units
                 .Include(f => f.ItemUnitPoint)
                 .ThenInclude(f => f!.Point)
