@@ -1,0 +1,103 @@
+<div class="p-3">
+
+    <div class="admin-order-control pb-2">
+      <mat-checkbox 
+        type="checkbox" 
+        class="item-checkbox"
+        id="show-all-checkbox"
+        [checked]="userParams.showAll"
+        (change)="showAll()"
+        #mainCheckbox
+      >Show all orders</mat-checkbox>  
+      <!-- <label for="show-all-checkbox">Show all orders</label> -->
+    </div>
+
+    <div class="row table-div">
+        <table class="table" *ngIf="orders.length > 0">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Order id</th>
+                <th scope="col">Order time span</th>
+                <th scope="col">Client</th>
+                <th scope="col">Delivery</th>
+                <th scope="col">Return</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let order of orders">
+                <td scope="row">{{order.id}}</td>
+                <td>{{order.deliveryDate | date: "dd MMMM YYYY"}} - {{order.returnDate | date: "dd MMMM YYYY"}}</td>
+                <td><a class="link" (click)="message(order.client)">Message</a></td>
+
+                <td *ngIf="order.deliveryMan !== null && order.deliveryMan.username !== order.client.username && !order.cancelled">
+                  Via <a class="link" (click)="message(order.deliveryMan)">deliveryman</a>
+                </td>
+                <td *ngIf="order.deliveryLocation === null && order.deliveryMan.username === order.client.username && !order.cancelled">
+                  Selfpick
+                </td>
+                <td *ngIf="order.deliveryLocation !== null && order.deliveryMan === null && !order.cancelled">
+                  Via deliveryman (searching)
+                </td>
+
+                <td *ngIf="order.cancelled">
+                  Cancelled
+                </td>
+
+                <td *ngIf="order.returnPoint === null && order.returnFromLocation === null && !order.cancelled">
+                  Client did not choose yet
+                </td>
+                <td *ngIf="order.returnPoint !== null && order.returnDeliveryman.username === order.client.username && !order.cancelled">
+                  Selfreturn
+                </td>
+                <td *ngIf="order.returnFromLocation !== null && order.returnDeliveryman !== null && !order.cancelled">
+                  Via <a class="link" (click)="message(order.returnDeliveryman)">deliveryman</a>
+                </td>
+                <td *ngIf="order.returnFromLocation !== null && order.returnDeliveryman === null && !order.cancelled">
+                  Via deliveryman (searching)
+                </td>
+
+                <td *ngIf="order.cancelled">
+                  Cancelled
+                </td>
+
+
+                <td *ngIf="order.deliveryMan !== null && order.deliveryMan.username === order.client.username && !order.deliveryCompleted && !order.cancelled">
+                  Waiting for client to pick unit up
+                </td>
+                <td *ngIf="!order.deliveryInProcess && order.deliveryMan !== null && order.deliveryMan.username !== order.client.username && !order.cancelled">
+                  Deliveryman did not start delivery yet
+                </td>
+                <td *ngIf="order.deliveryInProcess && !order.deliveryCompleted && !order.cancelled">
+                  Delivery in process
+                </td>
+
+                <td *ngIf="order.deliveryCompleted && !order.clientGotDelivery && !order.cancelled">
+                  Waiting for client to receive a unit
+                </td>
+                <td *ngIf="order.inUsage && !order.unitReturned && !order.cancelled">
+                  Unit is in usage
+                </td>
+
+                <td *ngIf="order.unitReturned && !order.cancelled">
+                  Unit was returned
+                </td>
+
+                <td *ngIf="order.cancelled">
+                  Cancelled
+                </td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+    <mat-paginator #paginator class="home-paginator"
+        (page)="pageEvent = pageChanged($event)"
+        [length]="pagination.totalItems"
+        [pageSize]="pagination.itemsPerPage"
+        [pageIndex]="pagination.currentPage-1"
+        [pageSizeOptions]="pageSizeOptions"
+        aria-label="Select page">   
+    </mat-paginator>
+</div>

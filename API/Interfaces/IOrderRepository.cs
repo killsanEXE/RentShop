@@ -11,6 +11,6 @@ namespace API.Interfaces
     public interface IOrderRepository
     {
         Task<Order> GetOrderByIdAsync(int id);
-        Task<PagedList<OrderDTO>> GetOrdersAsync(UserParams userParams);
+        Task<PagedList<OrderDTO>> GetOrdersAsync(PaginationParams paginationParamss);
     }
 }

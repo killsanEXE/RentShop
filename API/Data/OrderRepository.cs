@@ -31,12 +31,12 @@ namespace API.Data
             return order ?? null!;
         }
 
-        public async Task<PagedList<OrderDTO>> GetOrdersAsync(UserParams userParams)
+        public async Task<PagedList<OrderDTO>> GetOrdersAsync(PaginationParams paginationParams)
         {
             var query = _context.Orders.AsQueryable();
             return await PagedList<OrderDTO>.CreateAsync(
                 query.ProjectTo<OrderDTO>(_mapper.ConfigurationProvider).AsNoTracking(),
-                userParams.PageNumber, userParams.PageSize
+                paginationParams.PageNumber, paginationParams.PageSize
             );
         }
     }

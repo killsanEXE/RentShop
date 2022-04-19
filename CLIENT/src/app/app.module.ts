@@ -64,6 +64,7 @@ import { TakeOrdersComponent } from './deliveryman/take-orders/take-orders.compo
 import { MessageComponent } from './message/message.component';
 import { ReceiveOrderConfirmComponent } from './orders/receive-order-confirm/receive-order-confirm.component';
 import { ReturnOrderConfirmComponent } from './orders/return-order-confirm/return-order-confirm.component';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 @Injectable()
 export class MyHammerConfig extends HammerGestureConfig  {
@@ -111,7 +112,7 @@ export class MyHammerConfig extends HammerGestureConfig  {
     TakeOrdersComponent,
     MessageComponent,
     ReceiveOrderConfirmComponent,
-    ReturnOrderConfirmComponent,
+    ReturnOrderConfirmComponent
   ],
   imports: [
     BrowserModule,
@@ -139,6 +140,7 @@ export class MyHammerConfig extends HammerGestureConfig  {
     MatFormFieldModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatCheckboxModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},

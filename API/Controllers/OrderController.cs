@@ -33,7 +33,13 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OrderDTO>>> GetAllOrders([FromQuery] UserParams userParams)
         {
-            var orders = await _unitOfWork.OrderRepository.GetOrdersAsync(userParams);
+            // var orders = await _unitOfWork.OrderRepository.GetOrdersAsync(paginationParams);
+            var query = _context.Orders.AsQueryable();
+            if(!userParams.showAll) query = query.Where(f => !f.Cancelled && !f.UnitReturned);
+            var orders = await PagedList<OrderDTO>.CreateAsync(
+                query.ProjectTo<OrderDTO>(_mapper.ConfigurationProvider).AsNoTracking(),
+                userParams.PageNumber, userParams.PageSize
+            );
             Response.AddPaginationHeader(orders.CurrentPage, orders.PageSize, orders.TotalCount, orders.TotalPages);
             return Ok(orders);
         }

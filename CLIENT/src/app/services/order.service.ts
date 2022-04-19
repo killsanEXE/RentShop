@@ -1,8 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Order } from '../models/order';
+import { getPaginatedResult, getPaginationHeaders } from '../models/paginationHelper';
+import { UserParams } from '../models/userParams';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +14,13 @@ export class OrderService {
 
   baseUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) { }
+  userParams: UserParams;
+  orderCache = new Map();
+  allOrders: Order[] = [];
+
+  constructor(private http: HttpClient) {
+    this.userParams = new UserParams();
+  }
 
   loadOrders(){
     return this.http.get<Order[]>(this.baseUrl + "order/my-orders").pipe(map((orders: Order[]) => {
@@ -91,9 +100,27 @@ export class OrderService {
   }
 
   confirmReceive(id: string){
-    return this.http.put<Order>(this.baseUrl + `order/confirm-receive/${id}`, {}).pipe(map((order: Order) => {
-      return order;
+    return this.http.put<Order>(this.baseUrl + `order/confirm-receive/${id}`, {}).pipe(map((order: Order) => { return order; }));
+  }
+
+  getUserParams(){ return this.userParams; }
+  setUserParams(params: UserParams){ this.userParams = params; }
+
+  loadAllOrders(userParams: UserParams, old: boolean = false){
+    var response = this.orderCache.get(Object.values(userParams).join("-"));
+    if(response && !old) return of(response);
+
+    let params = getPaginationHeaders(userParams.pageNumber, userParams.PageSize);
+
+    params = params.append("showAll", userParams.showAll);
+
+    return getPaginatedResult<Order[]>(this.baseUrl + "order", params, this.http).pipe(map(response => {
+      this.orderCache.set(Object.values(userParams).join("-"), response);
+      return response;  
     }));
+    // return this.http.get<Order[]>(this.baseUrl + "order").pipe(map((orders: Order[]) => {
+    //   return orders;
+    // }));
   }
 
 }

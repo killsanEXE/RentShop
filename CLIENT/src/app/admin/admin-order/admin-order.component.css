@@ -1,0 +1,28 @@
+.admin-order-control{
+    display: flex;
+    align-items: center;
+}
+
+.admin-order-control input{
+    transform: scale(1.2);
+}
+
+.link{
+    cursor: pointer;
+    color: blue;
+}
+
+.home-paginator{
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    padding-right: 2vh;
+    padding-bottom: 2vh;
+    background: transparent;
+}
+
+.table-div{
+    max-height: 500px;
+    overflow-y: scroll;
+    border: 0;
+}

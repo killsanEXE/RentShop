@@ -39,7 +39,8 @@ namespace API.Helpers
             CreateMap<Photo, PhotoDTO>();
 
             CreateMap<Unit, UnitDTO>()
-                .ForMember(f => f.Point, opt => opt.MapFrom(s => s.ItemUnitPoint!.Point));
+                .ForMember(f => f.Point, opt => opt.MapFrom(s => s.ItemUnitPoint!.Point))
+                .ForMember(f => f.ItemId, opt => opt.MapFrom(s => s.ItemUnitPoint!.Item!.Id));
 
             CreateMap<AppUser, DeliverymanDTO>().ForMember(f => f.Age, opt => opt.MapFrom(s => s.DateOfBirth.CalculateAge()));
             

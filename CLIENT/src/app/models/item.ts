@@ -12,6 +12,7 @@ export interface Item {
   
   export interface Unit {
     id: number
+    itemId: number
     pointId: number
     description: string
     whenWillBeAvaliable: Date
