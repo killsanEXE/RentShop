@@ -10,6 +10,12 @@
                             <p>Country: {{user.location.country}}</p>
                             <p>Age: {{user.age}}</p>
                         </div>
+                        <div class="control">
+                            <buttton class="btn deny-button" (click)="removeDeliveryman(user)">Remove</buttton>
+                        </div>
+                    </div>
+                    <div *ngIf="deliverymans.length <= 0" style="display: flex; justify-content: center;">
+                        <p class="pt-2">No deliverymans yet </p>
                     </div>
                 </div>
             </div>

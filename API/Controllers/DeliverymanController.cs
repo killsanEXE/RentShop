@@ -77,6 +77,28 @@ namespace API.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("{username}")]
+        public async Task<ActionResult> RemoveDeliveryman(string username)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(f => f.UserName == username);
+            if(user == null) return NotFound();
+
+            var orders = await _context.Orders.Include(f => f.DeliveryMan)
+                .Include(f => f.ReturnDeliveryman)
+                .Where(f => (
+                    (f.DeliveryMan != null && f.DeliveryMan.UserName == user.UserName && !f.ClientGotDelivery) || 
+                    (f.ReturnDeliveryman != null && f.ReturnDeliveryman.UserName == user.UserName)) 
+                && (!f.Cancelled && !f.UnitReturned))
+                .ToListAsync();
+            
+            if(orders.Count > 0) return BadRequest($"{user.UserName} did not finsh {orders.Count} order(s)");
+
+            await _userManager.RemoveFromRoleAsync(user, "Deliveryman");
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
         [HttpPost("join")]
         public async Task<ActionResult<UserDTO>> CreateBecomeDeliverymanRequest(JoinDeliverymanDTO dto)
         {

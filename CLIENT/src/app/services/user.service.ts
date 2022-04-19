@@ -53,4 +53,8 @@ export class UserService {
     return this.http.put(this.baseUrl + `deliveryman/requests/${username}`, {});
   }
 
+  removeDeliveryman(username: string){
+    return this.http.delete(this.baseUrl + `deliveryman/${username}`);
+  }
+
 }

@@ -40,4 +40,10 @@ export class AdminUserComponent implements OnInit {
     })
   }
 
+  removeDeliveryman(user: User){
+    this.userService.removeDeliveryman(user.username).subscribe(() => {
+      this.deliverymans.splice((this.deliverymans.indexOf(user)), 1);
+    })
+  }
+
 }
