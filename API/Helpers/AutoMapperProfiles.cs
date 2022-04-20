@@ -48,6 +48,13 @@ namespace API.Helpers
 
             CreateMap<Message, MessageDTO>();
             CreateMap<MessageDTO, Message>();
+
+            CreateMap<Item, DatasetItemDTO>();
+
+            CreateMap<DatasetItemDTO, Item>();
+            CreateMap<Photo, DatasetPhotoDTO>();
+            CreateMap<DatasetPhotoDTO, Photo>();
+
         }
     }
 }

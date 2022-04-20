@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { DatasetItem, DatasetItems } from '../models/dataset';
 import { Item, Unit } from '../models/item';
 import { getPaginatedResult, getPaginationHeaders } from '../models/paginationHelper';
 import { UserParams } from '../models/userParams';
@@ -18,17 +19,9 @@ export class ItemService {
   itemCache = new Map();
   userParams: UserParams;
 
-  constructor(private http: HttpClient) {
-    this.userParams = new UserParams();
-  }
-
-  getUserParams(){
-    return this.userParams;
-  }
-
-  setUserParams(params: UserParams){
-    this.userParams = params;
-  }
+  constructor(private http: HttpClient) { this.userParams = new UserParams(); }
+  getUserParams(){ return this.userParams; }
+  setUserParams(params: UserParams){ this.userParams = params; }
 
   loadItems(userParams: UserParams, old = false){
     var response = this.itemCache.get(Object.values(userParams).join("-"));
@@ -64,13 +57,8 @@ export class ItemService {
   // deleteItem(item: Item){
   //   return this.http.delete(this.baseUrl + `item/${item.id}`);
   // }
-  disableItem(item: Item){
-    return this.http.put(this.baseUrl + `item/disable/${item.id}`, {});
-  }
-
-  enableItem(item: Item){
-    return this.http.put(this.baseUrl + `item/enable/${item.id}`, {});
-  }
+  disableItem(item: Item){ return this.http.put(this.baseUrl + `item/disable/${item.id}`, {}); }
+  enableItem(item: Item){ return this.http.put(this.baseUrl + `item/enable/${item.id}`, {}); }
 
 
   createUnit(id: number, unit: any){
@@ -86,11 +74,16 @@ export class ItemService {
     }));
   }
 
-  disableUnit(id: number){
-    return this.http.put(this.baseUrl + `unit/disable/${id}`, {});
+  disableUnit(id: number){ return this.http.put(this.baseUrl + `unit/disable/${id}`, {}); }
+  enableUnit(id: number){ return this.http.put(this.baseUrl + `unit/enable/${id}`, {}); }
+
+  importDataset(){
+    return this.http.get<DatasetItems>(this.baseUrl + "admin/dataset").pipe(map((response: DatasetItems) => {
+      return response;
+    }))
   }
 
-  enableUnit(id: number){
-    return this.http.put(this.baseUrl + `unit/enable/${id}`, {});
+  exportDataset(data){
+    return this.http.post(this.baseUrl + "admin/dataset", data);
   }
 }

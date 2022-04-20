@@ -35,4 +35,5 @@ export interface Item {
   export interface Photo {
     id: number
     url: string
+    publicId: string
   }

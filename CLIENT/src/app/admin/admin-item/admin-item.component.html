@@ -24,7 +24,7 @@
       </div>
     </div>
 
-    <div class="row">
+    <div class="row table-div">
       <table class="table" *ngIf="items.length > 0">
           <thead class="thead-dark">
             <tr>
@@ -65,6 +65,11 @@
 
       <div *ngIf="items.length <= 0">
         <p>No items yet, click on the plus icon to add one</p>
+      </div>
+
+      <div class="import-export-datasets">
+        <button class="btn" (click)="importDataset()">Import dataset</button>
+        <button class="btn" (click)="exportDataset()">Export dataset</button>
       </div>
 
       <mat-paginator #paginator class="home-paginator"

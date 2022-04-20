@@ -10,6 +10,7 @@ import { UserParams } from 'src/app/models/userParams';
 import { AccountService } from 'src/app/services/account.service';
 import { ConfirmService } from 'src/app/services/confirm.service';
 import { ItemService } from 'src/app/services/item.service';
+import { ExportDatasetComponent } from '../export-dataset/export-dataset.component';
 import { CreateItemComponent } from '../items/create-item/create-item.component';
 import { UploadItemPhotoComponent } from '../items/upload-item-photo/upload-item-photo.component';
 import { UploadMainPhotoComponent } from '../items/upload-main-photo/upload-main-photo.component';
@@ -157,6 +158,33 @@ export class AdminItemComponent implements OnInit {
     this.itemService.setUserParams(this.userParams);
     this.loadItems();
     return event;
+  }
+
+  exportDataset(){
+    const modalRef = this.modalService.open(ExportDatasetComponent, {
+      size: "lg",
+    })
+    modalRef.componentInstance.itemService = this.itemService;
+    modalRef.componentInstance.handler.subscribe(() => {
+      modalRef.close();
+      this.loadItems();
+    });
+  }
+    // modalRef.result.then(() => { this.loadItems() });
+
+  importDataset(){
+    this.itemService.importDataset().subscribe(response => {
+      // let jsonFile = JSON.stringify(response);
+      // this.downloadHref = this.sanitizer.bypassSecurityTrustUrl("data:text/json;charset=UTF-8," + encodeURIComponent(jsonFile));
+      let sJson = JSON.stringify(response);
+      let element = document.createElement('a');
+      element.setAttribute('href', "data:text/json;charset=UTF-8," + encodeURIComponent(sJson));
+      element.setAttribute('download', "RentShopDataset.json");
+      element.style.display = 'none';
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+    })
   }
 
 }

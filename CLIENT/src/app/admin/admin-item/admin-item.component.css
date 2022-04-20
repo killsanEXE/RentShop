@@ -43,3 +43,32 @@
 .manage-point:hover{
     color: #ff3d00;
 }
+
+.table-div{
+    max-height: 450px;
+    overflow-y: scroll;
+    border: 0;
+}
+
+.home-paginator{
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    padding-right: 2vh;
+    padding-bottom: 2vh;
+    background: transparent;
+}
+
+.import-export-datasets{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    padding-left: 5vh;
+    padding-bottom: 4vh;
+    background: transparent;
+    display: flex;
+}
+
+.import-export-datasets button{
+    margin-left: 2vh;
+}
