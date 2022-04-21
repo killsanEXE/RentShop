@@ -55,9 +55,28 @@ namespace API.Controllers
                 // };
 
                 var mappedItem = _mapper.Map<Item>(item);
-                System.Console.WriteLine(mappedItem.Name);
+                var sameNameItems = await _context.Items.Include(f => f.Photos)
+                    .Where(f => f.Name!.Trim().ToLower() == mappedItem.Name!.Trim().ToLower()).ToListAsync();
 
-                _context.Items.Add(mappedItem);
+                System.Console.WriteLine(sameNameItems.Count);
+                if(sameNameItems.Count == 1)
+                {
+                    var editedItem = sameNameItems.First();
+                    editedItem.Description = mappedItem.Description;
+                    editedItem.AgeRestriction = mappedItem.AgeRestriction;
+                    editedItem.PricePerDay = mappedItem.PricePerDay;
+
+                    foreach(var photo in mappedItem.Photos!)
+                    {
+                        if(!editedItem.Photos!.Any(f => f.PublicId == photo.PublicId))
+                        {
+                            editedItem.Photos!.Add(photo);
+                        }
+                    }
+                }
+                else{
+                    _context.Items.Add(mappedItem);
+                }
             }
             if(await _context.SaveChangesAsync() > 0) return Ok();
             return BadRequest("Failed to add item(s) to database");
