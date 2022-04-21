@@ -111,6 +111,15 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<PresenceTracker>();
+builder.Services.AddScoped<IEmailService, EmailService>(s => 
+{
+    var emailSettings = builder.Configuration.GetSection("EmailSettings");
+    return new EmailService(new EmailSettings() 
+    {
+        Email = emailSettings.GetSection("Email").Value,
+        Password = emailSettings.GetSection("Password").Value,
+    });
+});
 
 var app = builder.Build();
 

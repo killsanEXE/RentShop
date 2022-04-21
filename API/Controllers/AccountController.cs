@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using API.Data;
 using API.DTOs;
 using API.Entities;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -21,14 +22,16 @@ namespace API.Controllers
         readonly IMapper _mapper;
         readonly UserManager<AppUser> _userManager;
         readonly SignInManager<AppUser> _signInManager;
+        readonly IEmailService _emailService;
         public AccountController(ApplicationContext context, ITokenService tokenService, IMapper mapper, 
-            UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+            UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IEmailService emailService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _mapper = mapper;
             _tokenService = tokenService;
             _context = context;
+            _emailService = emailService;
         }
 
         [HttpPost("register")]
@@ -44,6 +47,8 @@ namespace API.Controllers
 
             var role = await _userManager.AddToRoleAsync(user, "Client");
             if(!role.Succeeded) return BadRequest(role.Errors);
+
+            await _emailService.SendEmail(new EmailMessage(registerDTO.Email!, "Confirm email", "Go to link"));
 
             return new UserDTO
             {
