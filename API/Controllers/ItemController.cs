@@ -200,8 +200,8 @@ namespace API.Controllers
             var photo = item.Photos!.FirstOrDefault(f => f.Id == photoId);
             if(photo == null) return NotFound();
 
-            var result = await _photoService.DeletePhotoAsync(photo.PublicId!);
-            if(result.Error != null) return BadRequest(result.Error.Message);
+            // var result = await _photoService.DeletePhotoAsync(photo.PublicId!);
+            // if(result.Error != null) return BadRequest(result.Error.Message);
             item.Photos!.Remove(photo);
             
             if(await _unitOfWork.Complete()) return Ok();
