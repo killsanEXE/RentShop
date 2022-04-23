@@ -1,8 +1,9 @@
 FROM node:alpine AS build
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm install
+COPY package.json ./
 RUN npm install -g @angular/cli 
+RUN npm install --save --legacy-peer-deps @ng-bootstrap/ng-bootstrap
+
 COPY . .
 RUN npm run build-docker
 
