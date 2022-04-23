@@ -17,11 +17,7 @@ export class AccountService {
   constructor(private http: HttpClient) { }
 
   register(model: any){
-    return this.http.post<User>(this.baseUrl + "account/register", model).pipe(map((user: User) => {
-      if(user){
-        this.setCurrentUser(user);
-      }
-    }));
+    return this.http.post(this.baseUrl + "account/register", model);
   }
   
   login(model: any){
@@ -70,6 +66,18 @@ export class AccountService {
     return this.http.post<User>(this.baseUrl + "deliveryman/join", joinRequest).pipe(map((user) => {
       return user;
     }));
+  }
+
+  forgotPassword(email: string){
+    return this.http.post(this.baseUrl + `account/forgot-password/${email}`, {});
+  }
+
+  resetPassword(form: any){
+    return this.http.post(this.baseUrl + "account/reset-password", form);
+  }
+
+  resendEmailConfirmation(email: string){
+    return this.http.post(this.baseUrl + `account/resend-email-confirmation/${email}`, {});
   }
 
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { AccountService } from 'src/app/services/account.service';
 
 @Component({
@@ -13,8 +14,9 @@ export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
   validationErrors: string[] = [];
   maxDate: Date;
+  registrationComplete = false;
 
-  constructor(private fb: FormBuilder, private accountService: AccountService, private router: Router) { }
+  constructor(private fb: FormBuilder, private accountService: AccountService, private toastr: ToastrService) { }
 
   ngOnInit(): void {
     this.initializeForm();
@@ -44,7 +46,8 @@ export class RegisterComponent implements OnInit {
 
   register(){
     this.accountService.register(this.registerForm.value).subscribe(() => {
-      this.router.navigateByUrl("/");
+      this.registrationComplete = true;
+      this.toastr.info("Please confirm your email");
     }, error => console.log(error));
   }
 }

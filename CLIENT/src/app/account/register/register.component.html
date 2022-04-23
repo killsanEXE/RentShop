@@ -1,5 +1,5 @@
 <div class="container text-center mt-4">
-    <form [formGroup]="registerForm" (ngSubmit)="register()" autocomplete="off">
+    <form [formGroup]="registerForm" (ngSubmit)="register()" autocomplete="off" *ngIf="!registrationComplete">
 
         <app-text-input 
             [formControl]="registerForm.controls['username']"
@@ -37,4 +37,8 @@
 
         <button class="btn btn-secondary" [disabled]="!registerForm.valid" type="submit">Register</button>
     </form>
+
+    <div *ngIf="registrationComplete">
+        <p>Please, confirm your email</p>
+    </div>
 </div>

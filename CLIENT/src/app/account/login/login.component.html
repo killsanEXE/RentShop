@@ -1,16 +1,21 @@
 <div class="container text-center mt-4">
     <form (submit)="login()" class="" autocomplete="off">
-        <div class="my-4 form-group">
+        <div class="my-2 form-group">
             <mat-form-field class="full-width" appearance="fill">
                 <mat-label>Username</mat-label>
                 <input matInput [(ngModel)]="model.username" name="username" type="text">
             </mat-form-field>
         </div>
-        <div class="my-4 form-group">
+        <div class="form-group">
             <mat-form-field class="full-width" appearance="fill">
                 <mat-label>Password</mat-label>
                 <input matInput [(ngModel)]="model.password" name="password" type="password">
             </mat-form-field>
+        </div>
+        <div class="pb-3">
+            <a class="pb-3" routerLink="/forgot-password">Forgot password</a>
+            <br>
+            <a class="pb-1" routerLink="/resend-email-confirmation">Resend email confirmation</a>
         </div>
         <button class="btn btn-secondary" 
             [disabled]="model.username?.trim() === '' || model.password?.trim() === ''" 

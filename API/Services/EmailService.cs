@@ -27,14 +27,9 @@ namespace API.Services
 
             using (var client = new SmtpClient())
             {
-
-                System.Console.WriteLine(_settings.Email);
-                System.Console.WriteLine(_settings.Password);
-
                 client.Connect("smtp.gmail.com", 465, true);
                 client.Authenticate(_settings.Email, _settings.Password);
                 client.Send(emailMessage);
-
                 await client.DisconnectAsync(true);
             }
 

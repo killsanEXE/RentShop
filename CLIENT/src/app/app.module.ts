@@ -66,6 +66,9 @@ import { ReceiveOrderConfirmComponent } from './orders/receive-order-confirm/rec
 import { ReturnOrderConfirmComponent } from './orders/return-order-confirm/return-order-confirm.component';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { ExportDatasetComponent } from './admin/export-dataset/export-dataset.component';
+import { ForgotPasswordComponent } from './account/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './account/reset-password/reset-password.component';
+import { ResendEmailConfirmationComponent } from './account/resend-email-confirmation/resend-email-confirmation.component';
 
 @Injectable()
 export class MyHammerConfig extends HammerGestureConfig  {
@@ -114,7 +117,10 @@ export class MyHammerConfig extends HammerGestureConfig  {
     MessageComponent,
     ReceiveOrderConfirmComponent,
     ReturnOrderConfirmComponent,
-    ExportDatasetComponent
+    ExportDatasetComponent,
+    ForgotPasswordComponent,
+    ResetPasswordComponent,
+    ResendEmailConfirmationComponent
   ],
   imports: [
     BrowserModule,

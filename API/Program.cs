@@ -72,12 +72,14 @@ builder.Services.AddDbContext<ApplicationContext>(options => {
 builder.Services.AddIdentityCore<AppUser>(opt => 
 {
     opt.Password.RequireNonAlphanumeric = false;
+    opt.SignIn.RequireConfirmedEmail = true;
 })
     .AddRoles<AppRole>()
     .AddRoleManager<RoleManager<AppRole>>()
     .AddSignInManager<SignInManager<AppUser>>()
     .AddRoleValidator<RoleValidator<AppRole>>()
-    .AddEntityFrameworkStores<ApplicationContext>();
+    .AddEntityFrameworkStores<ApplicationContext>()
+    .AddTokenProvider<DataProtectorTokenProvider<AppUser>>(TokenOptions.DefaultProvider);;
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => 
 {

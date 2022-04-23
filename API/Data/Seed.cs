@@ -59,7 +59,8 @@ namespace API.Data
             var admin = new AppUser
             {
                 UserName = "admin",
-                DateOfBirth = DateTime.Parse("1000-01-23")
+                DateOfBirth = DateTime.Parse("1000-01-23"),
+                EmailConfirmed = true
             };
 
             await userManager.CreateAsync(admin, "Perehod2020");

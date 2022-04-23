@@ -43,3 +43,12 @@ label:focus,
 .cdk-global-overlay-wrapper, .cdk-overlay-container {
     z-index: 3000 !important;
 }
+
+.site-button{
+    background-color: #343a40;
+    color: white;
+}
+
+.site-button:hover{
+    color: #ff3d00;
+}

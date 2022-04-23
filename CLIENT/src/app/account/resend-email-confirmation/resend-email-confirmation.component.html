@@ -1,0 +1,14 @@
+<div class="resend-confirm-main">
+    <form *ngIf="!sended">
+        <mat-form-field style="width: 100%;" appearance="fill">
+            <mat-label>Email</mat-label>
+            <input matInput [(ngModel)]="email" name="email" type="email">
+        </mat-form-field>
+        <button type="submit" class="btn site-button" [disabled]="email.trim() === ''" (click)="send()">
+            Send
+        </button>
+    </form>
+    <div *ngIf="sended" class="sended-div">
+        <p>Please, check your email</p>
+    </div>
+</div>
