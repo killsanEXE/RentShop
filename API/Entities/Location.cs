@@ -15,7 +15,5 @@ namespace API.Entities
         public string? Address { get; set; }
         public int Floor { get; set; }
         public string? Apartment { get; set; }
-        // public AppUser? AppUser { get; set; }
-        // public int AppUserId { get; set; }
     }
 }

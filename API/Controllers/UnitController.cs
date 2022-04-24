@@ -31,12 +31,10 @@ namespace API.Controllers
         public async Task<ActionResult<UnitDTO>> AddUnit(int itemId, UnitDTO unitDTO)
         {
             var item = await _context.Items
-                .Include(f => f.Units)
                 .Where(f => f.Id == itemId)
                 .AsSplitQuery()
                 .SingleOrDefaultAsync();
             var point = await _context.Points
-                .Include(f => f.Units)
                 .Where(f => f.Id == unitDTO.PointId)
                 .AsSplitQuery()
                 .SingleOrDefaultAsync();
@@ -49,8 +47,6 @@ namespace API.Controllers
             };
 
             await _context.ItemUnitPoints.AddAsync(new() { Item = item, Point = point, Unit = unit});
-            // item.Units!.Add(unit);
-            // point.Units!.Add(unit);
             if(await _context.SaveChangesAsync() > 0) return Ok(_mapper.Map<UnitDTO>(unit));
             return BadRequest("Failed to add unit");
         }
@@ -65,12 +61,6 @@ namespace API.Controllers
                 .SingleOrDefaultAsync(f => f.Id == id);
             if(unit == null) return NotFound();
 
-            for(int i = 0; i <=100; i++)
-            {
-                System.Console.WriteLine(unit.Id);
-                System.Console.WriteLine(unit.Description);
-            }
-            
             if(unit.IsAvailable && unit.ItemUnitPoint!.Point!.Id != unitDTO.PointId)
             {
                 var Point = _context.Points.FirstOrDefault(f => f.Id == unitDTO.PointId);
@@ -84,19 +74,6 @@ namespace API.Controllers
             if(await _context.SaveChangesAsync() > 0) return Ok(_mapper.Map<UnitDTO>(unit));
             return BadRequest("Failed to edit unit");
         }
-
-        // [HttpDelete("{itemId:int}-{unitId:int}")]
-        // public async Task<ActionResult> DeleteUnit(int itemId, int unitId)
-        // {
-        //     var item = await _unitOfWork.ItemRepository.GetItemByIdAsync(itemId);
-        //     var itemUnitPoint = item.Units?.FirstOrDefault(f => f.Unit?.Id == unitId);
-        //     var unit = itemUnitPoint?.Unit;
-        //     if(item == null || unit == null || itemUnitPoint == null) return NotFound();
-
-        //     _context.ItemUnitPoints.Remove(itemUnitPoint!);
-        //     if(await _context.SaveChangesAsync() > 0) return Ok();
-        //     return BadRequest("Failed to delete a unit");
-        // }
 
         [HttpPut("disable/{id:int}")]
         public async Task<ActionResult> DisableUnit(int id)

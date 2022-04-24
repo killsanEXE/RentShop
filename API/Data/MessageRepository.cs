@@ -90,23 +90,7 @@ namespace API.Data
 
         public async Task<IEnumerable<Group>> GetGruopsForUser(string username)
         {
-            // return await _context.Groups.Include(f => f.Connections).Where(f => 
-            // {
-            //     var nicknamesArray = f.Name!.Split('-');
-            //     foreach(var i in nicknamesArray)
-            //     {
-            //         System.Console.WriteLine(i);
-            //     }
-            //     if(nicknamesArray.Contains(username)) return true;
-            // }).ToListAsync();
-            // return await _context.Groups.Include(f => f.Connections).Where(f => f.Connections.Where(f => f.Username == username)).ToListAsync();
-
             return await _context.Groups.Where(f => f.Username1 == username || f.Username2 == username).OrderBy(f => f.Name).ToListAsync();
         }
-
-        // public async Task<bool> SaveAllAsync()
-        // {
-        //     return await _context.SaveChangesAsync() > 0;
-        // }
     }
 }

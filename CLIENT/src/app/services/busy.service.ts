@@ -10,22 +10,6 @@ export class BusyService {
 
   constructor() { }
 
-  // busy(){
-  //   this.busyRequestCount++;
-  //   this.spinnerService.show(undefined, {
-  //     bdColor: "rgba(255,255,255,0)",
-  //     color: "#333333",
-  //   });
-  // }
-
-  // idle(){
-  //   this.busyRequestCount--;
-  //   if(this.busyRequestCount <= 0){
-  //     this.busyRequestCount = 0;
-  //     this.spinnerService.hide();
-  //   }
-  // }
-
   busy(){
     this.isLoading.next(true);
   }

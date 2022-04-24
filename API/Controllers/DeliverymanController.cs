@@ -55,8 +55,7 @@ namespace API.Controllers
         [HttpPost("requests/{username}")]
         public async Task<ActionResult<DeliverymanDTO>> AddDeliveryMan(string username)
         {
-            // var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(username);
-            var user = await _context.Users.Include(f => f.Location).SingleOrDefaultAsync(f => f.UserName == username);
+            var user = await _context.Users.SingleOrDefaultAsync(f => f.UserName == username);
             if(user == null || !user.DeliverymanRequest) return NotFound();
 
             user.DeliverymanRequest = false;

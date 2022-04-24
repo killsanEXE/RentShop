@@ -109,7 +109,6 @@ namespace API.Controllers
         public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDTO)
         {
 
-            // loginDTO = TrimStrings<LoginDTO>(loginDTO);
             AppUser? user = await _context.Users.Include(f => f.DeliveryLocations).SingleOrDefaultAsync(f => f.UserName == loginDTO.Username!.ToLower());
             if(user == null) return Unauthorized("Invalid username");
 

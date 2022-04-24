@@ -22,10 +22,8 @@ export class PresenceService {
 
   private groupsSource = new BehaviorSubject<Group[]>([]);
   groups$ = this.groupsSource.asObservable();
-  // user: User;
 
   constructor(private toastr: ToastrService, private messageService: MessageService) {
-    // this.accountService.currentUser$.pipe(take(1)).subscribe(user => this.user = user);
   }
 
   createHubConnection(user: User){
@@ -61,7 +59,6 @@ export class PresenceService {
     })
 
     this.hubConnection.on("ReceiveGroupsMessages", (respGroups: Group[]) => {
-      console.log(respGroups);
       this.updateGroups(respGroups);
     })
   }

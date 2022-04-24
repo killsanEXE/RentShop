@@ -23,7 +23,6 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { FileUploadModule } from 'ng2-file-upload';
 import { LoadingInterceptor } from './interceptors/loading.interceptor';
 import { DateInputComponent } from './_forms/date-input/date-input.component';
-// import { BsDatepickerModule } from "ngx-bootstrap/datepicker";
 import {MatPaginatorModule} from '@angular/material/paginator';
 import { AdminPanelComponent } from './admin/admin-panel/admin-panel.component';
 import { AdminItemComponent } from './admin/admin-item/admin-item.component';
@@ -139,7 +138,6 @@ export class MyHammerConfig extends HammerGestureConfig  {
     }),
     BsDropdownModule.forRoot(),
     FileUploadModule,
-    // BsDatepickerModule.forRoot(),
     MatPaginatorModule,
     ModalModule.forRoot(),
     HammerModule,

@@ -46,7 +46,6 @@ export class AdminOrderComponent implements OnInit {
   loadOrders(){
     this.orderService.loadAllOrders(this.orderService.getUserParams()).subscribe(response => {
       this.orders = response.result;
-      // this.orders.map(f => console.log(f));
       this.pagination = response.pagination;
     })
   }

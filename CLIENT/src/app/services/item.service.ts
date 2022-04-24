@@ -54,9 +54,6 @@ export class ItemService {
     }));
   }
 
-  // deleteItem(item: Item){
-  //   return this.http.delete(this.baseUrl + `item/${item.id}`);
-  // }
   disableItem(item: Item){ return this.http.put(this.baseUrl + `item/disable/${item.id}`, {}); }
   enableItem(item: Item){ return this.http.put(this.baseUrl + `item/enable/${item.id}`, {}); }
 
@@ -68,7 +65,6 @@ export class ItemService {
   } 
 
   editUnit(id: number, unit: any){
-    console.log(unit);
     return this.http.put<Unit>(this.baseUrl + `unit/${id}`, unit).pipe(map((unit: Unit) => {
       return unit;
     }));

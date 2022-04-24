@@ -46,19 +46,10 @@ namespace API.Controllers
             if(dto.Items == null) return BadRequest("Invalid json file");
             foreach(var item in dto.Items)
             {
-                // var mappedItem = new Item() 
-                // {
-                //     Name = item.Name,
-                //     Description = item.Description,
-                //     PricePerDay = item.PricePerDay,
-                //     AgeRestriction = item.AgeRestriction
-                // };
-
                 var mappedItem = _mapper.Map<Item>(item);
                 var sameNameItems = await _context.Items.Include(f => f.Photos)
                     .Where(f => f.Name!.Trim().ToLower() == mappedItem.Name!.Trim().ToLower()).ToListAsync();
 
-                System.Console.WriteLine(sameNameItems.Count);
                 if(sameNameItems.Count == 1)
                 {
                     var editedItem = sameNameItems.First();

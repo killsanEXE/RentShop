@@ -55,31 +55,6 @@ namespace API.Controllers
             return BadRequest("Failed to update a pick up point");
         }
 
-        // [Authorize(Roles = "Admin")]
-        // [HttpDelete("{currentPoint:int}-{moveTo:int}")]
-        // public async Task<ActionResult> DeletePoint(int currentPoint, int moveTo)
-        // {
-        //     var point = await _context.Points.Include(f => f.Units).SingleOrDefaultAsync(f => f.Id == currentPoint);
-        //     var anotherPoint = await _context.Points.FindAsync(moveTo);
-        //     if(point == null || anotherPoint == null) return NotFound();
-
-        //     if(point.PhotoUrl != null && point.PublicPhotoId != null)
-        //     {
-        //         var result = await _photoService.DeletePhotoAsync(point.PublicPhotoId);
-        //         if(result.Error != null) return BadRequest(result.Error.Message);
-        //     }
-
-        //     foreach(var i in point.Units!)
-        //     {
-        //         i.Point = anotherPoint;
-        //     }
-
-        //     _context.Points.Remove(point);
-
-        //     if(await _context.SaveChangesAsync() > 0) return Ok();
-        //     return BadRequest("Failed to delete pick up point");
-        // }
-
         [Authorize(Roles = "Admin")]
         [HttpPut("disable/{id:int}")]
         public async Task<ActionResult> DisablePoint(int id)

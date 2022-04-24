@@ -37,10 +37,6 @@ export class PointService {
     }));
   }
 
-  // deletePoint(point1: number, point2: number){
-  //   return this.http.delete(this.baseUrl + `point/${point1}-${point2}`);
-  // }
-
   disablePoint(id: number){
     return this.http.put(this.baseUrl + `point/disable/${id}`, {});
   }

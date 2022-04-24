@@ -36,7 +36,6 @@ namespace API.Data
             foreach(var user in clients)
             {
                 user.UserName = user.UserName!.ToLower();
-                // user.PhotoUrl = "https://res.cloudinary.com/killsan/image/upload/v1647499317/oi55f6gb6tkzxpjxokk4.jpg";
                 user.DateOfBirth = DateTime.Parse("1985-01-23");
                 await userManager.CreateAsync(user, "Perehod2020");
                 await userManager.AddToRoleAsync(user, "Client");
@@ -49,7 +48,6 @@ namespace API.Data
                 {
                     Country = "Belarus"
                 };
-                // user.PhotoUrl = "https://res.cloudinary.com/killsan/image/upload/v1647499317/oi55f6gb6tkzxpjxokk4.jpg";
                 user.DateOfBirth = DateTime.Parse("1985-01-23");
                 await userManager.CreateAsync(user, "Perehod2020");
                 await userManager.AddToRoleAsync(user, "Client");

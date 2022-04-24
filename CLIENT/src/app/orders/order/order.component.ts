@@ -44,8 +44,6 @@ export class OrderComponent implements OnInit {
       this.showReturnOptions = false;
       this.selectSelfReturn();
     }
-
-    console.log(this.order);
   }
 
   initializeForm(){
@@ -58,7 +56,6 @@ export class OrderComponent implements OnInit {
 
   requireFromLocation(): ValidatorFn{
     return (control: AbstractControl) => {
-      // return (control?.value !== null && this.showLocationsReturn) ? null : { isRequired: true }
       if(this.showLocationsReturn){
         if(control?.value !== null){
           return null;
@@ -73,7 +70,6 @@ export class OrderComponent implements OnInit {
 
   requirePoint(): ValidatorFn{
     return (control: AbstractControl) => {
-      // return (control?.value !== null && this.showPointsToReturn) ? null : { isRequired: true }
       if(this.showPointsToReturn){
         if(control?.value !== null){
           return null;

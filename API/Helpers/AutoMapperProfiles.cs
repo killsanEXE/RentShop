@@ -17,7 +17,6 @@ namespace API.Helpers
             CreateMap<RegisterDTO, AppUser>();
             CreateMap<AppUser, ClientDTO>().ForMember(f => f.Age, opt => opt.MapFrom(s => s.DateOfBirth.CalculateAge()));
 
-            // CreateMap<Item, ItemDTO>().ForMember(f => f.PreviewPhotoUrl, opt => opt.MapFrom(s => s.Photos!.FirstOrDefault(f => f.IsPreview)!.Url));
             CreateMap<Item, ItemDTO>();
 
             CreateMap<ItemDTO, Item>();
@@ -32,7 +31,6 @@ namespace API.Helpers
             CreateMap<LocationDTO, Location>();
             CreateMap<LocationDTO, Point>();
             CreateMap<Location, LocationDTO>();
-            // CreateMap<LocationDTO, Point>().ForMember(f => f.Disabled, opt => opt.MapFrom(s => false));
 
             CreateMap<Point, PointDTO>();
 

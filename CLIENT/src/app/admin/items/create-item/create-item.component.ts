@@ -10,7 +10,6 @@ import { ConfirmService } from 'src/app/services/confirm.service';
 })
 export class CreateItemComponent implements OnInit {
 
-  // @Input() item = new EventEmitter();
   @Output() passEntry: EventEmitter<any> = new EventEmitter();
   confirmServcie: ConfirmService;
   itemForm: FormGroup;

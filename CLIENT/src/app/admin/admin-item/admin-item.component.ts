@@ -170,12 +170,9 @@ export class AdminItemComponent implements OnInit {
       this.loadItems();
     });
   }
-    // modalRef.result.then(() => { this.loadItems() });
 
   importDataset(){
     this.itemService.importDataset().subscribe(response => {
-      // let jsonFile = JSON.stringify(response);
-      // this.downloadHref = this.sanitizer.bypassSecurityTrustUrl("data:text/json;charset=UTF-8," + encodeURIComponent(jsonFile));
       let sJson = JSON.stringify(response);
       let element = document.createElement('a');
       element.setAttribute('href', "data:text/json;charset=UTF-8," + encodeURIComponent(sJson));

@@ -25,10 +25,6 @@ namespace API.Data
         public async Task<Item> GetItemByIdAsync(int Id)
         {
             return (await _context.Items
-                // .Include(f => f.Units!)
-                // .ThenInclude(f => f.Unit)
-                // .Include(f => f.Units!)
-                // .ThenInclude(f => f.Point)
                 .Include(f => f.Photos)
                 .Include(f => f.PreviewPhoto)
                 .FirstOrDefaultAsync(f => f.Id == Id))!;

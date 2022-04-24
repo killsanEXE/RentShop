@@ -17,10 +17,6 @@ var builder = WebApplication.CreateBuilder(args);
 var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
 
-// builder.Services.AddControllers()
-//     .AddJsonOptions(f => {
-//         f.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-//     });
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 

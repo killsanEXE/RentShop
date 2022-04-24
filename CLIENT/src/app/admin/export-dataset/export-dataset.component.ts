@@ -41,7 +41,6 @@ export class ExportDatasetComponent implements OnInit {
   upload(){
     if(this.datasetRequest !== null){
       this.itemService.exportDataset(this.datasetRequest).subscribe(() => {
-        // this.modal.close();
         this.handler.emit();
       })
     }

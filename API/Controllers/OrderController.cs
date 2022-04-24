@@ -33,7 +33,6 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OrderDTO>>> GetAllOrders([FromQuery] UserParams userParams)
         {
-            // var orders = await _unitOfWork.OrderRepository.GetOrdersAsync(paginationParams);
             var query = _context.Orders.AsQueryable();
             if(!userParams.showAll) query = query.Where(f => !f.Cancelled && !f.UnitReturned);
             var orders = await PagedList<OrderDTO>.CreateAsync(
@@ -84,7 +83,6 @@ namespace API.Controllers
                     .Where(f => f.Client!.Id != user.Id)
                     .Where(f => (f.DeliveryMan != null && f.DeliveryMan.Id == user.Id && !f.ClientGotDelivery) 
                     || (f.ReturnDeliveryman != null && f.ReturnDeliveryman.Id == user.Id && !f.UnitReturned))
-                    // .Where(f => f.ReturnDeliveryman != null && f.ReturnDeliveryman.Id == user.Id && !f.UnitReturned)
                     .ProjectTo<OrderDTO>(_mapper.ConfigurationProvider)
                     .ToListAsync()
             );
@@ -161,10 +159,6 @@ namespace API.Controllers
                 .Include(f => f.ReturnDeliveryman)
                 .Include(f => f.ReturnFromLocation)
                 .AsQueryable();
-            // var order = await _context.Orders
-            //     .Include(f => f.DeliveryMan)
-            //     .Where(f => f.DeliveryMan == null && !f.Cancelled)
-            //     .SingleOrDefaultAsync(f => f.Id == orderId);
 
             var order = await query.Where(f => !f.Cancelled).SingleOrDefaultAsync(f => f.Id == orderId);
 
@@ -173,7 +167,6 @@ namespace API.Controllers
             else if(order.ReturnDeliveryman == null && order.ReturnFromLocation != null) order.ReturnDeliveryman = user;
             else return BadRequest("This order is already taken");
 
-            // if(await _context.SaveChangesAsync() > 0) return Ok(_mapper.Map<OrderDTO>(order));
             if(await _context.SaveChangesAsync() > 0) return Ok(await query.Where(f => f.Id == orderId).ProjectTo<OrderDTO>(_mapper.ConfigurationProvider).AsNoTracking().FirstOrDefaultAsync());
             return BadRequest("Failed to accept order");
         }
@@ -303,10 +296,6 @@ namespace API.Controllers
             if(User.IsInRole("Deliveryman"))
             {
                 if(order.ReturnPoint != null || dto.ReturnPoint == null) return BadRequest("You crazy man, what are you doing?");
-                // if(order.ReturnDeliveryman == null)
-                // {
-                //     if(order.Client!.UserName == user.UserName) order.ReturnDeliveryman = user;
-                // }
                 order.ReturnPoint = await _context.Points.SingleOrDefaultAsync(f => f.Id == Convert.ToInt32(dto.ReturnPoint));
             }
             else
@@ -365,7 +354,6 @@ namespace API.Controllers
             || order.DeliveryCompleted 
             || order.DeliveryMan.UserName != order.Client!.UserName) return BadRequest("You cannot confirm the receive of this order");
 
-            // if(order.Client!.UserName == user.UserName) order.ReturnDeliveryman = user;
             order.DeliveryCompleted = true;
 
             if(await _context.SaveChangesAsync() > 0) return Ok(await query.ProjectTo<OrderDTO>(_mapper.ConfigurationProvider).AsNoTracking().FirstOrDefaultAsync());

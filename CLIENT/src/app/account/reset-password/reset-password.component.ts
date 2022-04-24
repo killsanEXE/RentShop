@@ -47,9 +47,7 @@ export class ResetPasswordComponent implements OnInit {
   }
 
   reset(){
-    // this.form.controls["token"].setValue(this.token);
     this.accountService.resetPassword(this.form.value).subscribe(() => this.router.navigateByUrl("/regandlog"))
-    // console.log(this.form.value);
   }
 
 }

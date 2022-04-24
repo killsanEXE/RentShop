@@ -32,23 +32,19 @@ export class NavComponent implements OnInit {
 
   showNavMenu(){
     const menuBtn = document.querySelector(".menu-icon span");
-    // const searchBtn = document.querySelector(".search-icon");
     const cancelBtn = document.querySelector(".cancel-icon");
     const items = document.querySelector(".nav-items");
     items.classList.add("active");
     menuBtn.classList.add("hide");
-    // searchBtn.classList.add("hide");
     cancelBtn.classList.add("show");
   }
   
   hideNavMenu(){
     const menuBtn = document.querySelector(".menu-icon span");
-    // const searchBtn = document.querySelector(".search-icon");
     const cancelBtn = document.querySelector(".cancel-icon");
     const items = document.querySelector(".nav-items");
     items.classList.remove("active");
     menuBtn.classList.remove("hide");
-    // searchBtn.classList.add("hide");
     cancelBtn.classList.remove("show");
   }
 

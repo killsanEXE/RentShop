@@ -19,9 +19,6 @@ export class ItemDetailedComponent implements OnInit {
   item: Item;
   orderForm: FormGroup;
 
-  // gallaryOptions: NgxGalleryOptions[];
-  // gallaryImages: NgxGalleryImage[];
-
   selectedDeliveryWay: string;
   selectedUnit: Unit;
 
@@ -36,7 +33,6 @@ export class ItemDetailedComponent implements OnInit {
   allUnits: Unit[] = [];
 
   todayDate = new Date();
-  // minDate = new Date(this.todayDate.getFullYear(), this.todayDate.getMonth(), this.todayDate.getDate() + 3);
   minDate: Date = this.todayDate;
   user: User;
 

@@ -42,7 +42,6 @@ export class OrderService {
 
   selfpickOrder(id: number){
     return this.http.put<Order>(this.baseUrl + `order/selfpick/${id}`, {}).pipe(map((order: Order) => {
-      console.log(order);
       return order;
     }));
   }
@@ -118,9 +117,6 @@ export class OrderService {
       this.orderCache.set(Object.values(userParams).join("-"), response);
       return response;  
     }));
-    // return this.http.get<Order[]>(this.baseUrl + "order").pipe(map((orders: Order[]) => {
-    //   return orders;
-    // }));
   }
 
 }

@@ -110,31 +110,6 @@ namespace API.Controllers
             return Ok();
         }
 
-        // [Authorize(Roles = "Admin")]
-        // [HttpDelete("{id:int}")]
-        // public async Task<ActionResult> DeleteItem(int id)
-        // {
-        //     var item = await _unitOfWork.ItemRepository.GetItemByIdAsync(id);
-        //     if(item == null) return NotFound();
-        //     var units = await _context.Units.Where(f => f.ItemUnitPoint!.Item!.Id == item.Id).ToListAsync();
-        //     foreach(var photo in item.Photos!)
-        //     {
-        //         var result = await _photoService.DeletePhotoAsync(photo.PublicId!);
-        //         if(result.Error != null) return BadRequest(result.Error.Message);
-        //     }
-
-        //     if(item.PreviewPhoto != null){
-        //         var result = await _photoService.DeletePhotoAsync(item.PreviewPhoto.PublicId!);
-        //         if(result.Error != null) return BadRequest(result.Error.Message);
-        //     }
-
-        //     _context.Units.RemoveRange(units);
-        //     _context.Items.Remove(item);
-            
-        //     if(await _context.SaveChangesAsync() > 0) return Ok();
-        //     return BadRequest("Failed to delete item");
-        // }
-
         [Authorize(Roles = "Admin")]
         [HttpPost("add-main-photo/{itemId:int}")]
         public async Task<ActionResult<PhotoDTO>> AddMainPhoto(int itemId, IFormFile file)
@@ -199,9 +174,6 @@ namespace API.Controllers
             var item = await _unitOfWork.ItemRepository.GetItemByIdAsync(itemId);
             var photo = item.Photos!.FirstOrDefault(f => f.Id == photoId);
             if(photo == null) return NotFound();
-
-            // var result = await _photoService.DeletePhotoAsync(photo.PublicId!);
-            // if(result.Error != null) return BadRequest(result.Error.Message);
             item.Photos!.Remove(photo);
             
             if(await _unitOfWork.Complete()) return Ok();
