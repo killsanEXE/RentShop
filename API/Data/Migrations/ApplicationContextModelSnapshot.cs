@@ -156,27 +156,6 @@ namespace API.Data.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("API.Entities.Chat", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("UnreadMessages")
-                        .HasColumnType("boolean");
-
-                    b.Property<int?>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Chats");
-                });
-
             modelBuilder.Entity("API.Entities.Connection", b =>
                 {
                     b.Property<string>("ConnectionId")
@@ -198,6 +177,21 @@ namespace API.Data.Migrations
             modelBuilder.Entity("API.Entities.Group", b =>
                 {
                     b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastMessageContent")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastMessageSender")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("UnreadMessages")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Username1")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Username2")
                         .HasColumnType("text");
 
                     b.HasKey("Name");
@@ -599,15 +593,6 @@ namespace API.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("API.Entities.Chat", b =>
-                {
-                    b.HasOne("API.Entities.AppUser", "User")
-                        .WithMany("Chats")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("API.Entities.Connection", b =>
                 {
                     b.HasOne("API.Entities.Group", null)
@@ -774,8 +759,6 @@ namespace API.Data.Migrations
 
             modelBuilder.Entity("API.Entities.AppUser", b =>
                 {
-                    b.Navigation("Chats");
-
                     b.Navigation("DeliveryLocations");
 
                     b.Navigation("UserRoles");

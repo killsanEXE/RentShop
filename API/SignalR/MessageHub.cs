@@ -32,13 +32,25 @@ namespace API.SignalR
         {
             var httpContext = Context.GetHttpContext();
             var otherUser = httpContext!.Request.Query["user"].ToString();
-            var groupName = GetGroupName(Context.User!.GetUsername(), otherUser);
+            string username = Context.User!.GetUsername();
+            var groupName = GetGroupName(username, otherUser);
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
             var group = await AddToGroup(groupName);
+            group.Username1 = username;
+            group.Username2 = otherUser;
+            if(group.UnreadMessages)
+            {
+                if(group.LastMessageSender == otherUser) group.UnreadMessages = false;
+            }
             await Clients.Group(groupName).SendAsync("UpdatedGroup", group);
             var messages = await _unitOfWork.MessageRepository.GetMessageThread(Context.User!.GetUsername(), otherUser);
+            
             if(_unitOfWork.HasChanges()) await _unitOfWork.Complete(); 
             await Clients.Caller.SendAsync("ReceiveMessageThread", messages);
+
+            var callerConnections = await _tracker.GetConnectionsForUser(username);
+            var callerGroups = await _unitOfWork.MessageRepository.GetGruopsForUser(username);
+            await _presenceHub.Clients.Clients(callerConnections).SendAsync("ReceiveGroupsMessages", callerGroups);
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)
@@ -69,6 +81,8 @@ namespace API.SignalR
 
             var groupName = GetGroupName(sender.UserName, recipient.UserName);
             var group = await _unitOfWork.MessageRepository.GetMessageGroup(groupName);
+            group.LastMessageContent = createMessageDTO.Content;
+            group.LastMessageSender = username;
 
             if(group.Connections!.Any(f => f.Username == recipient.UserName))
             {
@@ -76,12 +90,19 @@ namespace API.SignalR
             }
             else
             {
+                group.UnreadMessages = true;
                 var connections = await _tracker.GetConnectionsForUser(recipient.UserName);
                 if(connections != null)
                 {
                     await _presenceHub.Clients.Clients(connections).SendAsync("NewMessageReceived", 
                         new {username = sender.UserName, knownAs = sender.Name});
+
+                    var recepientGroups = await _unitOfWork.MessageRepository.GetGruopsForUser(recipient.UserName);
+                    await _presenceHub.Clients.Clients(connections).SendAsync("ReceiveGroupsMessages", recepientGroups);
                 }
+                var callerConnections = await _tracker.GetConnectionsForUser(username);
+                var callerGroups = await _unitOfWork.MessageRepository.GetGruopsForUser(username);
+                await _presenceHub.Clients.Clients(callerConnections).SendAsync("ReceiveGroupsMessages", callerGroups);
             }
 
             _unitOfWork.MessageRepository.AddMessage(message);

@@ -1,0 +1,28 @@
+.main-messages{
+    padding: 4vh;
+    height: 500px;
+    /* background-color: black; */
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid gray;
+    padding: 1vh;
+}
+
+.chat-div:hover{
+    transform: scale(1.01);
+    cursor: pointer;
+}
+
+.dot{
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: blue;
+}

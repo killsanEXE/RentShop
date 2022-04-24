@@ -69,6 +69,7 @@ import { ExportDatasetComponent } from './admin/export-dataset/export-dataset.co
 import { ForgotPasswordComponent } from './account/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './account/reset-password/reset-password.component';
 import { ResendEmailConfirmationComponent } from './account/resend-email-confirmation/resend-email-confirmation.component';
+import { MessagesComponent } from './messages/messages.component';
 
 @Injectable()
 export class MyHammerConfig extends HammerGestureConfig  {
@@ -120,7 +121,8 @@ export class MyHammerConfig extends HammerGestureConfig  {
     ExportDatasetComponent,
     ForgotPasswordComponent,
     ResetPasswordComponent,
-    ResendEmailConfirmationComponent
+    ResendEmailConfirmationComponent,
+    MessagesComponent
   ],
   imports: [
     BrowserModule,

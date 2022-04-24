@@ -17,6 +17,5 @@ namespace API.Entities
         public ICollection<Location>? DeliveryLocations { get; set; }
         public ICollection<AppUserRole>? UserRoles { get; set; }
         public bool DeliverymanRequest { get; set; }
-        public ICollection<Chat>? Chats { get; set; }
     }
 }

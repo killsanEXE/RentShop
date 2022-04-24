@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace API.Data.Migrations
 {
-    public partial class AddedChat : Migration
+    public partial class AddedUnreadedMessages : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -36,29 +36,15 @@ namespace API.Data.Migrations
                 defaultValue: false);
 
             migrationBuilder.CreateTable(
-                name: "Chats",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: true),
-                    UnreadMessages = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Chats", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Chats_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Groups",
                 columns: table => new
                 {
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    UnreadMessages = table.Column<bool>(type: "boolean", nullable: false),
+                    LastMessageSender = table.Column<string>(type: "text", nullable: true),
+                    LastMessageContent = table.Column<string>(type: "text", nullable: true),
+                    Username1 = table.Column<string>(type: "text", nullable: true),
+                    Username2 = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -130,11 +116,6 @@ namespace API.Data.Migrations
                 column: "ReturnPointId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Chats_UserId",
-                table: "Chats",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Connections_GroupName",
                 table: "Connections",
                 column: "GroupName");
@@ -184,9 +165,6 @@ namespace API.Data.Migrations
             migrationBuilder.DropForeignKey(
                 name: "FK_Orders_Locations_ReturnPointId",
                 table: "Orders");
-
-            migrationBuilder.DropTable(
-                name: "Chats");
 
             migrationBuilder.DropTable(
                 name: "Connections");

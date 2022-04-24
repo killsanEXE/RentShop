@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { Group } from '../models/group';
 import { User } from '../models/user';
 import { AccountService } from './account.service';
 import { MessageService } from './message.service';
@@ -18,6 +19,9 @@ export class PresenceService {
   private hubConnection: HubConnection;
   private onlineUserSource = new BehaviorSubject<string[]>([]);
   onlineUsers$ = this.onlineUserSource.asObservable();
+
+  private groupsSource = new BehaviorSubject<Group[]>([]);
+  groups$ = this.groupsSource.asObservable();
   // user: User;
 
   constructor(private toastr: ToastrService, private messageService: MessageService) {
@@ -55,10 +59,18 @@ export class PresenceService {
           this.messageService.openDialog(user, username)
         });
     })
-  }
 
+    this.hubConnection.on("ReceiveGroupsMessages", (respGroups: Group[]) => {
+      console.log(respGroups);
+      this.updateGroups(respGroups);
+    })
+  }
 
   stopHubConnection(){
     this.hubConnection.stop().catch(error => console.log(error));
+  }
+
+  updateGroups(groups: Group[]){
+    this.groupsSource.next(groups);
   }
 }

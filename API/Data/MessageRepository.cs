@@ -57,24 +57,6 @@ namespace API.Data
                 .FirstOrDefaultAsync(f => f.Name == groupName))!;
         }
 
-        // public async Task<PagedList<MessageDTO>> GetMessagesForUser(MessageParams messageParams)
-        // {
-        //     var query = _context.Messages
-        //         .OrderByDescending(m => m.MessageSend)
-        //         .ProjectTo<MessageDTO>(_mapper.ConfigurationProvider)
-        //         .AsQueryable();
-
-        //     query = messageParams.Container switch
-        //     {
-        //         "Inbox" => query.Where(u => u.RecipientUsername == messageParams.Username),
-        //         "Outbox" => query.Where(u => u.SenderUsername == messageParams.Username),
-        //         _ => query.Where(u => u.RecipientUsername == messageParams.Username && u.DateRead == null)
-        //     }; 
-
-        //     // var messages = query.ProjectTo<MessageDTO>(_mapper.ConfigurationProvider);
-        //     return await PagedList<MessageDTO>.CreateAsync(query, messageParams.PageNumber, messageParams.PageSize);
-        // }
-
         public async Task<IEnumerable<MessageDTO>> GetMessageThread(string currentUsername, string recipientUsername)
         {
             var messages = await _context.Messages
@@ -104,6 +86,22 @@ namespace API.Data
         public void RemoveConnection(Connection connection)
         {
             _context.Connections.Remove(connection);
+        }
+
+        public async Task<IEnumerable<Group>> GetGruopsForUser(string username)
+        {
+            // return await _context.Groups.Include(f => f.Connections).Where(f => 
+            // {
+            //     var nicknamesArray = f.Name!.Split('-');
+            //     foreach(var i in nicknamesArray)
+            //     {
+            //         System.Console.WriteLine(i);
+            //     }
+            //     if(nicknamesArray.Contains(username)) return true;
+            // }).ToListAsync();
+            // return await _context.Groups.Include(f => f.Connections).Where(f => f.Connections.Where(f => f.Username == username)).ToListAsync();
+
+            return await _context.Groups.Where(f => f.Username1 == username || f.Username2 == username).OrderBy(f => f.Name).ToListAsync();
         }
 
         // public async Task<bool> SaveAllAsync()

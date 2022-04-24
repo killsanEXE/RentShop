@@ -20,5 +20,10 @@ namespace API.Entities
         [Key]
         public string? Name { get; set; }
         public ICollection<Connection>? Connections { get; set; } = new List<Connection>();
+        public bool UnreadMessages { get; set; }
+        public string? LastMessageSender { get; set; }
+        public string? LastMessageContent { get; set; }
+        public string? Username1 { get; set; }
+        public string? Username2 { get; set; }
     }
 }

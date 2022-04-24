@@ -1,0 +1,7 @@
+<div class="main-messages">
+    <div *ngFor="let group of (presenceService.groups$ | async)" class="chat-div" 
+    (click)="message(group.username1 === user.username ? group.username2 : group.username1)">
+        <div><p>{{group.lastMessageContent}}</p></div>
+        <div *ngIf="group.unreadMessages && group.lastMessageSender !== user.username" class="dot"></div>
+    </div>
+</div>

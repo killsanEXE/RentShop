@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using API.Extensions;
+using API.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 
 namespace API.SignalR
@@ -10,19 +11,25 @@ namespace API.SignalR
     public class PresenceHub : Hub
     {
         readonly PresenceTracker _tracker;
-        public PresenceHub(PresenceTracker tracker)
+        readonly IUnitOfWork _unitOfWork;
+        public PresenceHub(PresenceTracker tracker, IUnitOfWork unitOfWork)
         {
             _tracker = tracker;
+            _unitOfWork = unitOfWork;
         }
 
         public override async Task OnConnectedAsync()
         {
-            var isOnline = await _tracker.UserConnected(Context.User!.GetUsername(), Context.ConnectionId);
+            string username = Context.User!.GetUsername();
+            var isOnline = await _tracker.UserConnected(username, Context.ConnectionId);
             if(isOnline)
-                await Clients.Others.SendAsync("UserIsOnline", Context.User!.GetUsername());
+                await Clients.Others.SendAsync("UserIsOnline", username);
 
             var currentUsers = await _tracker.GetOnlineUsers();
             await Clients.Caller.SendAsync("GetOnlineUsers", currentUsers);
+
+            var groups = await _unitOfWork.MessageRepository.GetGruopsForUser(username);
+            await Clients.Caller.SendAsync("ReceiveGroupsMessages", groups);
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)

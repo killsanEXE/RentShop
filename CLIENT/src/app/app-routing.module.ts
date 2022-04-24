@@ -13,6 +13,7 @@ import { AdminGuard } from './guards/admin.guard';
 import { AuthGuard } from './guards/auth.guard';
 import { DeliverymanGuard } from './guards/deliveryman.guard';
 import { HomeComponent } from './home/home.component';
+import { MessagesComponent } from './messages/messages.component';
 import { ClientOrdersComponent } from './orders/client-orders/client-orders.component';
 import { ItemDetailedComponent } from './orders/item-detailed/item-detailed.component';
 import { ItemDetailedResolver } from './resolvers/item-detailed.resolver';
@@ -31,6 +32,7 @@ const routes: Routes = [
       {path: "item/:id", component: ItemDetailedComponent, resolve: {item: ItemDetailedResolver}},
       {path: "orders", component: ClientOrdersComponent},
       {path: "deliveries", component: DeliverymanMainComponent, canActivate: [DeliverymanGuard]},
+      {path: "messages", component: MessagesComponent}
     ]
   },
   {path: "regandlog", component: RegAndLogComponent},

@@ -23,7 +23,6 @@ namespace API.Data
         public DbSet<Message> Messages { get; set; } = null!;
         public DbSet<Group> Groups { get; set;} = null!;
         public DbSet<Connection> Connections { get; set;} = null!;
-        public DbSet<Chat> Chats { get; set; } = null!;
         public ApplicationContext(DbContextOptions options) : base(options) { }
         protected override void OnModelCreating(ModelBuilder builder)
         {
