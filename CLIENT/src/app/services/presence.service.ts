@@ -18,10 +18,10 @@ export class PresenceService {
   private hubConnection: HubConnection;
   private onlineUserSource = new BehaviorSubject<string[]>([]);
   onlineUsers$ = this.onlineUserSource.asObservable();
-  user: User;
+  // user: User;
 
-  constructor(private toastr: ToastrService, private messageService: MessageService, private accountService: AccountService) {
-    this.accountService.currentUser$.pipe(take(1)).subscribe(user => this.user = user);
+  constructor(private toastr: ToastrService, private messageService: MessageService) {
+    // this.accountService.currentUser$.pipe(take(1)).subscribe(user => this.user = user);
   }
 
   createHubConnection(user: User){
@@ -52,7 +52,7 @@ export class PresenceService {
     this.hubConnection.on("NewMessageReceived", ({username, knownAs}) => {
       this.toastr.info(knownAs + " sent u a new message")
         .onTap.pipe(take(1)).subscribe(() => {
-          this.messageService.openDialog(this.user, username)
+          this.messageService.openDialog(user, username)
         });
     })
   }
