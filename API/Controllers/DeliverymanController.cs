@@ -25,13 +25,15 @@ namespace API.Controllers
         readonly IUnitOfWork _unitOfWork;
         readonly ApplicationContext _context;
         readonly UserManager<AppUser> _userManager;
+        readonly IEmailService _emailService;
         public DeliverymanController(IUnitOfWork unitOfWork, IMapper mapper, 
-            ApplicationContext context, UserManager<AppUser> userManager)
+            ApplicationContext context, UserManager<AppUser> userManager, IEmailService emailService)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _context = context;
             _userManager = userManager;
+            _emailService = emailService;
         }
 
         [Authorize(Roles = "Admin")]
@@ -55,12 +57,14 @@ namespace API.Controllers
         [HttpPost("requests/{username}")]
         public async Task<ActionResult<DeliverymanDTO>> AddDeliveryMan(string username)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(f => f.UserName == username);
-            if(user == null || !user.DeliverymanRequest) return NotFound();
+            var user = await _context.Users.Include(f => f.Location).SingleOrDefaultAsync(f => f.UserName == username);
+            if(user == null || !user.DeliverymanRequest || user.Location == null) return NotFound();
 
             user.DeliverymanRequest = false;
             await _userManager.AddToRoleAsync(user, "Deliveryman");
             await _context.SaveChangesAsync(); 
+            
+            await _emailService.SendEmail(new EmailMessage(user.Email, "Congratulations, you joined deliverymans", "Logout and log in to your account to see changes"));
             return Ok(_mapper.Map<DeliverymanDTO>(user));
         }
 

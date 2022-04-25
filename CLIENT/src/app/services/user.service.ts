@@ -46,7 +46,9 @@ export class UserService {
   }
 
   addDeliveryman(username: string){
-    return this.http.post<User>(this.baseUrl + `deliveryman/requests/${username}`, {});
+    return this.http.post<User>(this.baseUrl + `deliveryman/requests/${username}`, {}).pipe(map((user: User) => {
+      return user;
+    }));;
   }
 
   denyDeliveryman(username: string){

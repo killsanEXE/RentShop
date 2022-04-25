@@ -22,11 +22,13 @@ namespace API.Controllers
         readonly ApplicationContext _context;
         readonly IUnitOfWork _unitOfWork;
         readonly IMapper _mapper;
-        public OrderController(ApplicationContext context, IUnitOfWork unitOfWork, IMapper mapper)
+        readonly IEmailService _emailService;
+        public OrderController(ApplicationContext context, IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService)
         {
             _context = context;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _emailService = emailService;
         }   
 
         [Authorize(Roles = "Admin")]
@@ -109,18 +111,21 @@ namespace API.Controllers
         public async Task<ActionResult<OrderDTO>> CreateOrder(CreateOrderDTO dto)
         {
             if(User.IsInRole("Admin")) return BadRequest("Create another account to order something");
+
             var unit = await _context.Units
                 .Include(f => f.ItemUnitPoint)
                 .ThenInclude(f => f!.Point)
                 .SingleOrDefaultAsync(f => f.Id == dto.UnitId);
             var client = await _context.Users
+                .Include(f => f.UserRoles)
                 .Include(f => f.DeliveryLocations!.Where(s => s.Id == dto.DeliveryLocation))
                 .SingleOrDefaultAsync(f => f.UserName == User.GetUsername());
 
             if(unit == null || client == null || !unit.IsAvailable || unit.Disabled) return NotFound();
+            var userRolesCount = client.UserRoles?.Count;
+            if(dto.DeliveryLocation != null && client.UserRoles!.Count > 1) return BadRequest("You can only choose selfpick");
 
             AppUser? deliveryman = null;
-
             var deliveryLocation = client!.DeliveryLocations!.FirstOrDefault();
             if(deliveryLocation == null && dto.DeliveryLocation == null)
             {
@@ -128,7 +133,7 @@ namespace API.Controllers
             }else if(deliveryLocation == null && dto.DeliveryLocation != null)
             { 
                 return NotFound(); 
-            } 
+            }
 
             Order order = new() 
             {
@@ -142,6 +147,21 @@ namespace API.Controllers
 
             unit.IsAvailable = false;
             _context.Orders.Add(order);
+
+            if(dto.DeliveryLocation != null)
+            {
+                var availableDeliverymans = await _context.Users
+                    .Include(f => f.UserRoles!.Where(f => f.Role!.Name == "Deliveryman"))
+                    .Where(f => f.UserRoles!.Count > 1)
+                    .Include(f => f.Location)
+                    .Where(f => f.Location!.Country == unit.ItemUnitPoint!.Point!.Country)
+                    .ToListAsync();
+
+                foreach(var availableDeliveryman in availableDeliverymans)
+                {
+                    await _emailService.SendEmail(new EmailMessage(availableDeliveryman.Email, "New available order", $"{unit.Description}"));
+                }
+            }
 
             await _context.SaveChangesAsync();
             return Ok(_mapper.Map<OrderDTO>(order));
@@ -158,6 +178,7 @@ namespace API.Controllers
                 .Include(f => f.DeliveryMan)
                 .Include(f => f.ReturnDeliveryman)
                 .Include(f => f.ReturnFromLocation)
+                .Include(f => f.Client)
                 .AsQueryable();
 
             var order = await query.Where(f => !f.Cancelled).SingleOrDefaultAsync(f => f.Id == orderId);
@@ -166,6 +187,8 @@ namespace API.Controllers
             if(order.DeliveryMan == null) order.DeliveryMan = user;
             else if(order.ReturnDeliveryman == null && order.ReturnFromLocation != null) order.ReturnDeliveryman = user;
             else return BadRequest("This order is already taken");
+
+            await _emailService.SendEmail(new EmailMessage(order.Client!.Email, "Deliveryman accepted your order", ""));
 
             if(await _context.SaveChangesAsync() > 0) return Ok(await query.Where(f => f.Id == orderId).ProjectTo<OrderDTO>(_mapper.ConfigurationProvider).AsNoTracking().FirstOrDefaultAsync());
             return BadRequest("Failed to accept order");
@@ -179,6 +202,7 @@ namespace API.Controllers
             var query = _context.Orders
                 .Include(f => f.DeliveryMan)
                 .Where(f => f.Id == orderId)
+                .Include(f => f.Client)
                 .AsQueryable();
 
             var order = await query.SingleOrDefaultAsync(f => f.Id == orderId);
@@ -188,6 +212,8 @@ namespace API.Controllers
                 return BadRequest("You did not accept this order");
             
             order.DeliveryInProcess = true;
+
+            await _emailService.SendEmail(new EmailMessage(order.Client!.Email, "The delivery of your order has begun", ""));
 
             if(await _context.SaveChangesAsync() > 0) return Ok(await query.ProjectTo<OrderDTO>(_mapper.ConfigurationProvider).AsNoTracking().FirstOrDefaultAsync());
             return BadRequest("Failed to confirm delivery");
@@ -201,6 +227,7 @@ namespace API.Controllers
             var query = _context.Orders
                 .Include(f => f.DeliveryMan)
                 .Where(f => f.Id == orderId)
+                .Include(f => f.Client)
                 .AsQueryable();
 
             var order = await query.SingleOrDefaultAsync(f => f.Id == orderId);
@@ -212,6 +239,8 @@ namespace API.Controllers
             if(!order.DeliveryInProcess) return BadRequest("You did not even start the delivery");
 
             order.DeliveryCompleted = true;
+
+            await _emailService.SendEmail(new EmailMessage(order.Client!.Email, "Collect the item", "The delivery of your order was finished"));
             if(await _context.SaveChangesAsync() > 0) return Ok(await query.ProjectTo<OrderDTO>(_mapper.ConfigurationProvider).AsNoTracking().FirstOrDefaultAsync());
             return BadRequest("Failed to confirm delivery");
         }
@@ -249,6 +278,7 @@ namespace API.Controllers
                 .Include(f => f.Unit)
                 .Include(f => f.Client)
                 .Where(f => f.Id == orderId)
+                .Include(f => f.DeliveryMan)
                 .AsQueryable();
 
             var order = await query.FirstOrDefaultAsync(f => !f.Cancelled);
@@ -259,6 +289,8 @@ namespace API.Controllers
             order.Cancelled = true;
             order.Unit!.IsAvailable = true;
 
+            if(order.DeliveryMan != null)
+                await _emailService.SendEmail(new EmailMessage(order.DeliveryMan.Email, "Client cancelled the order", ""));
             if(await _context.SaveChangesAsync() > 0) return Ok(await query.ProjectTo<OrderDTO>(_mapper.ConfigurationProvider).AsNoTracking().FirstOrDefaultAsync());
             return BadRequest("Failed to cancel delivery");
         }
@@ -288,14 +320,17 @@ namespace API.Controllers
         [HttpPut("return")]
         public async Task<ActionResult<OrderDTO>> ReturnOrder(ReturnUnitDTO dto)
         {
-            var user = await _context.Users.Include(f => f.DeliveryLocations).SingleOrDefaultAsync(f => f.UserName == User.GetUsername());
+            var user = await _context.Users
+                .Include(f => f.DeliveryLocations)
+                .Include(f => f.UserRoles)
+                .SingleOrDefaultAsync(f => f.UserName == User.GetUsername());
             var query = _context.Orders.Include(f => f.Client).Include(f => f.ReturnDeliveryman).Where(f => f.Id == dto.Id && f.InUsage).AsQueryable();
             var order = await query.SingleOrDefaultAsync();
             if(order == null || user == null) return NotFound();
 
-            if(User.IsInRole("Deliveryman"))
+            if(User.IsInRole("Deliveryman") || user.UserRoles!.Count > 1)
             {
-                if(order.ReturnPoint != null || dto.ReturnPoint == null) return BadRequest("You crazy man, what are you doing?");
+                if(order.ReturnPoint != null || dto.ReturnPoint == null) return BadRequest("You are deliveryman");
                 order.ReturnPoint = await _context.Points.SingleOrDefaultAsync(f => f.Id == Convert.ToInt32(dto.ReturnPoint));
             }
             else
@@ -303,6 +338,17 @@ namespace API.Controllers
                 if(dto.ReturnPoint == null && dto.ReturnFromLocation != null)
                 {
                     order.ReturnFromLocation = user.DeliveryLocations!.SingleOrDefault(f => f.Id == Convert.ToInt32(dto.ReturnFromLocation));
+                    var availableDeliverymans = await _context.Users
+                        .Include(f => f.UserRoles!.Where(f => f.Role!.Name == "Deliveryman"))
+                        .Where(f => f.UserRoles!.Count > 1)
+                        .Include(f => f.Location)
+                        .Where(f => f.Location!.Country == order.ReturnFromLocation!.Country)
+                        .ToListAsync();
+
+                    foreach(var availableDeliveryman in availableDeliverymans)
+                    {
+                        await _emailService.SendEmail(new EmailMessage(availableDeliveryman.Email, "New available order", $"{order.ReturnFromLocation!.City}, {order.ReturnFromLocation!.Address}"));
+                    }
                 }
                 else if(dto.ReturnPoint != null && dto.ReturnFromLocation == null)
                 {

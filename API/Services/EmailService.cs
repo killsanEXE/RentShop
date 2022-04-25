@@ -32,7 +32,7 @@ namespace API.Services
                 client.Send(emailMessage);
                 await client.DisconnectAsync(true);
             }
-
+            Console.Beep();
             return true;
         }
     }
