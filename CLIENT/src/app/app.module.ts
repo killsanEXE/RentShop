@@ -69,6 +69,8 @@ import { ForgotPasswordComponent } from './account/forgot-password/forgot-passwo
 import { ResetPasswordComponent } from './account/reset-password/reset-password.component';
 import { ResendEmailConfirmationComponent } from './account/resend-email-confirmation/resend-email-confirmation.component';
 import { MessagesComponent } from './messages/messages.component';
+import { ServerErrorComponent } from './errors/server-error/server-error.component';
+import { NotFoundComponent } from './errors/not-found/not-found.component';
 
 @Injectable()
 export class MyHammerConfig extends HammerGestureConfig  {
@@ -121,7 +123,9 @@ export class MyHammerConfig extends HammerGestureConfig  {
     ForgotPasswordComponent,
     ResetPasswordComponent,
     ResendEmailConfirmationComponent,
-    MessagesComponent
+    MessagesComponent,
+    ServerErrorComponent,
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,

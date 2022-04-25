@@ -9,6 +9,8 @@ import { AdminPanelComponent } from './admin/admin-panel/admin-panel.component';
 import { EditItemComponent } from './admin/items/edit-item/edit-item.component';
 import { PointComponent } from './admin/points/point/point.component';
 import { DeliverymanMainComponent } from './deliveryman/deliveryman-main/deliveryman-main.component';
+import { NotFoundComponent } from './errors/not-found/not-found.component';
+import { ServerErrorComponent } from './errors/server-error/server-error.component';
 import { AdminGuard } from './guards/admin.guard';
 import { AuthGuard } from './guards/auth.guard';
 import { DeliverymanGuard } from './guards/deliveryman.guard';
@@ -39,6 +41,8 @@ const routes: Routes = [
   {path: "forgot-password", component: ForgotPasswordComponent},
   {path: "reset-password", component: ResetPasswordComponent},
   {path: "resend-email-confirmation", component: ResendEmailConfirmationComponent},
+  {path: "server-error", component: ServerErrorComponent},
+  {path: "**", component: NotFoundComponent, pathMatch: "full"}
 ];
 
 @NgModule({
