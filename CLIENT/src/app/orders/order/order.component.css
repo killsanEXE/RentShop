@@ -74,9 +74,6 @@ button:hover{
         padding-right: 0;
     }
 
-    /* .deliver-from, .deliver-to{
-        border-bottom: 2px solid gray;
-    } */
     .controls{
         flex-direction: column;
         justify-content: center;

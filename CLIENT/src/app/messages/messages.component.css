@@ -1,7 +1,6 @@
 .main-messages{
     padding: 4vh;
     height: 500px;
-    /* background-color: black; */
     overflow-y: scroll;
     display: flex;
     flex-direction: column;

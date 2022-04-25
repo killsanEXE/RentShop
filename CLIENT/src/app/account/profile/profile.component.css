@@ -6,12 +6,10 @@
 
 .photo-main-div{
     width: 40%;
-    /* background-color: #171c24; */
     background-color: white;
     padding: 3vh;
     border-top-left-radius: 20px;
     border-bottom-left-radius: 20px;
-    /* box-shadow: 6px 6px 5px rgba(0, 0, 0, 0.8); */
 }
 
 .photo-main-div img{
@@ -31,14 +29,11 @@
 }
 
 .locations-main-div{
-    /* background-color: #171c24; */
     background-color: white;
     width: 60%;
     margin-left: 4vh;
     border-top-right-radius: 20px;
     border-bottom-right-radius: 20px;
-    /* color: white; */
-    /* box-shadow: 6px 6px 5px rgba(0, 0, 0, 0.8); */
 }
 
 .add-location-btn, .become-deliveryman-btn{
@@ -61,8 +56,6 @@
     padding-left: 5vh;
     padding-right: 5vh;
     padding-top: 1vh;
-    /* padding-bottom: 1vh; */
-    /* background-color: #212529; */
     border-bottom: 2px solid rgb(187, 187, 187);
 }
 
@@ -110,11 +103,6 @@
         margin: 0 auto;
     }
 
-    /* .locations-main-div{
-        border-bottom-right-radius: 20px;
-        border-bottom-left-radius: 20px;
-    } */
-    
     .user-photo-div{
         padding-top: 2vh;
     }
