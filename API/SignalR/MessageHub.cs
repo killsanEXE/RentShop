@@ -35,9 +35,7 @@ namespace API.SignalR
             string username = Context.User!.GetUsername();
             var groupName = GetGroupName(username, otherUser);
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
-            var group = await AddToGroup(groupName);
-            group.Username1 = username;
-            group.Username2 = otherUser;
+            var group = await AddToGroup(groupName, username, otherUser);
             if(group.UnreadMessages)
             {
                 if(group.LastMessageSender == otherUser) group.UnreadMessages = false;
@@ -91,6 +89,7 @@ namespace API.SignalR
             else
             {
                 group.UnreadMessages = true;
+                await _unitOfWork.Complete();
                 var connections = await _tracker.GetConnectionsForUser(recipient.UserName);
                 if(connections != null)
                 {
@@ -122,7 +121,7 @@ namespace API.SignalR
             throw new HubException("Failed to remove form group");
         }
 
-        private async Task<Group> AddToGroup(string groupName)
+        private async Task<Group> AddToGroup(string groupName, string username1, string username2)
         {
             var group = await _unitOfWork.MessageRepository.GetMessageGroup(groupName);
             var connection = new Connection(Context.ConnectionId, Context.User!.GetUsername());
@@ -130,6 +129,8 @@ namespace API.SignalR
             if(group == null)
             {
                 group = new Group(groupName);
+                group.User1 = await _unitOfWork.UserRepository.GetUserByUsernameAsync(username1);
+                group.User2 = await _unitOfWork.UserRepository.GetUserByUsernameAsync(username2);
                 _unitOfWork.MessageRepository.AddGroup(group);
             }
 

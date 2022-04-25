@@ -6,6 +6,8 @@ export interface Group{
     lastMessageContent: string;
     username1: string;
     username2: string;
+    user1Photo: string;
+    user2Photo: string;
 }
 
 interface Connection{

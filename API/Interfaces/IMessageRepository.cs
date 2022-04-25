@@ -18,6 +18,6 @@ namespace API.Interfaces
         void AddMessage(Message message);
         Task<Message> GetMessage(int id);
         Task<IEnumerable<MessageDTO>> GetMessageThread(string currentUsername, string recipientUsername);
-        Task<IEnumerable<Group>> GetGruopsForUser(string username);
+        Task<IEnumerable<GroupDTO>> GetGruopsForUser(string username);
     }
 }

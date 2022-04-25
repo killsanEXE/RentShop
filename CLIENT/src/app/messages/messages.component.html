@@ -1,7 +1,24 @@
-<div class="main-messages">
+<div class="main-messages" *ngIf="(presenceService.groups$ | async).length > 0">
     <div *ngFor="let group of (presenceService.groups$ | async)" class="chat-div" 
     (click)="message(group.username1 === user.username ? group.username2 : group.username1)">
-        <div><p>{{group.lastMessageContent}}</p></div>
+        <div class="chat-info">
+            <div class="avatar-nickname-div">
+                <div class="avatar-div">
+                    <img src="{{
+                        group.username1 !== user.username ? (group.user1Photo === null ? '/assets/user.png' : group.user1Photo) : 
+                        (group.user2Photo === null ? '/assets/user.png' : group.user2Photo)
+                    }}" class="rounded-circle" alt="{{message.id}}">
+                </div>
+                <div class="nickname-div">
+                    <p>{{group.username1 === user.username ? group.username2 : group.username1}}:</p>
+                </div>
+            </div>
+            <div class="last-message"><p class="message">{{group.lastMessageContent}}</p></div>
+        </div>
         <div *ngIf="group.unreadMessages && group.lastMessageSender !== user.username" class="dot"></div>
     </div>
+</div>
+
+<div class="main-messages" *ngIf="(presenceService.groups$ | async).length <= 0">
+    <p style="margin: 0 auto;">No messages yet</p>
 </div>

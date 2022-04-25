@@ -12,6 +12,7 @@
     align-items: center;
     border-bottom: 1px solid gray;
     padding: 1vh;
+    max-width: 100%;
 }
 
 .chat-div:hover{
@@ -24,4 +25,44 @@
     height: 12px;
     border-radius: 50%;
     background-color: blue;
+}
+
+.chat-info{
+    display: flex;
+}
+
+.last-message{
+    padding-left: 1vh;
+    color: gray;
+}
+
+.avatar-div{
+    width: 40px;
+}
+
+.avatar-div img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.nickname-div{
+    padding-left: 2vh;
+}
+
+.avatar-nickname-div{
+    display: flex;
+}
+
+.message{
+    overflow: hidden;
+    white-space: nowrap; 
+    text-overflow: ellipsis;
+    max-width: 400px;
+}
+
+@media only screen and (max-width: 768px){
+    .message{
+        max-width: 80px;
+    }
 }

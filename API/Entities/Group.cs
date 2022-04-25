@@ -23,7 +23,7 @@ namespace API.Entities
         public bool UnreadMessages { get; set; }
         public string? LastMessageSender { get; set; }
         public string? LastMessageContent { get; set; }
-        public string? Username1 { get; set; }
-        public string? Username2 { get; set; }
+        public AppUser? User1 { get; set; }
+        public AppUser? User2 { get; set; }
     }
 }

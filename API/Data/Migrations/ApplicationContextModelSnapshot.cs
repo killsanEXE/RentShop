@@ -188,13 +188,17 @@ namespace API.Data.Migrations
                     b.Property<bool>("UnreadMessages")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Username1")
-                        .HasColumnType("text");
+                    b.Property<int?>("User1Id")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("Username2")
-                        .HasColumnType("text");
+                    b.Property<int?>("User2Id")
+                        .HasColumnType("integer");
 
                     b.HasKey("Name");
+
+                    b.HasIndex("User1Id");
+
+                    b.HasIndex("User2Id");
 
                     b.ToTable("Groups");
                 });
@@ -598,6 +602,21 @@ namespace API.Data.Migrations
                     b.HasOne("API.Entities.Group", null)
                         .WithMany("Connections")
                         .HasForeignKey("GroupName");
+                });
+
+            modelBuilder.Entity("API.Entities.Group", b =>
+                {
+                    b.HasOne("API.Entities.AppUser", "User1")
+                        .WithMany()
+                        .HasForeignKey("User1Id");
+
+                    b.HasOne("API.Entities.AppUser", "User2")
+                        .WithMany()
+                        .HasForeignKey("User2Id");
+
+                    b.Navigation("User1");
+
+                    b.Navigation("User2");
                 });
 
             modelBuilder.Entity("API.Entities.Item", b =>

@@ -88,9 +88,12 @@ namespace API.Data
             _context.Connections.Remove(connection);
         }
 
-        public async Task<IEnumerable<Group>> GetGruopsForUser(string username)
+        public async Task<IEnumerable<GroupDTO>> GetGruopsForUser(string username)
         {
-            return await _context.Groups.Where(f => f.Username1 == username || f.Username2 == username).OrderBy(f => f.Name).ToListAsync();
+            // return await _context.Groups.Where(f => f.Username1 == username || f.Username2 == username).OrderBy(f => f.Name).ToListAsync();
+            var query = _context.Groups.Include(f => f.User1).Include(f => f.User2).AsQueryable();
+            query = query.Where(f => f.User1!.UserName == username || f.User2!.UserName == username);
+            return await query.ProjectTo<GroupDTO>(_mapper.ConfigurationProvider).ToListAsync();
         }
     }
 }

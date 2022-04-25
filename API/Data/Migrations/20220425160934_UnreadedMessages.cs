@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace API.Data.Migrations
 {
-    public partial class AddedUnreadedMessages : Migration
+    public partial class UnreadedMessages : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -43,12 +43,22 @@ namespace API.Data.Migrations
                     UnreadMessages = table.Column<bool>(type: "boolean", nullable: false),
                     LastMessageSender = table.Column<string>(type: "text", nullable: true),
                     LastMessageContent = table.Column<string>(type: "text", nullable: true),
-                    Username1 = table.Column<string>(type: "text", nullable: true),
-                    Username2 = table.Column<string>(type: "text", nullable: true)
+                    User1Id = table.Column<int>(type: "integer", nullable: true),
+                    User2Id = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Groups", x => x.Name);
+                    table.ForeignKey(
+                        name: "FK_Groups_AspNetUsers_User1Id",
+                        column: x => x.User1Id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Groups_AspNetUsers_User2Id",
+                        column: x => x.User2Id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -119,6 +129,16 @@ namespace API.Data.Migrations
                 name: "IX_Connections_GroupName",
                 table: "Connections",
                 column: "GroupName");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Groups_User1Id",
+                table: "Groups",
+                column: "User1Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Groups_User2Id",
+                table: "Groups",
+                column: "User2Id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_RecipientId",
