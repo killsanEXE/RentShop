@@ -4,6 +4,7 @@ import { Client } from 'src/app/models/client';
 import { Point } from 'src/app/models/item';
 import { Order } from 'src/app/models/order';
 import { User, UserLocation } from 'src/app/models/user';
+import { ConfirmService } from 'src/app/services/confirm.service';
 import { MessageService } from 'src/app/services/message.service';
 import { OrderService } from 'src/app/services/order.service';
 import { PointService } from 'src/app/services/point.service';
@@ -32,7 +33,7 @@ export class OrderComponent implements OnInit {
   returnForm: FormGroup;
 
   constructor(private orderService: OrderService, private messageService: MessageService, 
-    private pointService: PointService, private fb: FormBuilder) {}
+    private pointService: PointService, private fb: FormBuilder, private confirmServcie: ConfirmService) {}
 
   ngOnInit(): void {
     this.initializeForm();
@@ -82,15 +83,31 @@ export class OrderComponent implements OnInit {
     }
   }
 
-  acceptOrder() { this.orderService.acceptOrder(this.order.id).subscribe(order => { this.order = order; }); }
-  startDelivery(){ this.orderService.startDelivery(this.order.id).subscribe(order => { this.order = order; }); }
+  acceptOrder() { 
+    this.confirmServcie.confirm().subscribe(f => {
+      if(f) this.orderService.acceptOrder(this.order.id).subscribe(order => { this.order = order; }); 
+    })
+  }
+  startDelivery(){
+    this.confirmServcie.confirm().subscribe(f => {
+      if(f) this.orderService.startDelivery(this.order.id).subscribe(order => { this.order = order; }); 
+    })
+  }
   finishDelivery(){ this.orderService.completeDelivery(this.order.id).subscribe(order => { this.order = order; }); }
   message(otherUser: Client){ this.messageService.openDialog(this.user, otherUser.username); }
 
 
 
-  cancelOrder(){ this.orderService.cancelOrder(this.order.id).subscribe((order) => { this.order = order; }) }
-  selfpickOrder(){ this.orderService.selfpickOrder(this.order.id).subscribe((order) => this.order = order); }
+  cancelOrder(){ 
+    this.confirmServcie.confirm().subscribe(f => {
+      if(f) this.orderService.cancelOrder(this.order.id).subscribe((order) => { this.order = order; }) 
+    })
+  }
+  selfpickOrder(){
+    this.confirmServcie.confirm().subscribe(f => {
+      if(f) this.orderService.selfpickOrder(this.order.id).subscribe((order) => this.order = order); 
+    })
+  }
   receivedOrder(){ this.orderService.receivedOrder(this.order.id).subscribe(order => this.order = order); }
 
 
@@ -112,7 +129,11 @@ export class OrderComponent implements OnInit {
   }
 
   save(){
-    this.returnForm.controls["id"].setValue(this.order.id);
-    this.orderService.setReturnForm(this.returnForm.value).subscribe(order => this.order = order);
+    this.confirmServcie.confirm().subscribe(f => {
+      if(f){
+        this.returnForm.controls["id"].setValue(this.order.id);
+        this.orderService.setReturnForm(this.returnForm.value).subscribe(order => this.order = order);
+      }
+    })
   }
 }
