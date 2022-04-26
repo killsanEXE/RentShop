@@ -64,7 +64,11 @@ namespace API.Data
 
         public async Task<AppUser> GetUserByUsernameAsync(string username)
         {
-            return (await _context.Users.Include(f => f.DeliveryLocations).SingleOrDefaultAsync(f => f.UserName == username))!;
+            return (await _context.Users
+                .Include(f => f.DeliveryLocations)
+                .Include(f => f.Location)
+                .Include(f => f.UserRoles)
+                .SingleOrDefaultAsync(f => f.UserName == username))!;
         }
 
         public async Task<IEnumerable<AppUser>> GetUsersAsync()
@@ -75,6 +79,22 @@ namespace API.Data
         public void Update(AppUser user)
         {
             _context.Entry(user).State = EntityState.Modified;
+        }
+
+        public async Task<IEnumerable<DeliverymanDTO>> GetDeliverymanRequestsAsync()
+        {
+            var query = _context.Users.Where(f => f.DeliverymanRequest).AsQueryable();
+            return await query.ProjectTo<DeliverymanDTO>(_mapper.ConfigurationProvider).AsNoTracking().ToListAsync();
+        }
+
+        public async Task<IEnumerable<AppUser>> GetDeliverymansFromCountryAsync(string country)
+        {
+            return await _context.Users
+                .Include(f => f.UserRoles!.Where(f => f.Role!.Name == "Deliveryman"))
+                .Where(f => f.UserRoles!.Count > 1)
+                .Include(f => f.Location)
+                .Where(f => f.Location!.Country == country)
+                .ToListAsync();
         }
     }
 }

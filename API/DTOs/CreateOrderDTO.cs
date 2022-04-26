@@ -9,7 +9,7 @@ namespace API.DTOs
     public class CreateOrderDTO
     {
         [Required]
-        public int? UnitId { get; set; }
+        public int UnitId { get; set; }
         public int? DeliveryLocation { get; set; }
         [Required]
         public DateTime DeliveryDate { get; set; }

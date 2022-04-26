@@ -19,14 +19,12 @@ namespace API.Controllers
     public class ItemController : BaseApiController
     {
         readonly IUnitOfWork _unitOfWork;
-        readonly ApplicationContext _context;
         readonly IMapper _mapper;
         readonly IPhotoService _photoService;
-        public ItemController(IUnitOfWork unitOfWork, ApplicationContext context, IMapper mapper,
+        public ItemController(IUnitOfWork unitOfWork, IMapper mapper,
             IPhotoService photoService)
         {
             _unitOfWork = unitOfWork;
-            _context = context;
             _mapper = mapper;
             _photoService = photoService;
         }
@@ -67,8 +65,8 @@ namespace API.Controllers
         public async Task<ActionResult<ItemDTO>> CreateItem(ItemDTO itemDTO)
         {
             var item = _mapper.Map<Item>(itemDTO);
-            _context.Items.Add(item);
-            if(await _context.SaveChangesAsync() > 0) return Ok(_mapper.Map<ItemDTO>(item));
+            _unitOfWork.ItemRepository.AddItem(item);
+            if(await _unitOfWork.Complete()) return Ok(_mapper.Map<ItemDTO>(item));
             return BadRequest("Failed to add new item");
         }
 
@@ -84,7 +82,7 @@ namespace API.Controllers
             item.AgeRestriction = itemDTO.AgeRestriction;        
             item.PricePerDay = itemDTO.PricePerDay;   
 
-            if(await _context.SaveChangesAsync() > 0) return Ok(await _unitOfWork.ItemRepository.GetItemDTOByIdAsync(item.Id, 1000, true));
+            if(await _unitOfWork.Complete()) return Ok(await _unitOfWork.ItemRepository.GetItemDTOByIdAsync(item.Id, 1000, true));
             return BadRequest("Failed to update item");
         }
 
@@ -95,7 +93,7 @@ namespace API.Controllers
             var item = await _unitOfWork.ItemRepository.GetItemByIdAsync(id);
             if(item == null) return NotFound();
             item.Disabled = true;
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Complete();
             return Ok();
         }
 
@@ -106,7 +104,7 @@ namespace API.Controllers
             var item = await _unitOfWork.ItemRepository.GetItemByIdAsync(id);
             if(item == null) return NotFound();
             item.Disabled = false;
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Complete();
             return Ok();
         }
 

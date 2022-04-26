@@ -18,22 +18,22 @@ namespace API.Controllers
 {
     public class AccountController : BaseApiController  
     {
-        readonly ApplicationContext _context;
         readonly ITokenService _tokenService;
         readonly IMapper _mapper;
         readonly UserManager<AppUser> _userManager;
         readonly SignInManager<AppUser> _signInManager;
         readonly IEmailService _emailService;
+        readonly IUnitOfWork _unitOfWork;
         readonly string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")!;
-        public AccountController(ApplicationContext context, ITokenService tokenService, IMapper mapper, 
+        public AccountController(ITokenService tokenService, IMapper mapper, IUnitOfWork unitOfWork,
             UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IEmailService emailService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _mapper = mapper;
             _tokenService = tokenService;
-            _context = context;
             _emailService = emailService;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpPost("register")]
@@ -109,7 +109,7 @@ namespace API.Controllers
         public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDTO)
         {
 
-            AppUser? user = await _context.Users.Include(f => f.DeliveryLocations).SingleOrDefaultAsync(f => f.UserName == loginDTO.Username!.ToLower());
+            AppUser? user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(loginDTO.Username!.Trim());
             if(user == null) return Unauthorized("Invalid username");
 
             if(!user.EmailConfirmed) return BadRequest("Email was not confirmed");

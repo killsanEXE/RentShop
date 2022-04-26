@@ -16,12 +16,12 @@ namespace API.Controllers
 {
     public class PointController : BaseApiController
     {
-        readonly ApplicationContext _context;
+        readonly IUnitOfWork _unitOfWork;
         readonly IMapper _mapper;
         readonly IPhotoService _photoService;
-        public PointController(ApplicationContext context, IMapper mapper, IPhotoService photoService)
+        public PointController(IUnitOfWork unitOfWork, IMapper mapper, IPhotoService photoService)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
             _photoService = photoService;
         }
@@ -32,8 +32,8 @@ namespace API.Controllers
         {
             locationDTO = TrimStrings<LocationDTO>(locationDTO);
             var point = _mapper.Map<Point>(locationDTO);
-            _context.Points.Add(point);
-            if(await _context.SaveChangesAsync() > 0) return Ok(_mapper.Map<PointDTO>(point));
+            _unitOfWork.PointRepository.AddPoint(point);
+            if(await _unitOfWork.Complete()) return Ok(_mapper.Map<PointDTO>(point));
             return BadRequest("Failed to add pick up point");
         }
 
@@ -42,7 +42,7 @@ namespace API.Controllers
         public async Task<ActionResult<PointDTO>> EditPoint(int currentPoint, LocationDTO locationDTO)
         {
             locationDTO = TrimStrings<LocationDTO>(locationDTO);
-            var point = await _context.Points.FindAsync(currentPoint);
+            var point = await _unitOfWork.PointRepository.GetPointByIdAsync(currentPoint);
             if(point == null) return NotFound();
 
             point.Address = locationDTO.Address;
@@ -51,7 +51,7 @@ namespace API.Controllers
             point.Floor = locationDTO.Floor;
             point.Apartment = locationDTO.Apartment;
 
-            if(await _context.SaveChangesAsync() > 0) return Ok(_mapper.Map<PointDTO>(point));
+            if(await _unitOfWork.Complete()) return Ok(_mapper.Map<PointDTO>(point));
             return BadRequest("Failed to update a pick up point");
         }
 
@@ -59,10 +59,10 @@ namespace API.Controllers
         [HttpPut("disable/{id:int}")]
         public async Task<ActionResult> DisablePoint(int id)
         {
-            var point = await _context.Points.FindAsync(id);
+            var point = await _unitOfWork.PointRepository.GetPointByIdAsync(id);
             if(point == null) return NotFound();
             point.Disabled = true;
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Complete();
             return Ok();
         }
 
@@ -70,10 +70,10 @@ namespace API.Controllers
         [HttpPut("enable/{id:int}")]
         public async Task<ActionResult> EnablePoint(int id)
         {
-            var point = await _context.Points.FindAsync(id);
+            var point = await _unitOfWork.PointRepository.GetPointByIdAsync(id);
             if(point == null) return NotFound();
             point.Disabled = false;
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Complete();
             return Ok();
         }
 
@@ -81,7 +81,7 @@ namespace API.Controllers
         [HttpPost("set-photo/{id:int}")]
         public async Task<ActionResult> SetPointPhoto(int id, IFormFile file)
         {
-            var point = await _context.Points.FindAsync(id);
+            var point = await _unitOfWork.PointRepository.GetPointByIdAsync(id);
             if(point == null) return NotFound();
 
             if(point.PhotoUrl != null && point.PublicPhotoId != null){
@@ -94,7 +94,7 @@ namespace API.Controllers
 
             point.PhotoUrl = result.Uri.AbsoluteUri;
             point.PublicPhotoId = result.PublicId;
-            if(await _context.SaveChangesAsync() > 0) return Content(point.PhotoUrl);           
+            if(await _unitOfWork.Complete()) return Content(point.PhotoUrl);           
             return BadRequest("Failed to set photo");
         }
 
@@ -102,18 +102,14 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PointDTO>>> GetPoints()
         {
-            var query = _context.Points.AsQueryable();
-            var points = query.ProjectTo<PointDTO>(_mapper.ConfigurationProvider).AsNoTracking();
-            return Ok(await points.ToListAsync());
+            return Ok(await _unitOfWork.PointRepository.GetDTOPointsAsync());
         }
 
         [Authorize]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<PointDTO>> GetPoint(int id)
         {
-            var point = await _context.Points.FindAsync(id);
-            if(point != null) return Ok(_mapper.Map<PointDTO>(point));            
-            return NotFound();
+            return Ok(await _unitOfWork.PointRepository.GetPointDTO(id));
         }
 
         T TrimStrings<T>(T obj) where T: class

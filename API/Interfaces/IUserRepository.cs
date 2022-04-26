@@ -18,5 +18,7 @@ namespace API.Interfaces
         Task<PagedList<DeliverymanDTO>> GetDeliverymansAsync(UserParams userParams);
         Task<AppUser> GetDeliverymanByUsernameAsync(string username);
         int GetUserAge(string username);
+        Task<IEnumerable<DeliverymanDTO>> GetDeliverymanRequestsAsync();
+        Task<IEnumerable<AppUser>> GetDeliverymansFromCountryAsync(string country);
     }
 }

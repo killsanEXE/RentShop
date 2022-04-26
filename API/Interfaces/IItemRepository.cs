@@ -13,5 +13,8 @@ namespace API.Interfaces
         Task<PagedList<ItemDTO>> GetItemsAsync(UserParams userParams, int userAge, bool admin);
         Task<Item> GetItemByIdAsync(int Id);
         Task<ItemDTO> GetItemDTOByIdAsync(int Id, int age, bool admin);
+        Task<IEnumerable<DatasetItemDTO>> GetDatasetItemsAsync();
+        Task<IEnumerable<Item>> GetItemsByNameAsync(string name);
+        void AddItem(Item item);
     }
 }

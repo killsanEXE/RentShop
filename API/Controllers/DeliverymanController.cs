@@ -23,15 +23,13 @@ namespace API.Controllers
 
         readonly IMapper _mapper;
         readonly IUnitOfWork _unitOfWork;
-        readonly ApplicationContext _context;
         readonly UserManager<AppUser> _userManager;
         readonly IEmailService _emailService;
         public DeliverymanController(IUnitOfWork unitOfWork, IMapper mapper, 
-            ApplicationContext context, UserManager<AppUser> userManager, IEmailService emailService)
+            UserManager<AppUser> userManager, IEmailService emailService)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
-            _context = context;
             _userManager = userManager;
             _emailService = emailService;
         }
@@ -49,20 +47,19 @@ namespace API.Controllers
         [HttpGet("requests")]
         public async Task<ActionResult<IEnumerable<DeliverymanDTO>>> GetAllJoinRequests()
         {
-            var query = _context.Users.Where(f => f.DeliverymanRequest).AsQueryable();
-            return Ok(await query.ProjectTo<DeliverymanDTO>(_mapper.ConfigurationProvider).AsNoTracking().ToListAsync());
+            return Ok(await _unitOfWork.UserRepository.GetDeliverymanRequestsAsync());
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPost("requests/{username}")]
         public async Task<ActionResult<DeliverymanDTO>> AddDeliveryMan(string username)
         {
-            var user = await _context.Users.Include(f => f.Location).SingleOrDefaultAsync(f => f.UserName == username);
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(username);
             if(user == null || !user.DeliverymanRequest || user.Location == null) return NotFound();
 
             user.DeliverymanRequest = false;
             await _userManager.AddToRoleAsync(user, "Deliveryman");
-            await _context.SaveChangesAsync(); 
+            await _unitOfWork.Complete();
             
             await _emailService.SendEmail(new EmailMessage(user.Email, "Congratulations, you joined deliverymans", "Logout and log in to your account to see changes"));
             return Ok(_mapper.Map<DeliverymanDTO>(user));
@@ -76,7 +73,7 @@ namespace API.Controllers
             if(user == null || !user.DeliverymanRequest) return NotFound();
 
             user.DeliverymanRequest = false;
-            await _context.SaveChangesAsync(); 
+            await _unitOfWork.Complete(); 
             return Ok();
         }
 
@@ -84,21 +81,15 @@ namespace API.Controllers
         [HttpDelete("{username}")]
         public async Task<ActionResult> RemoveDeliveryman(string username)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(f => f.UserName == username);
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(username);
             if(user == null) return NotFound();
 
-            var orders = await _context.Orders.Include(f => f.DeliveryMan)
-                .Include(f => f.ReturnDeliveryman)
-                .Where(f => (
-                    (f.DeliveryMan != null && f.DeliveryMan.UserName == user.UserName && !f.ClientGotDelivery) || 
-                    (f.ReturnDeliveryman != null && f.ReturnDeliveryman.UserName == user.UserName)) 
-                && (!f.Cancelled && !f.UnitReturned))
-                .ToListAsync();
+            var orders = await _unitOfWork.OrderRepository.GetActiveDeliveriesForDeliverymanAsync(user.UserName);
             
-            if(orders.Count > 0) return BadRequest($"{user.UserName} did not finsh {orders.Count} order(s)");
+            if(orders.Count() > 0) return BadRequest($"{user.UserName} did not finsh {orders.Count()} order(s)");
 
             await _userManager.RemoveFromRoleAsync(user, "Deliveryman");
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Complete();
             return Ok();
         }
 
@@ -116,7 +107,7 @@ namespace API.Controllers
                 Country = dto.Country
             };
             
-            if(await _context.SaveChangesAsync() > 0) return Ok(new UserDTO { DeliverymanRequest = true });
+            if(await _unitOfWork.Complete()) return Ok(new UserDTO { DeliverymanRequest = true });
             return BadRequest("Failed to send request");
         }
     }

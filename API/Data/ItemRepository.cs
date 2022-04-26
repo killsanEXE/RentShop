@@ -63,6 +63,7 @@ namespace API.Data
         public async Task<PagedList<ItemDTO>> GetItemsAsync(UserParams userParams, int userAge, bool admin)
         {
             var query = _context.Items.AsQueryable();
+            query = query.OrderBy(f => f.Id);
             if(!admin){
                 query = query.Where(f => f.AgeRestriction <= userAge && !f.Disabled);
             }
@@ -70,6 +71,24 @@ namespace API.Data
                 query.ProjectTo<ItemDTO>(_mapper.ConfigurationProvider).AsNoTracking(),
                 userParams.PageNumber, userParams.PageSize
             );
+        }
+
+        public async Task<IEnumerable<DatasetItemDTO>> GetDatasetItemsAsync()
+        {
+            var query = _context.Items.AsQueryable();
+            var items = await query.ProjectTo<DatasetItemDTO>(_mapper.ConfigurationProvider).ToListAsync();
+            return items;
+        }
+
+        public async Task<IEnumerable<Item>> GetItemsByNameAsync(string name)
+        {
+            return await _context.Items.Include(f => f.Photos)
+                    .Where(f => f.Name!.Trim().ToLower() == name.Trim().ToLower()).ToListAsync();
+        }
+
+        public void AddItem(Item item)
+        {
+            _context.Items.Add(item);
         }
     }
 }

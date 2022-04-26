@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using API.Data;
 using API.DTOs;
 using API.Entities;
+using API.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Authorization;
@@ -16,23 +17,22 @@ namespace API.Controllers
     [Authorize(Roles = "Admin")]
     public class AdminController : BaseApiController
     {
-        readonly ApplicationContext _context;
+        readonly IUnitOfWork _unitOfWork;
         readonly IMapper _mapper;
-        public AdminController(ApplicationContext context, IMapper mapper)
+        public AdminController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
         [HttpGet("dataset")]
         public async Task<ActionResult<DatasetDTO>> GetDataset()
         {
-            var query = _context.Items.AsQueryable();
-            var items = await query.ProjectTo<DatasetItemDTO>(_mapper.ConfigurationProvider).ToListAsync();
-            if(items.Count > 0)
+            var items = await _unitOfWork.ItemRepository.GetDatasetItemsAsync();
+            if(items.Count() > 0)
             {
                 return Ok(new DatasetDTO() {
-                    Items = items
+                    Items = items.ToList()
                 });
             }else
             {
@@ -47,10 +47,8 @@ namespace API.Controllers
             foreach(var item in dto.Items)
             {
                 var mappedItem = _mapper.Map<Item>(item);
-                var sameNameItems = await _context.Items.Include(f => f.Photos)
-                    .Where(f => f.Name!.Trim().ToLower() == mappedItem.Name!.Trim().ToLower()).ToListAsync();
-
-                if(sameNameItems.Count == 1)
+                var sameNameItems = await _unitOfWork.ItemRepository.GetItemsByNameAsync(mappedItem.Name!);
+                if(sameNameItems.Count() == 1)
                 {
                     var editedItem = sameNameItems.First();
                     editedItem.Description = mappedItem.Description;
@@ -66,10 +64,10 @@ namespace API.Controllers
                     }
                 }
                 else{
-                    _context.Items.Add(mappedItem);
+                    _unitOfWork.ItemRepository.AddItem(mappedItem);
                 }
             }
-            if(await _context.SaveChangesAsync() > 0) return Ok();
+            if(await _unitOfWork.Complete()) return Ok();
             return BadRequest("Failed to add item(s) to database");
         }
     }

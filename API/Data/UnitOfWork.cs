@@ -23,6 +23,8 @@ namespace API.Data
 
         public IOrderRepository OrderRepository => new OrderRepository(_context, _mapper);
         public IMessageRepository MessageRepository => new MessageRepository(_context, _mapper);
+        public IUnitRepository UnitRepository => new UnitRepository(_context, _mapper);
+        public IPointRepository PointRepository => new PointRepository(_context, _mapper);
 
         public async Task<bool> Complete()
         {

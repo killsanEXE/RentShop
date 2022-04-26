@@ -17,12 +17,10 @@ namespace API.Controllers
     public class UnitController : BaseApiController
     {
         readonly IUnitOfWork _unitOfWork;
-        readonly ApplicationContext _context;
         readonly IMapper _mapper;
-        public UnitController(IUnitOfWork unitOfWork, ApplicationContext context, IMapper mapper)
+        public UnitController(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
-            _context = context;
             _mapper = mapper;
         }
         
@@ -30,24 +28,19 @@ namespace API.Controllers
         [HttpPost("{itemId:int}")]
         public async Task<ActionResult<UnitDTO>> AddUnit(int itemId, UnitDTO unitDTO)
         {
-            var item = await _context.Items
-                .Where(f => f.Id == itemId)
-                .AsSplitQuery()
-                .SingleOrDefaultAsync();
-            var point = await _context.Points
-                .Where(f => f.Id == unitDTO.PointId)
-                .AsSplitQuery()
-                .SingleOrDefaultAsync();
+            var item = await _unitOfWork.ItemRepository.GetItemByIdAsync(itemId);
+            var point = await _unitOfWork.PointRepository.GetPointByIdAsync(unitDTO.PointId);
                 
-            if(point == null || item == null) return NotFound();
+            if(point.Id == -1 || item.Id == -1) return NotFound();
 
             var unit = new Unit
             {
                 Description = unitDTO.Description,
             };
 
-            await _context.ItemUnitPoints.AddAsync(new() { Item = item, Point = point, Unit = unit});
-            if(await _context.SaveChangesAsync() > 0) return Ok(_mapper.Map<UnitDTO>(unit));
+            _unitOfWork.UnitRepository.AddUnit(item, point, unit);
+
+            if(await _unitOfWork.Complete()) return Ok(_mapper.Map<UnitDTO>(unit));
             return BadRequest("Failed to add unit");
         }
 
@@ -55,43 +48,40 @@ namespace API.Controllers
         public async Task<ActionResult<UnitDTO>> EditUnit(int id, UnitDTO unitDTO)
         {
 
-            var unit = await _context.Units
-                .Include(f => f.ItemUnitPoint)
-                .ThenInclude(f => f!.Point)
-                .SingleOrDefaultAsync(f => f.Id == id);
-            if(unit == null) return NotFound();
+            var unit = await _unitOfWork.UnitRepository.GetUnitByIdAsync(id);
+            if(unit.Id == -1) return NotFound();
 
             if(unit.IsAvailable && unit.ItemUnitPoint!.Point!.Id != unitDTO.PointId)
             {
-                var Point = _context.Points.FirstOrDefault(f => f.Id == unitDTO.PointId);
-                if(Point != null){
-                    unit.ItemUnitPoint.Point = Point;
+                var point = await _unitOfWork.PointRepository.GetPointByIdAsync(unitDTO.PointId);
+                if(point.Id != -1){
+                    unit.ItemUnitPoint.Point = point;
                 }
             }
             else if(!unit.IsAvailable) return BadRequest("Failed to update pick up point");
 
             unit.Description = unitDTO.Description;
-            if(await _context.SaveChangesAsync() > 0) return Ok(_mapper.Map<UnitDTO>(unit));
+            if(await _unitOfWork.Complete()) return Ok(_mapper.Map<UnitDTO>(unit));
             return BadRequest("Failed to edit unit");
         }
 
         [HttpPut("disable/{id:int}")]
         public async Task<ActionResult> DisableUnit(int id)
         {
-            var unit = await _context.Units.FindAsync(id);
-            if(unit == null) return NotFound();
+            var unit = await _unitOfWork.UnitRepository.GetUnitByIdAsync(id);
+            if(unit.Id == -1) return NotFound();
             unit.Disabled = true;
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Complete();
             return Ok();
         }
 
         [HttpPut("enable/{id:int}")]
         public async Task<ActionResult> EnableUnit(int id)
         {
-            var unit = await _context.Units.FindAsync(id);
-            if(unit == null) return NotFound();
+            var unit = await _unitOfWork.UnitRepository.GetUnitByIdAsync(id);
+            if(unit.Id == -1) return NotFound();
             unit.Disabled = false;
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Complete();
             return Ok();
         }
     }

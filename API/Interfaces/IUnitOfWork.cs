@@ -11,6 +11,8 @@ namespace API.Interfaces
         IItemRepository ItemRepository { get; }
         IOrderRepository OrderRepository { get; }
         IMessageRepository MessageRepository { get; }
+        IUnitRepository UnitRepository { get; }
+        IPointRepository PointRepository { get; }
         Task<bool> Complete();
         bool HasChanges();
     }
