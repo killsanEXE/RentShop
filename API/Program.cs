@@ -22,7 +22,13 @@ builder.Services.AddEndpointsApiExplorer();
 
 if (env == "Docker") 
 {
-    builder.Services.AddCors(x => x.AddPolicy("Any", builder => { builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); }));
+    builder.Services.AddCors(x => x.AddPolicy("_myDockerSpecieficOrigins", builder => {
+        builder
+            .AllowAnyHeader()
+            .WithOrigins("http://localhost:8080")
+            .AllowAnyMethod()
+            .AllowCredentials();
+    }));
     builder.Services.AddSwaggerGen(c =>
     {
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "RentShop.Api", Version = "v1" });
@@ -107,7 +113,15 @@ builder.Services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();
-builder.Services.AddSignalR();
+if (env == "Docker") {
+    builder.Services.AddSignalR(e => {
+                e.MaximumReceiveMessageSize = 102400000;
+                e.EnableDetailedErrors = true;
+            });
+} else {
+    builder.Services.AddSignalR();
+}
+
 builder.Services.AddSingleton<PresenceTracker>();
 builder.Services.AddScoped<IEmailService, EmailService>(s => 
 {
@@ -145,7 +159,7 @@ using(var scope = app.Services.CreateScope())
 app.UseMiddleware<ExceptionMiddleware>();
 if (env == "Docker")
 {
-    app.UseCors("Any");
+    app.UseCors("_myDockerSpecieficOrigins");
     app.UseSwagger();
     app.UseSwaggerUI();
 } else {
