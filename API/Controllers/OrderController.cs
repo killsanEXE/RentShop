@@ -128,7 +128,7 @@ namespace API.Controllers
 
             await _emailService.SendEmail(new EmailMessage(order.Client!.Email, "Deliveryman accepted your order", ""));
 
-            if(await _unitOfWork.Complete()) return Ok(await _unitOfWork.OrderRepository.GetOrderDTOByIdAsync(orderId));
+            if(await _unitOfWork.Complete()) return Ok(await _unitOfWork.OrderRepository.GetOrderDTOByIdAsync(order.Id));
             return BadRequest("Failed to accept order");
         }
 
@@ -147,7 +147,7 @@ namespace API.Controllers
 
             await _emailService.SendEmail(new EmailMessage(order.Client!.Email, "The delivery of your order has begun", ""));
 
-            if(await _unitOfWork.Complete()) return Ok(await _unitOfWork.OrderRepository.GetOrderDTOByIdAsync(orderId));
+            if(await _unitOfWork.Complete()) return Ok(await _unitOfWork.OrderRepository.GetOrderDTOByIdAsync(order.Id));
             return BadRequest("Failed to confirm delivery");
         }
 
@@ -167,7 +167,7 @@ namespace API.Controllers
             order.DeliveryCompleted = true;
 
             await _emailService.SendEmail(new EmailMessage(order.Client!.Email, "Collect the item", "The delivery of your order was finished"));
-            if(await _unitOfWork.Complete()) return Ok(await _unitOfWork.OrderRepository.GetOrderDTOByIdAsync(orderId));
+            if(await _unitOfWork.Complete()) return Ok(await _unitOfWork.OrderRepository.GetOrderDTOByIdAsync(order.Id));
             return BadRequest("Failed to confirm delivery");
         }
 
@@ -185,7 +185,7 @@ namespace API.Controllers
             order.ClientGotDelivery = true;
             order.InUsage = true;
 
-            if(await _unitOfWork.Complete()) return Ok(await _unitOfWork.OrderRepository.GetOrderDTOByIdAsync(orderId));
+            if(await _unitOfWork.Complete()) return Ok(await _unitOfWork.OrderRepository.GetOrderDTOByIdAsync(order.Id));
             return BadRequest("Failed to confirm delivery");
         }
 
@@ -204,7 +204,7 @@ namespace API.Controllers
 
             if(order.DeliveryMan != null)
                 await _emailService.SendEmail(new EmailMessage(order.DeliveryMan.Email, "Client cancelled the order", ""));
-            if(await _unitOfWork.Complete()) return Ok(await _unitOfWork.OrderRepository.GetOrderDTOByIdAsync(orderId));
+            if(await _unitOfWork.Complete()) return Ok(await _unitOfWork.OrderRepository.GetOrderDTOByIdAsync(order.Id));
             return BadRequest("Failed to cancel delivery");
         }
 
@@ -220,7 +220,7 @@ namespace API.Controllers
             order.DeliveryMan = user;
             order.DeliveryLocation = null;
             
-            if(await _unitOfWork.Complete()) return Ok(await _unitOfWork.OrderRepository.GetOrderDTOByIdAsync(orderId));
+            if(await _unitOfWork.Complete()) return Ok(await _unitOfWork.OrderRepository.GetOrderDTOByIdAsync(order.Id));
             return BadRequest("Failed to cancel order delivery");
         }
 

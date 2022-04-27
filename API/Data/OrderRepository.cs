@@ -25,17 +25,23 @@ namespace API.Data
         public async Task<Order> GetOrderByIdAsync(int id)
         {
             return await _context.Orders
-                .AsQueryable()
-                .Where(f => f.Id == id && !f.UnitReturned && !f.Cancelled)
-                .ProjectTo<Order>(_mapper.ConfigurationProvider)
-                .FirstOrDefaultAsync() ?? new Order() { Id = -1 };
+                .Where(f => f.Id == id)
+                .Include(f => f.Unit)
+                .ThenInclude(f => f!.ItemUnitPoint!.Point)
+                .Include(f => f.Client)
+                .Include(f => f.DeliveryMan)
+                .Include(f => f.DeliveryLocation)
+                .Include(f => f.ReturnDeliveryman)
+                .Include(f => f.ReturnFromLocation)
+                .Include(f => f.ReturnPoint)
+                .SingleOrDefaultAsync() ?? new() { Id = -1 };
         }
 
         public async Task<OrderDTO> GetOrderDTOByIdAsync(int id)
         {
             return await _context.Orders
                 .AsQueryable()
-                .Where(f => f.Id == id && !f.UnitReturned && !f.Cancelled)
+                .Where(f => f.Id == id)
                 .ProjectTo<OrderDTO>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync() ?? new OrderDTO() { Id = -1 };
         }
@@ -97,7 +103,7 @@ namespace API.Data
                 .Include(f => f.Client)
                 .OrderBy(f => f.Id)
                 .AsQueryable()
-                .Where(f => f.Client!.UserName == username)
+                .Where(f => f.Client!.UserName == username && !f.Cancelled && !f.UnitReturned)
                 .ProjectTo<OrderDTO>(_mapper.ConfigurationProvider)
                 .ToListAsync();
         }
