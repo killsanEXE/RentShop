@@ -58,7 +58,8 @@ namespace API.Controllers
                     unit.ItemUnitPoint.Point = point;
                 }
             }
-            else if(!unit.IsAvailable) return BadRequest("Failed to update pick up point");
+            else if(!unit.IsAvailable && unit.ItemUnitPoint!.Point!.Id != unitDTO.PointId)
+                return BadRequest("Failed to update pick up point");
 
             unit.Description = unitDTO.Description;
             if(await _unitOfWork.Complete()) return Ok(_mapper.Map<UnitDTO>(unit));
