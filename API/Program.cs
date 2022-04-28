@@ -7,6 +7,7 @@ using API.Interfaces;
 using API.Middleware;
 using API.Services;
 using API.SignalR;
+using API.Wrappers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -132,6 +133,7 @@ builder.Services.AddScoped<IEmailService, EmailService>(s =>
         Password = emailSettings.GetSection("Password").Value,
     });
 });
+builder.Services.AddScoped<IWrapper, Wrapper>();
 
 var app = builder.Build();
 

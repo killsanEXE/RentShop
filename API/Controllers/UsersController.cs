@@ -18,24 +18,26 @@ namespace API.Controllers
         readonly IMapper _mapper;
         readonly IUnitOfWork _unitOfWork;
         readonly IPhotoService _photoService;
-        public UsersController(IPhotoService photoService, IUnitOfWork unitOfWork, IMapper mapper)
+        readonly IWrapper _wrapper;
+        public UsersController(IPhotoService photoService, IUnitOfWork unitOfWork, IMapper mapper, IWrapper wrapper)
         {
             _photoService = photoService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _wrapper = wrapper;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ClientDTO>>> GetUsers([FromQuery] UserParams userParams){
             var users = await _unitOfWork.UserRepository.GetClientsAsync(userParams);
-            Response.AddPaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
+            _wrapper.AddPaginationHeaderViaWrapper(Response, users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
             return Ok(users);
         }
 
         [HttpPost("add-photo")]
         public async Task<IActionResult> AddPhoto(IFormFile file)
         {
-            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(User));
 
             if(user.PhotoUrl != null && user.PublicPhotoId != null)
             {
@@ -55,7 +57,7 @@ namespace API.Controllers
         [HttpPost("locations")]
         public async Task<ActionResult<LocationDTO>> AddLocation(LocationDTO locationDTO)
         {
-            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(User));
             Location deliveryLocation = new()
             {
                 Country = locationDTO.Country,
@@ -72,7 +74,7 @@ namespace API.Controllers
         [HttpPut("locations/{locationId:int}")]
         public async Task<ActionResult<LocationDTO>> EditLocation(int locationId, LocationDTO locationDTO)
         {
-            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(User));
             var location = user.DeliveryLocations!.SingleOrDefault(f => f.Id == locationId);
             if(user == null || location == null) return NotFound();
 
@@ -89,7 +91,7 @@ namespace API.Controllers
         [HttpDelete("locations/{locationId:int}")]
         public async Task<ActionResult> DeleteLocation(int locationId)
         {
-            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(User));
             var location = user.DeliveryLocations!.SingleOrDefault(f => f.Id == locationId);
             if(user == null || location == null) return NotFound();
 
