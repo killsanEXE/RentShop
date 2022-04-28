@@ -12,16 +12,26 @@ namespace API.Tests
 {
     public class UsersControllerTests : DependencyProvider
     {
-        readonly UsersController _UsersController = null!;
+        readonly UsersController _usersController = null!;
         readonly UnitController _unitController = null!;
+        readonly AdminController _adminController = null!;
         protected readonly ITestOutputHelper _output;
+        protected ClaimsPrincipal user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.Name, "Username"),
+                new Claim(ClaimTypes.NameIdentifier, "1"),
+                new Claim("custom-claim", "example claim value"),
+            }, "mock"));
         public UsersControllerTests(ITestOutputHelper output)
         {
-            _UsersController = new UsersController(_fakePhotoService, _fakeUnitOfWork, _mapper, _wrapper);
+            _usersController = new UsersController(_fakePhotoService, _fakeUnitOfWork, _mapper, _wrapper);
             _unitController = new UnitController(_fakeUnitOfWork, _mapper);
+            _adminController = new AdminController(_fakeUnitOfWork, _mapper);
             _output = output;
         }
 
+
+        //USERS CONTROLLER
         [Fact]
         public async void GetUsersReturn200()
         {
@@ -32,7 +42,7 @@ namespace API.Tests
                 .Returns(Task.FromResult(fakePagedList));
 
             var response = A.Fake<HttpResponse>();
-            var actionResult = await _UsersController.GetUsers(fakeUserParams);
+            var actionResult = await _usersController.GetUsers(fakeUserParams);
 
             var result = actionResult.Result as OkObjectResult;
             var resultUsers = result?.Value as IEnumerable<ClientDTO>;
@@ -42,10 +52,7 @@ namespace API.Tests
         [Fact]
         public async void AddLocationReturn200()
         {
-            AppUser fakeUser = new()
-            {
-                Name = "user"
-            };
+            AppUser fakeUser = new() { Name = "user" };
             var fakeDeliveryLocations = A.CollectionOfDummy<Location>(4);
             fakeUser.DeliveryLocations = fakeDeliveryLocations;
             fakeUser.DeliveryLocations?.Add(new());
@@ -56,23 +63,16 @@ namespace API.Tests
                 Address = "something",
             };
 
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.Name, "Username"),
-                new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim("custom-claim", "example claim value"),
-            }, "mock"));
-
             A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(user)))
                 .Returns(Task.FromResult(fakeUser));
             A.CallTo(() => _fakeUnitOfWork.Complete()).Returns(Task.FromResult(true));
 
-            _UsersController.ControllerContext = new ControllerContext()
+            _usersController.ControllerContext = new ControllerContext()
             {
                 HttpContext = new DefaultHttpContext() { User = user }
             };
 
-            var actionResult = await _UsersController.AddLocation(fakeLocationDTO);
+            var actionResult = await _usersController.AddLocation(fakeLocationDTO);
 
             var result = actionResult.Value;
             Assert.Equal(fakeLocationDTO.Country, result?.Country);
@@ -81,10 +81,7 @@ namespace API.Tests
         [Fact]
         public async void AddLocationReturn400()
         {
-            AppUser fakeUser = new()
-            {
-                Name = "user"
-            };
+            AppUser fakeUser = new() { Name = "user" };
             var fakeDeliveryLocations = A.CollectionOfDummy<Location>(4);
             fakeUser.DeliveryLocations = fakeDeliveryLocations;
             LocationDTO fakeLocationDTO = new()
@@ -94,23 +91,16 @@ namespace API.Tests
                 Address = "something",
             };
 
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.Name, "Username"),
-                new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim("custom-claim", "example claim value"),
-            }, "mock"));
-
             A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(user)))
                 .Returns(Task.FromResult(fakeUser));
             A.CallTo(() => _fakeUnitOfWork.Complete()).Returns(Task.FromResult(false));
 
-            _UsersController.ControllerContext = new ControllerContext()
+            _usersController.ControllerContext = new ControllerContext()
             {
                 HttpContext = new DefaultHttpContext() { User = user }
             };
 
-            var actionResult = await _UsersController.AddLocation(fakeLocationDTO);
+            var actionResult = await _usersController.AddLocation(fakeLocationDTO);
 
             var result = actionResult.Result as BadRequestObjectResult;
             Assert.Equal(400, result?.StatusCode);
@@ -127,10 +117,7 @@ namespace API.Tests
                 City = "LA",
                 Address = "something",
             };
-            AppUser fakeUser = new()
-            {
-                Name = "user"
-            };
+            AppUser fakeUser = new() { Name = "user" };
             var fakeDeliveryLocations = A.CollectionOfDummy<Location>(4);
             fakeUser.DeliveryLocations = fakeDeliveryLocations;
             fakeUser.DeliveryLocations?.Add(new()
@@ -140,18 +127,11 @@ namespace API.Tests
                 City = "Minsk"
             });
 
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.Name, "Username"),
-                new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim("custom-claim", "example claim value"),
-            }, "mock"));
-
             A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(user)))
                 .Returns(Task.FromResult(fakeUser));
             A.CallTo(() => _fakeUnitOfWork.Complete()).Returns(Task.FromResult(true));
 
-            var actionResult = await _UsersController.EditLocation(locationId, fakeLocationDTO);
+            var actionResult = await _usersController.EditLocation(locationId, fakeLocationDTO);
 
             var result = (actionResult.Result as OkObjectResult)?.Value as LocationDTO;
             Assert.Equal(fakeLocationDTO.Country, result?.Country);
@@ -167,10 +147,7 @@ namespace API.Tests
                 City = "Minsk",
                 Address = "something",
             };
-            AppUser fakeUser = new()
-            {
-                Name = "user"
-            };
+            AppUser fakeUser = new() { Name = "user" };
             var fakeDeliveryLocations = A.CollectionOfDummy<Location>(4);
             fakeUser.DeliveryLocations = fakeDeliveryLocations;
             fakeUser.DeliveryLocations?.Add(new()
@@ -180,18 +157,11 @@ namespace API.Tests
                 City = "Minsk"
             });
 
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.Name, "Username"),
-                new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim("custom-claim", "example claim value"),
-            }, "mock"));
-
             A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(user)))
                 .Returns(Task.FromResult(fakeUser));
             A.CallTo(() => _fakeUnitOfWork.Complete()).Returns(Task.FromResult(false));
 
-            var actionResult = await _UsersController.EditLocation(locationId, fakeLocationDTO);
+            var actionResult = await _usersController.EditLocation(locationId, fakeLocationDTO);
 
             var result = actionResult.Result as BadRequestObjectResult;
             Assert.Equal(400, result?.StatusCode);           
@@ -207,35 +177,81 @@ namespace API.Tests
                 City = "Minsk",
                 Address = "something",
             };
-            AppUser fakeUser = new()
-            {
-                Name = "user"
-            };
+            AppUser fakeUser = new() { Name = "user" };
             var fakeDeliveryLocations = A.CollectionOfDummy<Location>(4);
             fakeUser.DeliveryLocations = fakeDeliveryLocations;
-
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.Name, "Username"),
-                new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim("custom-claim", "example claim value"),
-            }, "mock"));
 
             A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(user)))
                 .Returns(Task.FromResult(fakeUser));
 
-            var actionResult = await _UsersController.EditLocation(locationId, fakeLocationDTO);
+            var actionResult = await _usersController.EditLocation(locationId, fakeLocationDTO);
 
             var result = actionResult.Result as NotFoundResult;
             Assert.Equal(404, result?.StatusCode);   
         }
 
-        
+        [Fact]
+        public async void DeleteLocationReturn200()
+        {
+            int locationId = 1;
+            AppUser fakeUser = new() { Name = "user" };
+            var fakeDeliveryLocations = A.CollectionOfDummy<Location>(4);
+            fakeUser.DeliveryLocations = fakeDeliveryLocations;
+            fakeUser.DeliveryLocations.Add(new() { Id = 1 });
+
+            A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(user)))
+                .Returns(Task.FromResult(fakeUser));
+            A.CallTo(() => _fakeUnitOfWork.Complete()).Returns(Task.FromResult(true));
+
+            var actionResult = await _usersController.DeleteLocation(locationId);
+
+            var result = actionResult as OkResult;
+            Assert.Equal(200, result?.StatusCode);
+        }
+
+        [Fact]
+        public async void DeleteLocationReturn400()
+        {
+            int locationId = 1;
+            AppUser fakeUser = new() { Name = "user" };
+            var fakeDeliveryLocations = A.CollectionOfDummy<Location>(4);
+            fakeUser.DeliveryLocations = fakeDeliveryLocations;
+            fakeUser.DeliveryLocations.Add(new() { Id = 1 });
+
+            A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(user)))
+                .Returns(Task.FromResult(fakeUser));
+            A.CallTo(() => _fakeUnitOfWork.Complete()).Returns(Task.FromResult(false));
+
+            var actionResult = await _usersController.DeleteLocation(locationId);
+
+            var result = actionResult as BadRequestObjectResult;
+            Assert.Equal(400, result?.StatusCode);
+        }
+
+        [Fact]
+        public async void DeleteLocationReturn404()
+        {
+            int locationId = 1;
+            AppUser fakeUser = new() { Name = "user" };
+            var fakeDeliveryLocations = A.CollectionOfDummy<Location>(4);
+            fakeUser.DeliveryLocations = fakeDeliveryLocations;
+
+            A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(user)))
+                .Returns(Task.FromResult(fakeUser));
+
+            var actionResult = await _usersController.DeleteLocation(locationId);
+
+            var result = actionResult as NotFoundResult;
+            Assert.Equal(404, result?.StatusCode);
+        }
 
 
 
 
 
+
+
+        //UNIT CONTROLLER
         [Fact]
         public async void AddUnitReturn200()
         {
@@ -317,8 +333,6 @@ namespace API.Tests
         }
 
 
-
-        
         [Fact]
         public async void EditUnitReturn200()
         {
@@ -395,6 +409,83 @@ namespace API.Tests
             Assert.Equal(400, result?.StatusCode);
         }
 
+
+
+
+
+
+
+
+
+
+        //ADMIN CONTROLLER
+        [Fact]
+        public async void GetDatasetReturn200()
+        {
+            var fakeItems = A.CollectionOfDummy<DatasetItemDTO>(6).AsEnumerable();
+            A.CallTo(() => _fakeUnitOfWork.ItemRepository.GetDatasetItemsAsync())
+                .Returns(Task.FromResult(fakeItems));
+
+            var actionResult = await _adminController.GetDataset();
+
+            var result = actionResult.Result as OkObjectResult;
+            var resultDTO = result?.Value as DatasetDTO;
+            Assert.Equal(fakeItems.Count(), resultDTO?.Items?.Count());
+        }
+
+        [Fact]
+        public async void GetDatasetReturn400()
+        {
+            var fakeItems = A.CollectionOfDummy<DatasetItemDTO>(0).AsEnumerable();
+            A.CallTo(() => _fakeUnitOfWork.ItemRepository.GetDatasetItemsAsync())
+                .Returns(Task.FromResult(fakeItems));
+
+            var actionResult = await _adminController.GetDataset();
+
+            var result = actionResult.Result as BadRequestObjectResult;
+            Assert.Equal(400, result?.StatusCode);
+        }
+
+        [Fact]
+        public async void SetDatasetReturn200()
+        {
+            var fakeDatasetItems = A.CollectionOfDummy<DatasetItemDTO>(10).ToList();
+            DatasetItemDTO singleDatasetItem = new()
+            {
+                AgeRestriction = 1,
+                Description = "new description",
+                PricePerDay = 1
+            };
+            Item fakeItem = new()
+            {
+                AgeRestriction = 0,
+                Description = "original description",
+                PricePerDay = 0
+            };
+            fakeDatasetItems.Add(singleDatasetItem);
+            var fakeSameNameItems = A.CollectionOfDummy<Item>(0).AsEnumerable().Append(fakeItem);
+            DatasetDTO fakeDatasetDTO = new() { Items = fakeDatasetItems };
+
+            A.CallTo(() => _fakeUnitOfWork.ItemRepository.GetItemsByNameAsync("SAME NAEM ITEM"))
+                .Returns(Task.FromResult(fakeSameNameItems));
+            A.CallTo(() => _fakeUnitOfWork.ItemRepository.AddItem(fakeItem)).DoesNothing();
+            A.CallTo(() => _fakeUnitOfWork.Complete()).Returns(Task.FromResult(true));
+
+            var actionResult = await _adminController.SetDataset(fakeDatasetDTO);
+
+            var result = actionResult as OkResult;
+            Assert.Equal(200, result?.StatusCode);
+        }
+
+        [Fact]
+        public async void SetDatasetReturn400()
+        {
+            DatasetDTO fakeDatasetDTO = new();
+            var actionResult = await _adminController.SetDataset(fakeDatasetDTO);
+
+            var result = actionResult as BadRequestObjectResult;
+            Assert.Equal(400, result?.StatusCode);
+        }
 
     }
 }
