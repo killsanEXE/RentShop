@@ -25,22 +25,22 @@ namespace API.Controllers
         readonly IUnitOfWork _unitOfWork;
         readonly UserManager<AppUser> _userManager;
         readonly IEmailService _emailService;
+        readonly IWrapper _wrapper;
         public DeliverymanController(IUnitOfWork unitOfWork, IMapper mapper, 
-            UserManager<AppUser> userManager, IEmailService emailService)
+            UserManager<AppUser> userManager, IEmailService emailService, IWrapper wrapper)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _userManager = userManager;
             _emailService = emailService;
+            _wrapper = wrapper;
         }
 
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<DeliverymanDTO>>> GetAllDeliverymans([FromQuery] UserParams userParams)
+        public async Task<ActionResult<IEnumerable<DeliverymanDTO>>> GetAllDeliverymans()
         {
-            var deliverymans = await _unitOfWork.UserRepository.GetDeliverymansAsync(userParams);
-            Response.AddPaginationHeader(deliverymans.CurrentPage, deliverymans.PageSize, deliverymans.TotalCount, deliverymans.TotalPages);
-            return Ok(deliverymans);
+            return Ok(await _unitOfWork.UserRepository.GetDeliverymansAsync());
         }
 
         [Authorize(Roles = "Admin")]
@@ -96,9 +96,9 @@ namespace API.Controllers
         [HttpPost("join")]
         public async Task<ActionResult<UserDTO>> CreateBecomeDeliverymanRequest(JoinDeliverymanDTO dto)
         {
-            if(User.IsInRole("Deliveryman")) return BadRequest("You are already a deliveryman");
-            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(User));
             if(user == null) return NotFound();
+            if(user.UserRoles!.Count > 1) return BadRequest("You are already a deliveryman");
             if(user.DeliverymanRequest) return BadRequest("You already sended join request");
 
             user.DeliverymanRequest = true;

@@ -15,7 +15,7 @@ namespace API.Interfaces
         Task<AppUser> GetUserByIdAsync(int id);
         Task<AppUser> GetUserByUsernameAsync(string username);
         Task<PagedList<ClientDTO>> GetClientsAsync(UserParams userParams);
-        Task<PagedList<DeliverymanDTO>> GetDeliverymansAsync(UserParams userParams);
+        Task<IEnumerable<DeliverymanDTO>> GetDeliverymansAsync();
         Task<AppUser> GetDeliverymanByUsernameAsync(string username);
         int GetUserAge(string username);
         Task<IEnumerable<DeliverymanDTO>> GetDeliverymanRequestsAsync();

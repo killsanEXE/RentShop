@@ -4,6 +4,7 @@ using API.DTOs;
 using API.Entities;
 using API.Helpers;
 using FakeItEasy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 using Xunit.Abstractions;
@@ -15,6 +16,7 @@ namespace API.Tests
         readonly UsersController _usersController = null!;
         readonly UnitController _unitController = null!;
         readonly AdminController _adminController = null!;
+        readonly DeliverymanController _deliverymanController = null!;
         protected readonly ITestOutputHelper _output;
         protected ClaimsPrincipal user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
@@ -27,6 +29,8 @@ namespace API.Tests
             _usersController = new UsersController(_fakePhotoService, _fakeUnitOfWork, _mapper, _wrapper);
             _unitController = new UnitController(_fakeUnitOfWork, _mapper);
             _adminController = new AdminController(_fakeUnitOfWork, _mapper);
+            _deliverymanController = new DeliverymanController(_fakeUnitOfWork, 
+                _mapper, _fakeUserManager, _fakeEmailService, _wrapper);
             _output = output;
         }
 
@@ -41,7 +45,6 @@ namespace API.Tests
             A.CallTo(() => _fakeUnitOfWork.UserRepository.GetClientsAsync(fakeUserParams))
                 .Returns(Task.FromResult(fakePagedList));
 
-            var response = A.Fake<HttpResponse>();
             var actionResult = await _usersController.GetUsers(fakeUserParams);
 
             var result = actionResult.Result as OkObjectResult;
@@ -487,5 +490,213 @@ namespace API.Tests
             Assert.Equal(400, result?.StatusCode);
         }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //DELIVERYMAN CONTROLLERS
+        [Fact]
+        public async void GetAllDeliverymansReturn200()
+        {
+            var fakeDeliverymans = A.CollectionOfDummy<DeliverymanDTO>(5).AsEnumerable();
+            A.CallTo(() => _fakeUnitOfWork.UserRepository.GetDeliverymansAsync())
+                .Returns(Task.FromResult(fakeDeliverymans));
+
+            var actionResult = await _deliverymanController.GetAllDeliverymans();
+
+            var result = (actionResult.Result as OkObjectResult)?.Value as IEnumerable<DeliverymanDTO>;
+            Assert.Equal(fakeDeliverymans.Count(), result?.Count());
+        }
+
+        [Fact]
+        public async void GetAllJoinRequestsReturn200()
+        {
+            var fakeDeliverymans = A.CollectionOfDummy<DeliverymanDTO>(5).AsEnumerable();
+            A.CallTo(() => _fakeUnitOfWork.UserRepository.GetDeliverymanRequestsAsync())
+                .Returns(Task.FromResult(fakeDeliverymans));
+
+            var actionResult = await _deliverymanController.GetAllJoinRequests();
+
+            _output.WriteLine(actionResult.ToString());
+            var result = (actionResult.Result as OkObjectResult)?.Value as IEnumerable<DeliverymanDTO>;
+            Assert.Equal(fakeDeliverymans.Count(), result?.Count());
+        }
+
+        [Fact]
+        public async void AddDeliveryManReturn200()
+        {
+            AppUser user = new() { UserName = "USERNAME", DeliverymanRequest = true, Location = new() };
+
+            A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserByUsernameAsync("USERNAME"))
+                .Returns(Task.FromResult(user));
+            A.CallTo(() => _fakeUserManager.AddToRoleAsync(user, "Deliveryman"))
+                .Returns(Task.FromResult(new IdentityResult()));
+            A.CallTo(() => _fakeUnitOfWork.Complete()).Returns(Task.FromResult(true));
+            A.CallTo(() => _fakeEmailService.SendEmail(new EmailMessage())).Returns(Task.FromResult(true));
+
+            var actionResult = await _deliverymanController.AddDeliveryMan("USERNAME");
+
+            var result = (actionResult.Result as OkObjectResult)?.Value as DeliverymanDTO;
+            Assert.Equal(user.UserName, result?.Username);            
+        }
+
+        [Fact]
+        public async void AddDeliveryManReturn404()
+        {
+            AppUser user = new() { UserName = "USERNAME", DeliverymanRequest = false, Location = new() };
+            A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserByUsernameAsync("USERNAME"))
+                .Returns(Task.FromResult(user));
+
+            
+            var actionResult = await _deliverymanController.AddDeliveryMan("USERNAME");
+
+            var result = actionResult.Result as NotFoundResult;
+            Assert.Equal(404, result?.StatusCode);    
+        }
+
+        [Fact]
+        public async void DenyDeliverymanReturn200()
+        {
+            AppUser user = new() { UserName = "USERNAME", DeliverymanRequest = true, Location = new() };
+            A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserByUsernameAsync("USERNAME"))
+                .Returns(Task.FromResult(user));
+            A.CallTo(() => _fakeEmailService.SendEmail(new EmailMessage())).Returns(Task.FromResult(true));
+            
+            var actionResult = await _deliverymanController.DenyDeliveryMan("USERNAME");
+
+            var result = actionResult.Result as OkResult;
+            Assert.Equal(200, result?.StatusCode);
+        }
+
+        [Fact]
+        public async void DenyDeliverymanReturn404()
+        {
+            AppUser user = new() { UserName = "USERNAME", DeliverymanRequest = false, Location = new() };
+            A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserByUsernameAsync("USERNAME"))
+                .Returns(Task.FromResult(user));
+            
+            var actionResult = await _deliverymanController.DenyDeliveryMan("USERNAME");
+
+            var result = actionResult.Result as NotFoundResult;
+            Assert.Equal(404, result?.StatusCode);
+        }
+
+        [Fact]
+        public async void RemoveDeliverymanReturn200()
+        {
+            AppUser user = new() { UserName = "USERNAME", DeliverymanRequest = false, Location = new() };
+            var fakeActiveOrders = A.CollectionOfDummy<Order>(0).AsEnumerable();
+            A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserByUsernameAsync("USERNAME"))
+                .Returns(Task.FromResult(user));
+            A.CallTo(() => _fakeUnitOfWork.OrderRepository.GetActiveDeliveriesForDeliverymanAsync("USERNAME"))
+                .Returns(Task.FromResult(fakeActiveOrders));
+            A.CallTo(() => _fakeUserManager.RemoveFromRoleAsync(user, "Deliveryman"))
+                .Returns(Task.FromResult(new IdentityResult()));
+            A.CallTo(() => _fakeUnitOfWork.Complete()).Returns(Task.FromResult(true));
+
+            var actionResult = await _deliverymanController.RemoveDeliveryman("USERNAME");
+
+            var result = actionResult as OkResult;
+            Assert.Equal(200, result?.StatusCode); 
+        }
+
+        [Fact]
+        public async void RemoveDeliverymanReturn400()
+        {
+            AppUser user = new() { UserName = "USERNAME", DeliverymanRequest = false, Location = new() };
+            var fakeActiveOrders = A.CollectionOfDummy<Order>(1).AsEnumerable();
+            A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserByUsernameAsync("USERNAME"))
+                .Returns(Task.FromResult(user));
+            A.CallTo(() => _fakeUnitOfWork.OrderRepository.GetActiveDeliveriesForDeliverymanAsync("USERNAME"))
+                .Returns(Task.FromResult(fakeActiveOrders));
+
+            var actionResult = await _deliverymanController.RemoveDeliveryman("USERNAME");
+
+            var result = actionResult as BadRequestObjectResult;
+            Assert.Equal(400, result?.StatusCode); 
+        }
+
+        [Fact]
+        public async void CreateBecomeDeliverymanRequestReturn200()
+        {
+            JoinDeliverymanDTO dto = new() { Country = "Belarus" };
+            AppUser user = new() { DeliverymanRequest = false };
+            var userRoles = A.CollectionOfDummy<AppUserRole>(1).ToList();
+            user.UserRoles = userRoles;
+
+            A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserByUsernameAsync("USERNAME"))
+                .Returns(Task.FromResult(user));
+            A.CallTo(() => _fakeUnitOfWork.Complete()).Returns(Task.FromResult(true));
+            
+            var actionResult = await _deliverymanController.CreateBecomeDeliverymanRequest(dto);
+
+            var result = actionResult.Result as OkObjectResult;
+            var resultDTO = result?.Value as UserDTO;
+
+            Assert.Equal(200, result?.StatusCode);
+            Assert.True(resultDTO?.DeliverymanRequest);
+        }
+
+        [Fact]
+        public async void CreateBecomeDeliverymanRequestReturn404()
+        {
+            JoinDeliverymanDTO dto = new() { Country = "Belarus" };
+            AppUser? user = null;
+            A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserByUsernameAsync("USERNAME"))
+                .Returns(Task.FromResult(user)!);
+
+            var actionResult = await _deliverymanController.CreateBecomeDeliverymanRequest(dto);
+
+            var result = actionResult.Result as NotFoundResult;
+            Assert.Equal(404, result?.StatusCode);
+        }
+
+        [Fact]
+        public async void CreateBecomeDeliverymanRequestReturn400()
+        {
+            JoinDeliverymanDTO dto = new() { Country = "Belarus" };
+            AppUser user = new() { DeliverymanRequest = true };
+            var userRoles = A.CollectionOfDummy<AppUserRole>(2).ToList();
+            user.UserRoles = userRoles;
+
+            A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserByUsernameAsync("USERNAME"))
+                .Returns(Task.FromResult(user));
+            
+            var actionResult = await _deliverymanController.CreateBecomeDeliverymanRequest(dto);
+
+            var result = actionResult.Result as BadRequestObjectResult;
+            Assert.Equal(400, result?.StatusCode);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
     }
 }

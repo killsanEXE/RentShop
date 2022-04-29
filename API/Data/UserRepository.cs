@@ -32,17 +32,13 @@ namespace API.Data
             );
         }
 
-        public async Task<PagedList<DeliverymanDTO>> GetDeliverymansAsync(UserParams userParams)
+        public async Task<IEnumerable<DeliverymanDTO>> GetDeliverymansAsync()
         {
-            var users = _context.Users.Include(f => f.UserRoles!.Where(f => f.Role!.Name == "Deliveryman"))
+            var query =  _context.Users.Include(f => f.UserRoles!.Where(f => f.Role!.Name == "Deliveryman"))
                 .ThenInclude(f => f.Role)
                 .Where(f => f.UserRoles!.Count > 1).AsQueryable();
 
-            return await PagedList<DeliverymanDTO>.CreateAsync(
-                users.ProjectTo<DeliverymanDTO>(_mapper.ConfigurationProvider), 
-                userParams.PageNumber, 
-                userParams.PageSize
-            );
+            return await query.ProjectTo<DeliverymanDTO>(_mapper.ConfigurationProvider).ToListAsync();
         }
 
         public async Task<AppUser> GetDeliverymanByUsernameAsync(string username)
