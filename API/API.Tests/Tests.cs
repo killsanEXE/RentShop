@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Security.Principal;
 using API.Controllers;
 using API.DTOs;
 using API.Entities;
@@ -11,26 +12,37 @@ using Xunit.Abstractions;
 
 namespace API.Tests
 {
-    public class UsersControllerTests : DependencyProvider
+    public class Tests : DependencyProvider
     {
         readonly UsersController _usersController = null!;
         readonly UnitController _unitController = null!;
         readonly AdminController _adminController = null!;
         readonly DeliverymanController _deliverymanController = null!;
+        readonly ItemController _itemController = null!;
         protected readonly ITestOutputHelper _output;
-        protected ClaimsPrincipal user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.Name, "Username"),
-                new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim("custom-claim", "example claim value"),
-            }, "mock"));
-        public UsersControllerTests(ITestOutputHelper output)
+        protected ClaimsPrincipal _fakeUser = null!;
+        public Tests(ITestOutputHelper output)
         {
             _usersController = new UsersController(_fakePhotoService, _fakeUnitOfWork, _mapper, _wrapper);
             _unitController = new UnitController(_fakeUnitOfWork, _mapper);
             _adminController = new AdminController(_fakeUnitOfWork, _mapper);
             _deliverymanController = new DeliverymanController(_fakeUnitOfWork, 
                 _mapper, _fakeUserManager, _fakeEmailService, _wrapper);
+            _itemController = new ItemController(_fakeUnitOfWork, _mapper, _fakePhotoService, _wrapper);
+            // _itemController.ControllerContext = new ControllerContext() { HttpContext = new DefaultHttpContext() 
+            //     { 
+            //         User = _fakeUser 
+            //     } };
+
+            _fakeUser = A.Fake<ClaimsPrincipal>(f => f.WithArgumentsForConstructor(() => 
+                    new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                    {
+                        new Claim(ClaimTypes.Name, "Username"),
+                        new Claim(ClaimTypes.NameIdentifier, "1"),
+                        new Claim("custom-claim", "example claim value"),
+                    }, "mock"))
+                ));
+
             _output = output;
         }
 
@@ -66,13 +78,14 @@ namespace API.Tests
                 Address = "something",
             };
 
-            A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(user)))
+            A.CallTo(() => _fakeUnitOfWork.UserRepository
+                .GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(_fakeUser)))
                 .Returns(Task.FromResult(fakeUser));
             A.CallTo(() => _fakeUnitOfWork.Complete()).Returns(Task.FromResult(true));
 
             _usersController.ControllerContext = new ControllerContext()
             {
-                HttpContext = new DefaultHttpContext() { User = user }
+                HttpContext = new DefaultHttpContext() { User = _fakeUser }
             };
 
             var actionResult = await _usersController.AddLocation(fakeLocationDTO);
@@ -94,13 +107,14 @@ namespace API.Tests
                 Address = "something",
             };
 
-            A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(user)))
+            A.CallTo(() => _fakeUnitOfWork.UserRepository
+                .GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(_fakeUser)))
                 .Returns(Task.FromResult(fakeUser));
             A.CallTo(() => _fakeUnitOfWork.Complete()).Returns(Task.FromResult(false));
 
             _usersController.ControllerContext = new ControllerContext()
             {
-                HttpContext = new DefaultHttpContext() { User = user }
+                HttpContext = new DefaultHttpContext() { User = _fakeUser }
             };
 
             var actionResult = await _usersController.AddLocation(fakeLocationDTO);
@@ -130,7 +144,8 @@ namespace API.Tests
                 City = "Minsk"
             });
 
-            A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(user)))
+            A.CallTo(() => _fakeUnitOfWork.UserRepository
+                .GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(_fakeUser)))
                 .Returns(Task.FromResult(fakeUser));
             A.CallTo(() => _fakeUnitOfWork.Complete()).Returns(Task.FromResult(true));
 
@@ -160,7 +175,8 @@ namespace API.Tests
                 City = "Minsk"
             });
 
-            A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(user)))
+            A.CallTo(() => _fakeUnitOfWork.UserRepository
+                .GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(_fakeUser)))
                 .Returns(Task.FromResult(fakeUser));
             A.CallTo(() => _fakeUnitOfWork.Complete()).Returns(Task.FromResult(false));
 
@@ -184,7 +200,8 @@ namespace API.Tests
             var fakeDeliveryLocations = A.CollectionOfDummy<Location>(4);
             fakeUser.DeliveryLocations = fakeDeliveryLocations;
 
-            A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(user)))
+            A.CallTo(() => _fakeUnitOfWork.UserRepository
+                .GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(_fakeUser)))
                 .Returns(Task.FromResult(fakeUser));
 
             var actionResult = await _usersController.EditLocation(locationId, fakeLocationDTO);
@@ -202,7 +219,8 @@ namespace API.Tests
             fakeUser.DeliveryLocations = fakeDeliveryLocations;
             fakeUser.DeliveryLocations.Add(new() { Id = 1 });
 
-            A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(user)))
+            A.CallTo(() => _fakeUnitOfWork.UserRepository
+                .GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(_fakeUser)))
                 .Returns(Task.FromResult(fakeUser));
             A.CallTo(() => _fakeUnitOfWork.Complete()).Returns(Task.FromResult(true));
 
@@ -221,7 +239,8 @@ namespace API.Tests
             fakeUser.DeliveryLocations = fakeDeliveryLocations;
             fakeUser.DeliveryLocations.Add(new() { Id = 1 });
 
-            A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(user)))
+            A.CallTo(() => _fakeUnitOfWork.UserRepository
+                .GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(_fakeUser)))
                 .Returns(Task.FromResult(fakeUser));
             A.CallTo(() => _fakeUnitOfWork.Complete()).Returns(Task.FromResult(false));
 
@@ -239,7 +258,8 @@ namespace API.Tests
             var fakeDeliveryLocations = A.CollectionOfDummy<Location>(4);
             fakeUser.DeliveryLocations = fakeDeliveryLocations;
 
-            A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(user)))
+            A.CallTo(() => _fakeUnitOfWork.UserRepository
+                .GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(_fakeUser)))
                 .Returns(Task.FromResult(fakeUser));
 
             var actionResult = await _usersController.DeleteLocation(locationId);
@@ -247,6 +267,10 @@ namespace API.Tests
             var result = actionResult as NotFoundResult;
             Assert.Equal(404, result?.StatusCode);
         }
+
+
+
+
 
 
 
@@ -678,6 +702,194 @@ namespace API.Tests
         }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //ITEM CONTROLLER
+        [Fact]
+        public async void GetTtemsReturn200()
+        {
+            var fakeItems = A.CollectionOfDummy<ItemDTO>(3).AsEnumerable();
+            UserParams fakeUserParams = new();
+            var fakePagedList = new PagedList<ItemDTO>(fakeItems, fakeItems.Count(), 1, 3) { TotalPages = 1 };
+
+            A.CallTo(() => _fakeUser.Identity!.IsAuthenticated).Returns(true);
+            A.CallTo(() => _fakeUnitOfWork.UserRepository.GetUserAge("USERNAME"))
+                .Returns(2);
+            A.CallTo(() => _fakeUnitOfWork.ItemRepository.GetItemsAsync(fakeUserParams, 2, false))
+                .Returns(Task.FromResult(fakePagedList));
+            
+            _itemController.ControllerContext = new ControllerContext() { HttpContext = new DefaultHttpContext() 
+                { 
+                    User = _fakeUser 
+                } };
+            var actionResult = await _itemController.GetItems(fakeUserParams);
+
+            var result = actionResult.Result as OkObjectResult;
+            var resultItems = result?.Value as IEnumerable<ItemDTO>;
+            Assert.Equal(200, result?.StatusCode);
+            Assert.Equal(fakeItems.Count(), resultItems?.Count());
+        }
+
+        [Fact]
+        public async void GetItemReturn200()
+        {
+            int itemId = 1;
+            ItemDTO fakeItem = new() { Id = itemId, Name = "ITEM" };
+            A.CallTo(() => _fakeUser.Identity!.IsAuthenticated).Returns(false);
+            A.CallTo(() => _fakeUnitOfWork.ItemRepository.GetItemDTOByIdAsync(itemId, 2, false))
+                .Returns(Task.FromResult(fakeItem));
+
+            _itemController.ControllerContext = new ControllerContext() { HttpContext = new DefaultHttpContext() 
+                { 
+                    User = _fakeUser 
+                } };
+            var actionResult = await _itemController.GetItem(itemId);
+
+            var result = actionResult.Result as OkObjectResult;
+            var resultDTO = result?.Value as ItemDTO;
+            Assert.Equal(200, result?.StatusCode);
+            Assert.NotNull(resultDTO);
+        }
+
+        [Fact]
+        public async void GetItemReturn404()
+        {
+            int itemId = 1;
+            ItemDTO? fakeItem = null;
+            A.CallTo(() => _fakeUser.Identity!.IsAuthenticated).Returns(false);
+            A.CallTo(() => _fakeUnitOfWork.ItemRepository.GetItemDTOByIdAsync(itemId, 16, false))
+                .Returns(Task.FromResult(fakeItem)!);
+
+            _itemController.ControllerContext = new ControllerContext() { HttpContext = new DefaultHttpContext() 
+                { 
+                    User = _fakeUser 
+                } };
+            var actionResult = await _itemController.GetItem(itemId);
+        
+            var result = actionResult.Result as NotFoundResult;
+            Assert.Equal(404, result?.StatusCode);
+        }
+
+        [Fact]
+        public async void CreateItemReturn200()
+        {
+            ItemDTO fakeItemDTO = new();
+            A.CallTo(() => _fakeUnitOfWork.ItemRepository.AddItem(new Item()))
+                .DoesNothing();
+            A.CallTo(() => _fakeUnitOfWork.Complete()).Returns(Task.FromResult(true));
+
+            var actionResult = await _itemController.CreateItem(fakeItemDTO);
+
+            var result = actionResult.Result as OkObjectResult;
+            var resultDTO = result?.Value as ItemDTO;
+            Assert.Equal(200, result?.StatusCode);
+            Assert.NotNull(resultDTO);
+        }        
+        
+        [Fact]
+        public async void CreateItemReturn400()
+        {
+            ItemDTO fakeItemDTO = new();
+            A.CallTo(() => _fakeUnitOfWork.ItemRepository.AddItem(new Item()))
+                .DoesNothing();
+            A.CallTo(() => _fakeUnitOfWork.Complete()).Returns(Task.FromResult(false));
+
+            var actionResult = await _itemController.CreateItem(fakeItemDTO);
+
+            var result = actionResult.Result as BadRequestObjectResult;
+            Assert.Equal(400, result?.StatusCode);
+        }      
+
+        [Fact]
+        public async void EditItemReturn200()
+        {
+            int itemId = 1;
+            ItemDTO itemDTO = new() 
+            { 
+                Name = "New name", 
+                Description = "New Description",
+                AgeRestriction = 20,
+                PricePerDay = 20,
+            };
+
+            Item item = new() { Name = "Original name", Description = "Original Descriptino" };
+
+            A.CallTo(() => _fakeUnitOfWork.ItemRepository.GetItemByIdAsync(itemId))
+                .Returns(Task.FromResult(item));
+            A.CallTo(() => _fakeUnitOfWork.Complete()).Returns(Task.FromResult(true));
+
+            var actionResult = await _itemController.EditItem(itemId, itemDTO);
+
+            var result = actionResult.Result as OkObjectResult;
+            var resultDTO = result?.Value as ItemDTO;
+
+            Assert.Equal(200, result?.StatusCode);
+            Assert.NotNull(resultDTO);
+        }
+
+        [Fact]
+        public async void EditItemReturn400()
+        {
+            int itemId = 1;
+            ItemDTO itemDTO = new() 
+            { 
+                Name = "New name", 
+                Description = "New Description",
+                AgeRestriction = 20,
+                PricePerDay = 20,
+            };
+
+            Item item = new() { Name = "Original name", Description = "Original Descriptino" };
+
+            A.CallTo(() => _fakeUnitOfWork.ItemRepository.GetItemByIdAsync(itemId))
+                .Returns(Task.FromResult(item));
+            A.CallTo(() => _fakeUnitOfWork.Complete()).Returns(Task.FromResult(false));
+
+            var actionResult = await _itemController.EditItem(itemId, itemDTO);
+
+            var result = actionResult.Result as BadRequestObjectResult;
+            Assert.Equal(400, result?.StatusCode);
+        }
+
+        [Fact]
+        public async void EditItemReturn404()
+        {
+            int itemId = 1;
+            ItemDTO itemDTO = new() 
+            { 
+                Name = "New name", 
+                Description = "New Description",
+                AgeRestriction = 20,
+                PricePerDay = 20,
+            };
+
+            Item? item = null;
+
+            A.CallTo(() => _fakeUnitOfWork.ItemRepository.GetItemByIdAsync(itemId))
+                .Returns(Task.FromResult(item)!);
+
+            var actionResult = await _itemController.EditItem(itemId, itemDTO);
+
+            var result = actionResult.Result as NotFoundResult;
+            Assert.Equal(404, result?.StatusCode);
+        }
 
 
 

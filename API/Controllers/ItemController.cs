@@ -21,12 +21,14 @@ namespace API.Controllers
         readonly IUnitOfWork _unitOfWork;
         readonly IMapper _mapper;
         readonly IPhotoService _photoService;
+        readonly IWrapper _wrapper;
         public ItemController(IUnitOfWork unitOfWork, IMapper mapper,
-            IPhotoService photoService)
+            IPhotoService photoService, IWrapper wrapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _photoService = photoService;
+            _wrapper = wrapper;
         }
 
         [AllowAnonymous]
@@ -38,10 +40,10 @@ namespace API.Controllers
             if(User.Identity!.IsAuthenticated)
             {
                 if(User.IsInRole("Admin")) admin = true;
-                age = _unitOfWork.UserRepository.GetUserAge(User.GetUsername());
+                else age = _unitOfWork.UserRepository.GetUserAge(_wrapper.GetUsernameViaWrapper(User));
             }
             var items = await _unitOfWork.ItemRepository.GetItemsAsync(userParams, age, admin);
-            Response.AddPaginationHeader(items.CurrentPage, items.PageSize, items.TotalCount, items.TotalPages);
+            _wrapper.AddPaginationHeaderViaWrapper(Response, items.CurrentPage, items.PageSize, items.TotalCount, items.TotalPages);
             return Ok(items);
         }
 
@@ -82,7 +84,8 @@ namespace API.Controllers
             item.AgeRestriction = itemDTO.AgeRestriction;        
             item.PricePerDay = itemDTO.PricePerDay;   
 
-            if(await _unitOfWork.Complete()) return Ok(await _unitOfWork.ItemRepository.GetItemDTOByIdAsync(item.Id, 1000, true));
+            if(await _unitOfWork.Complete()) 
+                return Ok(await _unitOfWork.ItemRepository.GetItemDTOByIdAsync(item.Id, 1000, true));
             return BadRequest("Failed to update item");
         }
 
