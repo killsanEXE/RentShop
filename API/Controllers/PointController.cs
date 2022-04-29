@@ -48,8 +48,6 @@ namespace API.Controllers
             point.Address = locationDTO.Address;
             point.Country = locationDTO.Country;
             point.City = locationDTO.City;
-            point.Floor = locationDTO.Floor;
-            point.Apartment = locationDTO.Apartment;
 
             if(await _unitOfWork.Complete()) return Ok(_mapper.Map<PointDTO>(point));
             return BadRequest("Failed to update a pick up point");
@@ -109,7 +107,9 @@ namespace API.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<PointDTO>> GetPoint(int id)
         {
-            return Ok(await _unitOfWork.PointRepository.GetPointDTO(id));
+            var point = await _unitOfWork.PointRepository.GetPointDTO(id);
+            if(point != null) return Ok(point);
+            return NotFound();
         }
 
         T TrimStrings<T>(T obj) where T: class

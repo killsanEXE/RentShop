@@ -19,6 +19,7 @@ namespace API.Tests
         readonly AdminController _adminController = null!;
         readonly DeliverymanController _deliverymanController = null!;
         readonly ItemController _itemController = null!;
+        readonly PointController _pointController = null!;
         protected readonly ITestOutputHelper _output;
         protected ClaimsPrincipal _fakeUser = null!;
         public Tests(ITestOutputHelper output)
@@ -29,10 +30,7 @@ namespace API.Tests
             _deliverymanController = new DeliverymanController(_fakeUnitOfWork, 
                 _mapper, _fakeUserManager, _fakeEmailService, _wrapper);
             _itemController = new ItemController(_fakeUnitOfWork, _mapper, _fakePhotoService, _wrapper);
-            // _itemController.ControllerContext = new ControllerContext() { HttpContext = new DefaultHttpContext() 
-            //     { 
-            //         User = _fakeUser 
-            //     } };
+            _pointController = new PointController(_fakeUnitOfWork, _mapper, _fakePhotoService);
 
             _fakeUser = A.Fake<ClaimsPrincipal>(f => f.WithArgumentsForConstructor(() => 
                     new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
@@ -909,6 +907,127 @@ namespace API.Tests
 
 
 
-        
+        //POINT CONTROLLER 
+        [Fact]
+        public async void GetPointsReturn200()
+        {
+            var fakePoints = A.CollectionOfDummy<PointDTO>(5).AsEnumerable();
+            A.CallTo(() => _fakeUnitOfWork.PointRepository.GetDTOPointsAsync())
+                .Returns(Task.FromResult(fakePoints));
+
+            var actionResult = await _pointController.GetPoints();
+
+            var result = actionResult.Result as OkObjectResult;
+            var resultDTOs = result?.Value as IEnumerable<PointDTO>;
+            Assert.Equal(200, result?.StatusCode);
+            Assert.Equal(fakePoints.Count(), resultDTOs?.Count());
+        }
+
+        [Fact]
+        public async void GetPointRetrun200()
+        {
+            int pointId = 1;
+            PointDTO point = new();
+            A.CallTo(() => _fakeUnitOfWork.PointRepository.GetPointDTO(pointId))
+                .Returns(Task.FromResult(point));
+            
+            var actionResult = await _pointController.GetPoint(pointId);
+
+            var result = actionResult.Result as OkObjectResult;
+            var resultDTO = result?.Value as PointDTO;
+            Assert.Equal(200, result?.StatusCode);
+            Assert.NotNull(resultDTO);
+        }
+
+        [Fact]
+        public async void GetPointReturn404()
+        {
+            int pointId = 1;
+            PointDTO? point = null;
+            A.CallTo(() => _fakeUnitOfWork.PointRepository.GetPointDTO(pointId))
+                .Returns(Task.FromResult(point)!);
+            
+            var actionResult = await _pointController.GetPoint(pointId);
+
+            var result = actionResult.Result as NotFoundResult;
+            Assert.Equal(404, result?.StatusCode);
+        }
+
+        [Fact]
+        public async void AddPointReturn200()
+        {
+            LocationDTO locationDTO = new();
+            A.CallTo(() => _fakeUnitOfWork.PointRepository.AddPoint(new Point())).DoesNothing();
+            A.CallTo(() => _fakeUnitOfWork.Complete()).Returns(Task.FromResult(true));
+
+            var actionResult = await _pointController.AddPoint(locationDTO);
+
+            var result = actionResult.Result as OkObjectResult;
+            var resultDTO = result?.Value as PointDTO;
+            Assert.Equal(200, result?.StatusCode);
+            Assert.NotNull(resultDTO);
+        }
+
+        [Fact]
+        public async void AddPointReturn400()
+        {
+            LocationDTO locationDTO = new();
+            A.CallTo(() => _fakeUnitOfWork.PointRepository.AddPoint(new Point())).DoesNothing();
+            A.CallTo(() => _fakeUnitOfWork.Complete()).Returns(Task.FromResult(false));
+
+            var actionResult = await _pointController.AddPoint(locationDTO);
+
+            var result = actionResult.Result as BadRequestObjectResult;
+            Assert.Equal(400, result?.StatusCode);
+        }
+
+        [Fact]
+        public async void EditPointReturn200()
+        {
+            int pointId = 1;
+            Point point = new() { Country = "Belarus", City = "Minsk", Address = "some" };
+            LocationDTO locationDTO = new() { Country = "USA", City = "LA", Address = "some" };
+
+            A.CallTo(() => _fakeUnitOfWork.PointRepository.GetPointByIdAsync(pointId))
+                .Returns(Task.FromResult(point));
+            A.CallTo(() => _fakeUnitOfWork.Complete()).Returns(Task.FromResult(true));
+
+            var actionResult = await _pointController.EditPoint(pointId, locationDTO);
+
+            var result = actionResult.Result as OkObjectResult;
+            var resultDTO = result?.Value as PointDTO;
+            Assert.Equal(200, result?.StatusCode);
+            Assert.NotNull(resultDTO);
+        }
+
+        [Fact]
+        public async void EditPointReturn404()
+        {
+            int pointId = 1;
+            Point? point = null;
+            LocationDTO locationDTO = new();
+
+            A.CallTo(() => _fakeUnitOfWork.PointRepository.GetPointByIdAsync(pointId))
+                .Returns(Task.FromResult(point)!);
+
+            var actionResult = await _pointController.EditPoint(pointId, locationDTO);
+
+            var result = actionResult.Result as NotFoundResult;
+            Assert.Equal(404, result?.StatusCode);
+        }
+
+        [Fact]
+        public async void EditPointReturn400()
+        {
+            int pointId = 1;
+            LocationDTO locationDTO = new();
+            A.CallTo(() => _fakeUnitOfWork.Complete()).Returns(Task.FromResult(false));
+
+            var actionResult = await _pointController.EditPoint(pointId, locationDTO);
+
+            var result = actionResult.Result as BadRequestObjectResult;
+            Assert.Equal(400, result?.StatusCode);
+        }
+
     }
 }
