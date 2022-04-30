@@ -33,6 +33,8 @@ namespace API.Tests
         protected static IWrapper _wrapper = null!;
         protected static IEmailService _fakeEmailService = null!;
         protected static UserManager<AppUser> _fakeUserManager = null!;
+        // protected readonly ITestOutputHelper _output;
+        //ITestOutputHelper output
         public DependencyProvider()
         {
             var mapingConfig = new MapperConfiguration(mc => 
@@ -49,9 +51,10 @@ namespace API.Tests
             var fakeUserStore = A.Fake<IUserStore<AppUser>>();
             _fakeUserManager = A.Fake<UserManager<AppUser>>(f => 
                 f.WithArgumentsForConstructor(() => new UserManager<AppUser>(fakeUserStore, null, null, null, null, null, null, null, null)));
-            // _userManager = new UserManager<AppUser>(fakeUserStore, null, null, null, null, null, null, null, null);
             _fakeUserManager.UserValidators.Add(new UserValidator<AppUser>());
             _fakeUserManager.PasswordValidators.Add(new PasswordValidator<AppUser>());
+
+            // _output = output;
         }
     }
 }

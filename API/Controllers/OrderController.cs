@@ -22,11 +22,14 @@ namespace API.Controllers
         readonly IUnitOfWork _unitOfWork;
         readonly IMapper _mapper;
         readonly IEmailService _emailService;
-        public OrderController(IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService)
+        readonly IWrapper _wrapper;
+        public OrderController(IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService,
+            IWrapper wrapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _emailService = emailService;
+            _wrapper = wrapper;
         }   
 
         [Authorize(Roles = "Admin")]
@@ -34,7 +37,7 @@ namespace API.Controllers
         public async Task<ActionResult<IEnumerable<OrderDTO>>> GetAllOrders([FromQuery] UserParams userParams)
         {
             var orders = await _unitOfWork.OrderRepository.GetOrdersAsync(userParams, userParams.showAll);
-            Response.AddPaginationHeader(orders.CurrentPage, orders.PageSize, orders.TotalCount, orders.TotalPages);
+            _wrapper.AddPaginationHeaderViaWrapper(Response, orders.CurrentPage, orders.PageSize, orders.TotalCount, orders.TotalPages);
             return Ok(orders);
         }
 
@@ -42,7 +45,7 @@ namespace API.Controllers
         [HttpGet("available")]
         public async Task<ActionResult<IEnumerable<OrderDTO>>> GetAvailableOrders()
         {
-            var deliveryman = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
+            var deliveryman = await _unitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(User));
             if(deliveryman == null) return Unauthorized();
             return Ok(await _unitOfWork.OrderRepository.GetAvailableOrdersAsync(deliveryman));
         }
@@ -51,15 +54,15 @@ namespace API.Controllers
         [HttpGet("taken")]
         public async Task<ActionResult<IEnumerable<OrderDTO>>> GetAcceptedOrders()
         {
-            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
-            if(user == null) return NotFound();
-            return Ok(await _unitOfWork.OrderRepository.GetTakenOrdersAsync(user));
+            var deliveryman = await _unitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(User));
+            if(deliveryman == null) return Unauthorized();
+            return Ok(await _unitOfWork.OrderRepository.GetTakenOrdersAsync(deliveryman));
         }
 
         [HttpGet("my-orders")]
         public async Task<ActionResult<IEnumerable<OrderDTO>>> GetClientOrders()
         {
-            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(User));
             if(user == null) return NotFound();
             return Ok(await _unitOfWork.OrderRepository.GetClientOrdersAsync(user.UserName));
         }
@@ -70,10 +73,9 @@ namespace API.Controllers
             if(User.IsInRole("Admin")) return BadRequest("Create another account to order something");
 
             var unit = await _unitOfWork.UnitRepository.GetUnitByIdAsync(dto.UnitId);
-            var client = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
+            var client = await _unitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(User));
 
             if(unit.Id == -1 || client == null || !unit.IsAvailable || unit.Disabled) return NotFound();
-            var userRolesCount = client.UserRoles?.Count;
             if(dto.DeliveryLocation != null && client.UserRoles!.Count > 1) return BadRequest("You can only choose selfpick");
 
             AppUser? deliveryman = null;
@@ -81,10 +83,8 @@ namespace API.Controllers
             if(deliveryLocation == null && dto.DeliveryLocation == null)
             {
                 deliveryman = client;
-            }else if(deliveryLocation == null && dto.DeliveryLocation != null)
-            { 
-                return NotFound(); 
             }
+            else if(deliveryLocation == null && dto.DeliveryLocation != null) return NotFound(); 
 
             Order order = new() 
             {
@@ -118,7 +118,7 @@ namespace API.Controllers
         [HttpPost("{orderId:int}")]
         public async Task<ActionResult<OrderDTO>> AcceptOrder(int orderId)
         {
-            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(User));
             var order = await _unitOfWork.OrderRepository.GetOrderByIdAsync(orderId);
 
             if(user == null || order.Id == -1) return NotFound();
@@ -136,7 +136,7 @@ namespace API.Controllers
         [HttpPut("start-delivery/{orderId:int}")]
         public async Task<ActionResult<OrderDTO>> StartDelivery(int orderId)
         {
-            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(User));
             var order = await _unitOfWork.OrderRepository.GetOrderByIdAsync(orderId);
             if(user == null || order.Id == -1 || order.DeliveryCompleted || order.Cancelled) return NotFound();
 
@@ -155,7 +155,7 @@ namespace API.Controllers
         [HttpPut("delivered/{orderId:int}")]
         public async Task<ActionResult<OrderDTO>> DeliveredOrder(int orderId)
         {
-            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(User));
             var order = await _unitOfWork.OrderRepository.GetOrderByIdAsync(orderId);
 
             if(user == null || order.Id == -1) return NotFound();
@@ -174,7 +174,7 @@ namespace API.Controllers
         [HttpPut("received/{orderId:int}")]
         public async Task<ActionResult<OrderDTO>> ReceivedOrder(int orderId)
         {
-            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(User));
             var order = await _unitOfWork.OrderRepository.GetOrderByIdAsync(orderId);
 
             if(user == null || order.Id == -1 || order.DeliveryMan == null || order.Client!.Id != user.Id || order.ClientGotDelivery) return NotFound();
@@ -193,7 +193,7 @@ namespace API.Controllers
         [HttpPut("cancel/{orderId:int}")]
         public async Task<ActionResult<OrderDTO>> CancelOrder(int orderId)
         {
-            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(User));
             var order = await _unitOfWork.OrderRepository.GetOrderByIdAsync(orderId);
 
             if(user == null || order.Id == -1 || order.Client!.Id != user.Id || order.ClientGotDelivery) return NotFound();
@@ -211,7 +211,7 @@ namespace API.Controllers
         [HttpPut("selfpick/{orderId:int}")]
         public async Task<ActionResult<OrderDTO>> SelfpickOrder(int orderId)
         {
-            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(User));
             var order = await _unitOfWork.OrderRepository.GetOrderByIdAsync(orderId);
 
             if(user == null || order.Id == -1 || order.Client!.Id != user.Id || order.ClientGotDelivery) return NotFound();
@@ -229,7 +229,7 @@ namespace API.Controllers
         [HttpPut("return")]
         public async Task<ActionResult<OrderDTO>> ReturnOrder(ReturnUnitDTO dto)
         {
-            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(User));
             var order = await _unitOfWork.OrderRepository.GetOrderByIdAsync(dto.Id);
             if(order.Id == -1 || user == null) return NotFound();
 
@@ -264,7 +264,7 @@ namespace API.Controllers
         [HttpPut("confirm-return/{orderId:int}")]
         public async Task<ActionResult<OrderDTO>> ConfirmReturn(int orderId)
         {
-            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(User));
             var order = await _unitOfWork.OrderRepository.GetOrderByIdAsync(orderId);
             if(order.Id == -1 || user == null) return NotFound();
 
@@ -286,7 +286,7 @@ namespace API.Controllers
         [HttpPut("confirm-receive/{orderId:int}")]
         public async Task<ActionResult<OrderDTO>> ConfirmReceive(int orderId)
         {
-            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(User));
             var order = await _unitOfWork.OrderRepository.GetOrderByIdAsync(orderId);
             if(order.Id == -1 || user == null) return NotFound();
 
