@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using API.Controllers;
 using FakeItEasy;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Tests.OrderControllerTests
 {
@@ -23,6 +24,11 @@ namespace API.Tests.OrderControllerTests
                     new Claim("custom-claim", "example claim value"),
                 }, "mock"))
             ));
+
+            _orderController.ControllerContext = new ControllerContext() { HttpContext = new DefaultHttpContext() 
+            { 
+                User = _fakeUser 
+            }};
         }
     }
 }

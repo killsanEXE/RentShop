@@ -121,7 +121,7 @@ namespace API.Controllers
             var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(User));
             var order = await _unitOfWork.OrderRepository.GetOrderByIdAsync(orderId);
 
-            if(user == null || order.Id == -1) return NotFound();
+            if(user == null || order.Id == -1 || order.Cancelled || order.UnitReturned) return NotFound();
             if(order.DeliveryMan == null) order.DeliveryMan = user;
             else if(order.ReturnDeliveryman == null && order.ReturnFromLocation != null) order.ReturnDeliveryman = user;
             else return BadRequest("This order is already taken");
@@ -159,7 +159,7 @@ namespace API.Controllers
             var order = await _unitOfWork.OrderRepository.GetOrderByIdAsync(orderId);
 
             if(user == null || order.Id == -1) return NotFound();
-            if(order.DeliveryMan == null || order.DeliveryMan!.Id != user!.Id) 
+            if(order.DeliveryMan == null || order.DeliveryMan.Id != user.Id) 
                 return BadRequest("You did not accept this order");
 
             if(!order.DeliveryInProcess) return BadRequest("You did not even start the delivery");
@@ -177,15 +177,18 @@ namespace API.Controllers
             var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(User));
             var order = await _unitOfWork.OrderRepository.GetOrderByIdAsync(orderId);
 
-            if(user == null || order.Id == -1 || order.DeliveryMan == null || order.Client!.Id != user.Id || order.ClientGotDelivery) return NotFound();
+            if(user == null || order.Id == -1 || order.DeliveryMan == null || order.Client!.Id != user.Id) 
+                return NotFound();
 
-            if(!order.DeliveryCompleted && order.DeliveryMan.UserName != user.UserName) return BadRequest("Deliveryman did not confirm delivery");
+            if(!order.DeliveryCompleted && order.DeliveryMan.UserName != user.UserName) 
+                return BadRequest("Deliveryman did not confirm delivery");
 
             if(User.IsInRole("Deliveryman")) order.ReturnDeliveryman = user;
             order.ClientGotDelivery = true;
             order.InUsage = true;
 
-            if(await _unitOfWork.Complete()) return Ok(await _unitOfWork.OrderRepository.GetOrderDTOByIdAsync(order.Id));
+            if(await _unitOfWork.Complete()) 
+                return Ok(await _unitOfWork.OrderRepository.GetOrderDTOByIdAsync(order.Id));
             return BadRequest("Failed to confirm delivery");
         }
 
@@ -196,7 +199,8 @@ namespace API.Controllers
             var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(User));
             var order = await _unitOfWork.OrderRepository.GetOrderByIdAsync(orderId);
 
-            if(user == null || order.Id == -1 || order.Client!.Id != user.Id || order.ClientGotDelivery) return NotFound();
+            if(user == null || order.Id == -1 || order.Client!.Id != user.Id || order.ClientGotDelivery) 
+                return NotFound();
             if(order.DeliveryInProcess) return BadRequest("Delivery is already in progress");
 
             order.Cancelled = true;
@@ -214,7 +218,8 @@ namespace API.Controllers
             var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(User));
             var order = await _unitOfWork.OrderRepository.GetOrderByIdAsync(orderId);
 
-            if(user == null || order.Id == -1 || order.Client!.Id != user.Id || order.ClientGotDelivery) return NotFound();
+            if(user == null || order.Id == -1 || order.Client!.Id != user.Id || order.ClientGotDelivery) 
+                return NotFound();
             if(order.DeliveryMan != null) return BadRequest("Deliveryman already accepted this order");
             
             order.DeliveryMan = user;
@@ -264,21 +269,22 @@ namespace API.Controllers
         [HttpPut("confirm-return/{orderId:int}")]
         public async Task<ActionResult<OrderDTO>> ConfirmReturn(int orderId)
         {
-            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(User));
             var order = await _unitOfWork.OrderRepository.GetOrderByIdAsync(orderId);
-            if(order.Id == -1 || user == null) return NotFound();
+            if(order.Id == -1) return BadRequest("Order was not found");
 
-            if(!order.ClientGotDelivery || order.UnitReturned || order.Cancelled || order.ReturnDeliveryman == null || order.ReturnPoint == null) return BadRequest("You cannot confirm the return of this order");
+            if(!order.ClientGotDelivery || order.UnitReturned || order.Cancelled || order.ReturnDeliveryman == null || order.ReturnPoint == null)
+                return BadRequest("You cannot confirm the return of this order");
 
             var unit = await _unitOfWork.UnitRepository.GetUnitByIdAsync(order.Unit!.Id);
-            if(unit.Id == -1) return NotFound();
+            if(unit.Id == -1) return BadRequest("The unit you are trying to confirm does not exists");
 
             order.UnitReturned = true;
             unit.WhenWillBeAvailable = null;
             unit.IsAvailable = true;
             unit.ItemUnitPoint!.Point = order.ReturnPoint;
 
-            if(await _unitOfWork.Complete()) return Ok(await _unitOfWork.OrderRepository.GetOrderDTOByIdAsync(order.Id));
+            if(await _unitOfWork.Complete()) 
+                return Ok(await _unitOfWork.OrderRepository.GetOrderDTOByIdAsync(order.Id));
             return BadRequest("Failed to confirm return");
         }
 
@@ -286,16 +292,16 @@ namespace API.Controllers
         [HttpPut("confirm-receive/{orderId:int}")]
         public async Task<ActionResult<OrderDTO>> ConfirmReceive(int orderId)
         {
-            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(_wrapper.GetUsernameViaWrapper(User));
             var order = await _unitOfWork.OrderRepository.GetOrderByIdAsync(orderId);
-            if(order.Id == -1 || user == null) return NotFound();
+            if(order.Id == -1) return NotFound();
 
             if(order.ClientGotDelivery 
             || order.UnitReturned 
             || order.Cancelled 
             || order.DeliveryMan == null 
             || order.DeliveryCompleted 
-            || order.DeliveryMan.UserName != order.Client!.UserName) return BadRequest("You cannot confirm the receive of this order");
+            || order.DeliveryMan.UserName != order.Client!.UserName) 
+                return BadRequest("You cannot confirm the receive of this order");
 
             order.DeliveryCompleted = true;
 
