@@ -7,6 +7,8 @@ COPY appsettings.Docker.json ./appsettings.Docker.json
 
 # Restore as distinct layers
 RUN dotnet restore
+
+RUN dotnet test -c Release
 # Build and publish a release
 RUN dotnet publish -c Release -o out
 
