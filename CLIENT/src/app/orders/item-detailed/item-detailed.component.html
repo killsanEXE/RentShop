@@ -21,7 +21,7 @@
 
         <div *ngIf="createdOrder === null || createdOrder === undefined" class="row order-row px-4">
             <div *ngIf="!ordering">
-                <button [disabled]="allUnits.length <= 0 || user.roles.includes('Admin')" (click)="ordering = !ordering" class="btn order-button">Order</button>
+                <button mat-raised-button [disabled]="allUnits.length <= 0 || user.roles.includes('Admin')" (click)="ordering = !ordering" class=" order-button">Order</button>
             </div>
             <div *ngIf="ordering" style="width: 100%;">
                 <mat-form-field appearance="fill" class="select-form">
@@ -55,7 +55,7 @@
                         </div>
                         <div class="unit-location">
                             <p>Location: {{unit.point.country}}, {{unit.point.city}}, {{unit.point.address}}</p>
-                            <button class="btn select-unit-button" (click)="selectUnit(unit)" [disabled]="unit.disabled || !unit.isAvailable">Select</button>
+                            <button mat-raised-button class=" select-unit-button" (click)="selectUnit(unit)" [disabled]="unit.disabled || !unit.isAvailable">Select</button>
                         </div>
                     </div>
                 </div>
@@ -74,7 +74,7 @@
                     </div>
                     <div class="unit-location">
                         <p>Location {{selectedUnit.point.country}}, {{selectedUnit.point.city}}, {{selectedUnit.point.address}}</p>
-                        <button class="btn select-unit-button" (click)="selectAnotherUnit()">Select another</button>
+                        <button mat-raised-button class=" select-unit-button" (click)="selectAnotherUnit()">Select another</button>
                     </div>
                 </div>
             </div>
@@ -92,7 +92,7 @@
             </div>
 
             <div *ngIf="orderForm.valid" class="confirm-order">
-                <button [disabled]="!orderForm.valid" class="btn order-button" (click)="confirmOrder()">Order</button>
+                <button mat-raised-button [disabled]="!orderForm.valid" class=" order-button" (click)="confirmOrder()">Order</button>
             </div>
         </div>
 

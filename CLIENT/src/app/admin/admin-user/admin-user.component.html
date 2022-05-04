@@ -11,7 +11,7 @@
                             <p>Age: {{user.age}}</p>
                         </div>
                         <div class="control">
-                            <buttton class="btn deny-button" (click)="removeDeliveryman(user)">Remove</buttton>
+                            <button class="deny-button" (click)="removeDeliveryman(user)">Remove</button>
                         </div>
                     </div>
                     <div *ngIf="deliverymans.length <= 0" style="display: flex; justify-content: center;">
@@ -30,8 +30,8 @@
                             <p>Country: {{user.location.country}}</p>
                             <p>Age: {{user.age}}</p>
                             <div class="control">
-                                <buttton class="btn accept-button" (click)="addDeliveryman(user)">Accept</buttton>
-                                <buttton class="btn deny-button" (click)="denyDeliveryman(user)">Deny</buttton>
+                                <buttton class=" accept-button" (click)="addDeliveryman(user)">Accept</buttton>
+                                <buttton class=" deny-button" (click)="denyDeliveryman(user)">Deny</buttton>
                             </div>
                         </div>
                     </div>

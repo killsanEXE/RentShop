@@ -35,7 +35,7 @@
             [type]="'password'"
         ></app-text-input>
 
-        <button class="btn btn-secondary" [disabled]="!registerForm.valid" type="submit">Register</button>
+        <button mat-raised-button class="" [disabled]="!registerForm.valid" type="submit">Register</button>
     </form>
 
     <div *ngIf="registrationComplete">

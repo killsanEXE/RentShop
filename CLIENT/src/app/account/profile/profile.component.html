@@ -12,8 +12,8 @@
     </div>
     <div class="locations-main-div">
         <div class="locations-div-header py-2">
-            <button class="btn add-location-btn" (click)="addLocation()">Add Location</button>
-            <button *ngIf="!user.deliverymanRequest" class="btn become-deliveryman-btn" (click)="becomeDeliveryman()">Join deliverymans</button>
+            <button mat-raised-button class=" add-location-btn" (click)="addLocation()">Add Location</button>
+            <button mat-raised-button *ngIf="!user.deliverymanRequest" class=" become-deliveryman-btn" (click)="becomeDeliveryman()">Join deliverymans</button>
             <!-- <p *ngIf="user.deliverymanRequest">Admin will check your request</p> -->
         </div>
         <div *ngIf="user.locations.length > 0" class="location-div-boddy">

@@ -76,13 +76,13 @@
 
     <div *ngIf="user.roles.includes('Deliveryman') && order.client.username !== user.username">
         <div *ngIf="order.deliveryMan?.username === null">
-            <button (click)="acceptOrder()" class="btn">Accept</button>
+            <button mat-raised-button (click)="acceptOrder()" class="">Accept</button>
         </div>
         <div *ngIf="order.deliveryMan !== null && order.deliveryMan.username === user.username">
             <div class="deliveryman-taken-order-controls controls">
-                <button class="btn" [disabled]="order.clientGotDelivery" *ngIf="order.deliveryMan.username === user.username && !order.deliveryCompleted" (click)="message(order.client)">Message client</button>
-                <button class="btn" (click)="startDelivery()" *ngIf="!order.deliveryInProcess">Start delivery</button>
-                <button class="btn" (click)="finishDelivery()" *ngIf="order.deliveryInProcess && !order.deliveryCompleted">Finish delivery</button>
+                <button mat-raised-button class="" [disabled]="order.clientGotDelivery" *ngIf="order.deliveryMan.username === user.username && !order.deliveryCompleted" (click)="message(order.client)">Message client</button>
+                <button mat-raised-button class="" (click)="startDelivery()" *ngIf="!order.deliveryInProcess">Start delivery</button>
+                <button mat-raised-button class="" (click)="finishDelivery()" *ngIf="order.deliveryInProcess && !order.deliveryCompleted">Finish delivery</button>
             </div>
         </div>
         <div *ngIf="order.deliveryCompleted && order.clientGotDelivery && order.deliveryMan.username" style="display: flex; justify-content: center;" calss="pt-3">
@@ -101,21 +101,21 @@
 
     <div class="client-control-selfpick" *ngIf="(!user.roles.includes('Deliveryman') || (order.deliveryMan !== null && order.client.username === order.deliveryMan.username)) && !order.clientGotDelivery">
         <div class="client-order-controls controls full-width">
-            <button *ngIf="order.deliveryMan === null" class="btn" (click)="selfpickOrder()">Pick it up myself</button>
-            <button *ngIf="!order.deliveryCompleted" class="btn" [disabled]="order.deliveryInProcess" (click)="cancelOrder()">Cancel order</button>
-            <button class="btn" (click)="receivedOrder()" *ngIf="order.deliveryCompleted && !order.clientGotDelivery">Received order</button>
+            <button mat-raised-button *ngIf="order.deliveryMan === null" class="" (click)="selfpickOrder()">Pick it up myself</button>
+            <button mat-raised-button *ngIf="!order.deliveryCompleted" class="" [disabled]="order.deliveryInProcess" (click)="cancelOrder()">Cancel order</button>
+            <button mat-raised-button class="" (click)="receivedOrder()" *ngIf="order.deliveryCompleted && !order.clientGotDelivery">Received order</button>
 
-            <button class="btn" *ngIf="order.clientGotDelivery">How i will return unit</button>
-            <button 
+            <button mat-raised-button class="" *ngIf="order.clientGotDelivery">How i will return unit</button>
+            <button mat-raised-button 
                 *ngIf="order.deliveryMan !== null && order.deliveryMan.username !== user.username" 
                 (click)="message(order.deliveryMan)" 
-                class="btn" [disabled]="order.clientGotDelivery">Message deliveryman</button>
+                class="" [disabled]="order.clientGotDelivery">Message deliveryman</button>
             <p *ngIf="order.deliveryMan === null">Searching for deliveryman...</p>
         </div>
 
         <!-- <div class="client-selfpick-order-controls controls full-width" *ngIf="order.deliveryMan !== null && order.deliveryMan.username === user.username">
-            <button class="btn" [disabled]="!order.deliveryCompleted" (click)="receivedOrder()">Received order</button>
-            <button class="btn" *ngIf="order.clientGotDelivery">How i will return unit</button>
+            <button mat-raised-button class="" [disabled]="!order.deliveryCompleted" (click)="receivedOrder()">Received order</button>
+            <button mat-raised-button class="" *ngIf="order.clientGotDelivery">How i will return unit</button>
         </div> -->
     </div>
 
@@ -145,7 +145,7 @@
             </mat-select>
         </mat-form-field>  
 
-        <button class="btn" (click)="save()" *ngIf="returnForm.valid && (showPointsToReturn || showLocationsReturn)">
+        <button mat-raised-button class="" (click)="save()" *ngIf="returnForm.valid && (showPointsToReturn || showLocationsReturn)">
             Save
         </button>
     </div>
@@ -164,7 +164,7 @@
                 <div>
                     <p>Get this item to {{order.returnFromLocation.address}} for deliveryman to get it</p>
                 </div>
-                <button class="btn" (click)="message(order.returnDeliveryman)">Message deliveryman</button>
+                <button mat-raised-button class="" (click)="message(order.returnDeliveryman)">Message deliveryman</button>
             </div>
         </div>
     </div>
@@ -190,7 +190,7 @@
             <p>Delivery date: {{order.returnDate | date: "dd MMMM YYYY"}}</p>
         </div>
         <div *ngIf="order.returnDeliveryman === null">
-            <button (click)="acceptOrder()" class="btn">Accept</button>
+            <button mat-raised-button (click)="acceptOrder()" class="">Accept</button>
         </div>
         <div class="pt-3" *ngIf="(order.returnDeliveryman !== null && order.returnDeliveryman.username === user.username) && order.returnPoint === null">
             <mat-form-field appearance="fill" class="full-width" *ngIf="order.returnPoint === null">
@@ -199,7 +199,7 @@
                     <mat-option  *ngFor="let point of points" value="{{point.id}}">{{point.city}}, {{point.address}}</mat-option>
                 </mat-select>
             </mat-form-field>  
-            <button class="btn" (click)="save()" *ngIf="returnForm.valid && showPointsToReturn && order.returnPoint === null">
+            <button mat-raised-button class="" (click)="save()" *ngIf="returnForm.valid && showPointsToReturn && order.returnPoint === null">
                 Save
             </button>
         </div>

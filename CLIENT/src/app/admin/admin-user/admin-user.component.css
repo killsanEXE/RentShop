@@ -28,6 +28,9 @@
 
 .deny-button{
     color: red;
+    background-color: transparent;
+    border: 0;
+    padding: 0.5vh;
 }
 
 .accept-button:hover, .deny-button:hover{

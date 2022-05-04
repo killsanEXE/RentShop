@@ -5,12 +5,12 @@
             <mat-label>Enter order id</mat-label>
             <input matInput type="text" name="orderId" [(ngModel)]="orderId">
         </mat-form-field>
-        <button class="btn" (click)="confirmReturn()" [disabled]="orderId.trim() === ''">Confirm</button>
+        <button mat-raised-button class="" (click)="confirmReturn()" [disabled]="orderId.trim() === ''">Confirm</button>
     </div> -->
 
     <div style="display: flex;">
-        <button class="btn" (click)="confirmReceive()">Confirm order receive</button>
-        <button class="btn" (click)="confirmReturn()">Confirm order return</button>
+        <button mat-raised-button class="" (click)="confirmReceive()">Confirm order receive</button>
+        <button mat-raised-button class="" (click)="confirmReturn()">Confirm order return</button>
     </div>
 
     <mat-tab-group mat-align-tabs="center">

@@ -1,7 +1,7 @@
 <div class="container py-2">
     <div class="modal-header">
         <h4 class="modal-title" id="modal-basic-title">Message {{otehrUserusername}}</h4>
-        <button type="button" class="btn btn-danger" (click)="exit()" aria-label="Close">
+        <button mat-raised-button type="button" class="" color="warn"  (click)="exit()" aria-label="Close">
             Close
         </button>
     </div>
@@ -33,7 +33,7 @@
             <input class="full-width" name="message" [(ngModel)]="message" type="text">
         </div>
         <div class="message-button">
-            <button type="submit" [disabled]="message === '' || message === null" class="btn send-button">
+            <button mat-raised-button type="submit" [disabled]="message === '' || message === null" class=" send-button">
                 Send
             </button>
         </div>

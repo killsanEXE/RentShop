@@ -9,7 +9,7 @@
                     <div class="item-card-body">
                         <p *ngIf="!item.disabled" class="item-card-title">{{item.name}}</p>
                         <p *ngIf="item.disabled" style="color: red;" class="item-card-title">{{item.name}}</p>
-                        <button routerLink="/item/{{item.id}}" class="btn item-order-button">Order</button>
+                        <button mat-raised-button routerLink="/item/{{item.id}}" class=" item-order-button">Order</button>
                     </div>
                 </div>
             </div>

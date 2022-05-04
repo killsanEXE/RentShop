@@ -4,7 +4,7 @@
             <mat-label>Email</mat-label>
             <input matInput [(ngModel)]="email" name="email" type="email">
         </mat-form-field>
-        <button type="submit" class="btn site-button" [disabled]="email.trim() === ''" (click)="send()">
+        <button mat-raised-button type="submit" class=" site-button" [disabled]="email.trim() === ''" (click)="send()">
             Send
         </button>
     </form>

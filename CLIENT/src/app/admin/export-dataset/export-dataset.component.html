@@ -2,7 +2,7 @@
 
     <div class="modal-header">
         <h4 class="modal-title" id="modal-basic-title">Import items from json</h4>
-        <button type="button" class="btn btn-secondary" (click)="modal.close()" aria-label="Close">
+        <button mat-raised-button type="button" class="" (click)="modal.close()" aria-label="Close">
             Do it Later
         </button>
     </div>
@@ -11,7 +11,7 @@
 
         <form class="upload-form">
 	        <input type="file" id="file" accept=".json" (change)="readJson($event)">
-            <button (click)="upload()" *ngIf="datasetRequest !== null" class="btn">Upload</button>
+            <button mat-raised-button (click)="upload()" *ngIf="datasetRequest !== null" class="">Upload</button>
         </form>
 
     </div>

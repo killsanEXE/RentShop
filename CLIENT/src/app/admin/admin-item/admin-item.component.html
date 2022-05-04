@@ -7,20 +7,12 @@
       </div>
 
       <div class="col-6">
-        <button (click)="popUp()" type="button" class="btn icon-button btn-outline-primary">
-            <!-- <img class="icon-img" src="/assets/plus.png" alt="additem"> -->
+        <button mat-raised-button (click)="popUp()" type="button" class="control-button icon-button btn-outline-primary">
             New item
         </button>
-        <!-- <button 
-          [disabled]="selectedItems.length <= 0" 
-          type="button" 
-          class="btn icon-button btn-outline-danger"
-          (click)="deleteItems()">
-            <img class="icon-img" src="/assets/trash.png" alt="trashItem">
-        </button> -->
-        <button [disabled]="selectedItems.length <= 0" class="btn" (click)="enableItems()">Enable</button>
-        <button [disabled]="selectedItems.length <= 0" class="btn" (click)="disableItems()">Disable</button>
-        <button class="btn manage-point" routerLink="/admin/points">Pick Up Points</button>
+        <button class="control-button" mat-raised-button [disabled]="selectedItems.length <= 0" (click)="enableItems()">Enable</button>
+        <button class="control-button" mat-raised-button [disabled]="selectedItems.length <= 0" (click)="disableItems()">Disable</button>
+        <button mat-raised-button class="control-button manage-point" routerLink="/admin/points">Pick Up Points</button>
       </div>
     </div>
 
@@ -68,8 +60,8 @@
       </div>
 
       <div class="import-export-datasets">
-        <button class="btn" (click)="importDataset()">Export dataset</button>
-        <button class="btn" (click)="exportDataset()">Import dataset</button>
+        <button mat-raised-button class="" (click)="importDataset()">Export dataset</button>
+        <button mat-raised-button class="" (click)="exportDataset()">Import dataset</button>
       </div>
 
       <mat-paginator #paginator class="home-paginator"

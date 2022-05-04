@@ -17,7 +17,7 @@
             <br>
             <a class="pb-1" routerLink="/resend-email-confirmation">Resend email confirmation</a>
         </div>
-        <button class="btn btn-secondary" 
+        <button mat-raised-button class="" 
             [disabled]="model.username?.trim() === '' || model.password?.trim() === ''" 
             type="submit">Login</button>
     </form>

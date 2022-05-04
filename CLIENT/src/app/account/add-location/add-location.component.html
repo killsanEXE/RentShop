@@ -2,7 +2,7 @@
     <div>
         <div class="modal-header">
             <h4 class="modal-title" id="modal-basic-title">Add location</h4>
-            <button type="button" class="btn btn-danger" (click)="exit()" aria-label="Close">
+            <button mat-raised-button type="button" class="" color="warn"  (click)="exit()" aria-label="Close">
                 Close
             </button>
         </div>
@@ -41,7 +41,7 @@
                 [type]="'text'">
             </app-text-input>
 
-            <button class="btn btn-primary" [disabled]="!locationForm.valid" type="submit">Add</button>
+            <button mat-raised-button class="" [disabled]="!locationForm.valid" type="submit">Add</button>
         </form>
     </div>
 </div>

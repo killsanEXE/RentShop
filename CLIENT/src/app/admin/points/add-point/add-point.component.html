@@ -1,7 +1,7 @@
 <div class="container">
     <div class="modal-header">
         <h4 class="modal-title" id="modal-basic-title">Create Point</h4>
-        <button type="button" class="btn btn-danger" (click)="exit()" aria-label="Close">
+        <button mat-raised-button type="button" class="" color="warn"  (click)="exit()" aria-label="Close">
             Close
         </button>
     </div>
@@ -40,7 +40,7 @@
                 [type]="'text'">
             </app-text-input>
 
-            <button class="btn btn-primary" [disabled]="!pointForm.valid" type="submit">Add</button>
+            <button mat-raised-button class="" [disabled]="!pointForm.valid" type="submit">Add</button>
         </form>
     </div>
 </div>

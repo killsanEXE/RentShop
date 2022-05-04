@@ -39,7 +39,7 @@
                         [type]="'number'">
                     </app-text-input>
         
-                    <button class="btn btn-primary" [disabled]="!itemForm.valid" type="submit">Save</button>
+                    <button mat-raised-button class="" [disabled]="!itemForm.valid" type="submit">Save</button>
                 </form>
             </div>
         </mat-tab>
@@ -51,8 +51,8 @@
                     <div>
                         <img *ngIf="item.previewPhoto !== null" src="{{item.previewPhoto.url}}" alt="{{item.previewPhoto.id}}">
                         <div style="display: flex; flex-direction: column;">
-                            <button (click)="uploadMainPhoto(item)" class="btn btn-primary mb-2">Set main photo</button>
-                            <button (click)="uploadPhotos(item)" class="btn btn-secondary">Add multiple photos</button>
+                            <button mat-raised-button (click)="uploadMainPhoto(item)" class=" mb-2">Set main photo</button>
+                            <button mat-raised-button (click)="uploadPhotos(item)" class="">Add multiple photos</button>
                         </div>
                     </div>
                 </div>
@@ -60,7 +60,7 @@
                     <div class="row photo-row">
                         <div class="col-4 photo-col" *ngFor="let photo of item.photos">
                             <img src="{{photo.url}}" alt="{{photo.id}}">
-                            <button (click)="deletePhoto(photo)" class="btn btn-danger">Delete</button>
+                            <button mat-raised-button (click)="deletePhoto(photo)" class="" color="warn" >Delete</button>
                         </div>
                     </div>
                 </div>
@@ -71,7 +71,7 @@
             <ng-template mat-tab-label>Units</ng-template>
             <div class="container p-4">
                 <div class="row">
-                    <button class="btn btn-primary" (click)="createUnit()">
+                    <button mat-raised-button class="" (click)="createUnit()">
                         Create unit
                     </button>
                 </div>
@@ -87,9 +87,9 @@
                         <tbody>
                             <tr *ngFor="let unit of item.units">
                                 <td class="unit-description">{{unit.description}}</td>
-                                <td><button class="btn btn-warning" (click)="editUnit(unit)">Edit</button></td>
-                                <td *ngIf="unit.disabled"><button class="btn btn-primary" (click)="enableUnit(unit)">Enable</button></td>
-                                <td *ngIf="!unit.disabled"><button class="btn btn-danger" (click)="disableUnit(unit)">Disable</button></td>
+                                <td><button mat-raised-button class="" (click)="editUnit(unit)">Edit</button></td>
+                                <td *ngIf="unit.disabled"><button mat-raised-button class="" (click)="enableUnit(unit)">Enable</button></td>
+                                <td *ngIf="!unit.disabled"><button mat-raised-button class="" color="warn"  (click)="disableUnit(unit)">Disable</button></td>
                             </tr>
                         </tbody>
                     </table>

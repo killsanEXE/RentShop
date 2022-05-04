@@ -1,6 +1,6 @@
 <div class="container pt-5">
     <div class="row">
-        <button class="btn btn-primary" (click)="addPoint()">
+        <button mat-raised-button class="" (click)="addPoint()">
             Add point
         </button>
     </div>
@@ -20,9 +20,9 @@
                     <td scope="row">{{point.country}}</td>
                     <td>{{point.city}}</td>
                     <td>{{point.address}}</td>
-                    <td><button class="btn btn-warning" (click)="editPoint(point)">Edit</button></td>
-                    <td *ngIf="point.disabled"><button class="btn btn-primary" (click)="enablePoint(point)">Enable</button></td>
-                    <td *ngIf="!point.disabled"><button class="btn btn-danger" (click)="disablePoint(point)">Disable</button></td>
+                    <td><button mat-raised-button class="" (click)="editPoint(point)">Edit</button></td>
+                    <td *ngIf="point.disabled"><button mat-raised-button class="" (click)="enablePoint(point)">Enable</button></td>
+                    <td *ngIf="!point.disabled"><button mat-raised-button class="" color="warn"  (click)="disablePoint(point)">Disable</button></td>
                 </tr>
             </tbody>
         </table>

@@ -71,6 +71,7 @@ import { ResendEmailConfirmationComponent } from './account/resend-email-confirm
 import { MessagesComponent } from './messages/messages.component';
 import { ServerErrorComponent } from './errors/server-error/server-error.component';
 import { NotFoundComponent } from './errors/not-found/not-found.component';
+import {MatButtonModule} from '@angular/material/button';
 
 @Injectable()
 export class MyHammerConfig extends HammerGestureConfig  {
@@ -152,7 +153,8 @@ export class MyHammerConfig extends HammerGestureConfig  {
     MatFormFieldModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatButtonModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
