@@ -30,3 +30,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .site-button:hover{
     color: #ff3d00;
 }
+
+button{
+    margin-left: 1vh;
+}

@@ -46,20 +46,11 @@ namespace API.Helpers
             
             CreateMap<Order, OrderDTO>();
 
-            CreateMap<Message, MessageDTO>();
-            CreateMap<MessageDTO, Message>();
-
             CreateMap<Item, DatasetItemDTO>();
 
             CreateMap<DatasetItemDTO, Item>();
             CreateMap<Photo, DatasetPhotoDTO>();
             CreateMap<DatasetPhotoDTO, Photo>();
-
-            CreateMap<Group, GroupDTO>()
-                .ForMember(f => f.Username1, opt => opt.MapFrom(s => s.User1!.UserName))
-                .ForMember(f => f.Username2, opt => opt.MapFrom(s => s.User2!.UserName))
-                .ForMember(f => f.User1Photo, opt => opt.MapFrom(s => s.User1!.PhotoUrl))
-                .ForMember(f => f.User2Photo, opt => opt.MapFrom(s => s.User2!.PhotoUrl));
         }
     }
 }

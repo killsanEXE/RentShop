@@ -10,7 +10,6 @@ namespace API.Interfaces
         IUserRepository UserRepository { get; }
         IItemRepository ItemRepository { get; }
         IOrderRepository OrderRepository { get; }
-        IMessageRepository MessageRepository { get; }
         IUnitRepository UnitRepository { get; }
         IPointRepository PointRepository { get; }
         Task<bool> Complete();

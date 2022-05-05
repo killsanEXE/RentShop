@@ -1,16 +1,8 @@
 <div class="py-3">
 
-    <!-- <div>
-        <mat-form-field>
-            <mat-label>Enter order id</mat-label>
-            <input matInput type="text" name="orderId" [(ngModel)]="orderId">
-        </mat-form-field>
-        <button mat-raised-button class="" (click)="confirmReturn()" [disabled]="orderId.trim() === ''">Confirm</button>
-    </div> -->
-
     <div style="display: flex;">
-        <button mat-raised-button class="" (click)="confirmReceive()">Confirm order receive</button>
-        <button mat-raised-button class="" (click)="confirmReturn()">Confirm order return</button>
+        <button mat-raised-button class="deliveryman-control-button" (click)="confirmReceive()">Confirm order receive</button>
+        <button mat-raised-button class="deliveryman-control-button" (click)="confirmReturn()">Confirm order return</button>
     </div>
 
     <mat-tab-group mat-align-tabs="center">

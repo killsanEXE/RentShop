@@ -6,7 +6,6 @@ using API.Helpers;
 using API.Interfaces;
 using API.Middleware;
 using API.Services;
-using API.SignalR;
 using API.Wrappers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -82,7 +81,7 @@ builder.Services.AddIdentityCore<AppUser>(opt =>
     .AddSignInManager<SignInManager<AppUser>>()
     .AddRoleValidator<RoleValidator<AppRole>>()
     .AddEntityFrameworkStores<ApplicationContext>()
-    .AddTokenProvider<DataProtectorTokenProvider<AppUser>>(TokenOptions.DefaultProvider);;
+    .AddTokenProvider<DataProtectorTokenProvider<AppUser>>(TokenOptions.DefaultProvider);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => 
 {
@@ -114,16 +113,9 @@ builder.Services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();
-if (env == "Docker") {
-    builder.Services.AddSignalR(e => {
-                e.MaximumReceiveMessageSize = 102400000;
-                e.EnableDetailedErrors = true;
-            });
-} else {
-    builder.Services.AddSignalR();
-}
 
-builder.Services.AddSingleton<PresenceTracker>();
+
+
 builder.Services.AddScoped<IEmailService, EmailService>(s => 
 {
     var emailSettings = builder.Configuration.GetSection("EmailSettings");
@@ -173,8 +165,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHub<MessageHub>("hubs/message");
-app.MapHub<PresenceHub>("hubs/presence");
 
 
 app.Run();
