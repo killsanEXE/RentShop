@@ -1,14 +1,15 @@
 using System.Text;
-using API.Entities;
+using ChatAPI.Entities;
 using ChatAPI.Data;
 using ChatAPI.Helpers;
 using ChatAPI.Interfaces;
 using ChatAPI.SignalR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+
 
 var builder = WebApplication.CreateBuilder(args);
 var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
@@ -125,18 +126,6 @@ else
 }
 
 var app = builder.Build();
-
-using(var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<ApplicationContext>();
-    var users = await context.Users.ToListAsync();
-    foreach(var i in users)
-    {
-        System.Console.WriteLine(i.Email);
-    }
-}
-
 
 if (env == "Docker")
 {

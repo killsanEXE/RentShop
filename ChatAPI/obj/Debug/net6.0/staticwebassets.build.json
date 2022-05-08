@@ -1,23 +1,11 @@
 {
   "Version": 1,
-  "Hash": "2nWKv9LOUbezWcegSEo+vW4PBnShqqDWByO3suq0CTc=",
+  "Hash": "aoukMGvX3c+FyMyECRwqT3wyMHA78pzlKcekEXjLT8E=",
   "Source": "ChatAPI",
   "BasePath": "_content/ChatAPI",
   "Mode": "Default",
   "ManifestType": "Build",
-  "ReferencedProjectsConfiguration": [
-    {
-      "Identity": "C:\\Users\\Kills\\Desktop\\RentShop\\API\\API.csproj",
-      "Version": 2,
-      "Source": "API",
-      "GetPublishAssetsTargets": "ComputeReferencedStaticWebAssetsPublishManifest;GetCurrentProjectPublishStaticWebAssetItems",
-      "AdditionalPublishProperties": "",
-      "AdditionalPublishPropertiesToRemove": "WebPublishProfileFile;TargetFramework;RuntimeIdentifier",
-      "GetBuildAssetsTargets": "GetCurrentProjectBuildStaticWebAssetItems",
-      "AdditionalBuildProperties": "",
-      "AdditionalBuildPropertiesToRemove": "WebPublishProfileFile;TargetFramework;RuntimeIdentifier"
-    }
-  ],
+  "ReferencedProjectsConfiguration": [],
   "DiscoveryPatterns": [],
   "Assets": []
 }

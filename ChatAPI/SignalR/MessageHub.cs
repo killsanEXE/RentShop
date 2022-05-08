@@ -1,5 +1,5 @@
-using API.Entities;
-using API.Extensions;
+using ChatAPI.Entities;
+using ChatAPI.Extensions;
 using AutoMapper;
 using ChatAPI.DTOs;
 using ChatAPI.Interfaces;

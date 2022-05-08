@@ -1,4 +1,4 @@
-using API.Extensions;
+using ChatAPI.Extensions;
 using ChatAPI.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 

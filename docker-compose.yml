@@ -22,7 +22,19 @@ services:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=http://+:8800
     depends_on:
-      - db-rentshop      
+      - db-rentshop
+
+  chat-api:
+    build:
+      context: ./ChatAPI
+      dockerfile: Dockerfile
+    ports:
+      - 7137:8801
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:8801
+    depends_on:
+      - api      
 
   client:
     build:
